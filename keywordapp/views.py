@@ -34,27 +34,24 @@ def Index(request):
         except DailyReportModel.DoesNotExist:
             # create empty record
             bill_lunch =  BillLunchModel.objects.create()
-            pos_detail = PosDetailModel.objects.create()
-            edc_detail = EdcDetailModel.objects.create()
-            delivery_detail = DeliveryDetailModel.objects.create()
+            bill_dinner =  BillDinnerModel.objects.create()
+
 
             # get last id
             bill_lunch_id = bill_lunch.id
-            pos_detail_id = pos_detail.id
-            edc_detail_id = edc_detail.id
-            delivery_detail_id = delivery_detail.id
+            bill_dinner_id = bill_dinner.id
 
             # create daily report
             daily_report = DailyReportModel.objects.create(
                 date=choose_date,
                 bill_lunch_id=bill_lunch_id,
-                pos_detail_id=pos_detail_id,
-                edc_detail_id=edc_detail_id,
-                delivery_detail_id=delivery_detail_id
+                bill_dinner_id=bill_dinner_id,
             )
             
         if mode == 'lunch':
             return redirect(reverse('lunch-input-quick', kwargs={'daily_report_id': daily_report.id}))
+        if mode == 'dinner':
+            return redirect(reverse('dinner-input-quick', kwargs={'daily_report_id': daily_report.id}))
 
 
     return render(request, 'keywordapp/index.html', context)
@@ -88,18 +85,15 @@ def LunchInputQuick(request,daily_report_id):
         # Save the updated object
         bill_lunch.save()
         
-        return redirect(reverse('lunch-input', kwargs={'daily_report_id':daily_report_id}))
+        return redirect(reverse('lunch-input-detail', kwargs={'daily_report_id':daily_report_id}))
 
-    return render(request,'keywordapp/lunch-input-quick.html',context={'date':date,'data':bill_lunch})
+    return render(request,'keywordapp/lunch-input-quick.html',context={'date':date,'bill_lunch':bill_lunch})
 
 def LunchInputDetail(request,daily_report_id):
 
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
     date = daily_object.date
     bill_lunch_id = daily_object.bill_lunch.id
-    edc_detail_id = daily_object.edc_detail.id
-    pos_detail_id = daily_object.pos_detail.id
-    delivery_detail_id = daily_object.delivery_detail.id
 
     bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
 
@@ -210,9 +204,6 @@ def LunchResult(request,daily_report_id):
 
     date = daily_object.date
     bill_lunch_id = daily_object.bill_lunch.id
-    edc_detail_id = daily_object.edc_detail.id
-    pos_detail_id = daily_object.pos_detail.id
-    delivery_detail_id = daily_object.delivery_detail.id
 
     bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
     realBillPhoneCash = bill_lunch.real_bill_phone_cash
@@ -255,6 +246,8 @@ def LunchResult(request,daily_report_id):
     # Table 1 TA Phone
     sumrealBillPhoneCount = realBillPhoneCashCount + realBillPhoneCardCount
     sumrealBillPhone = realBillPhoneCash + realBillPhoneCard
+    sumrealBillOnlineCount = realBillOnlineCashCount + realBillOnlineCardCount
+    sumrealBillOnline = realBillOnlineCash + realBillOnlineCard
     sumposTABillPhoneCount = posTABillPhoneCashCount + posTABillPhoneCardCount
     sumposTABillPhone = posTABillPhoneCash + posTABillPhoneCard
     # Table 2 Dine-in
@@ -262,9 +255,6 @@ def LunchResult(request,daily_report_id):
     sumrealBillIn = realBillInCash + realBillInCard
     sumposInCount = posInCashCount + posInCardCount
     sumposIn = posInCash + posInCard
-    # Table 3 TA Online
-    sumrealBillOnlineCount = realBillOnlineCashCount + realBillOnlineCardCount
-    sumrealBillOnline = realBillOnlineCash + realBillOnlineCard
 
     # Check equality 
     # TABLE 1 TA Phone
@@ -277,9 +267,9 @@ def LunchResult(request,daily_report_id):
     # Status of each result table
     # Table 1 Ta Phone
     if resultPhoneCashCount == "✅" and resultPhoneCardCount == "✅" and resultPhoneCash == "✅" and resultPhoneCard == "✅" and resultPhoneCount == "✅" and resultPhone == "✅":
-        statusTableTaPhone = "✅"
+        statusTableTa = "✅"
     else:
-        statusTableTaPhone = "❌"
+        statusTableTa = "❌"
     # Table 2 Dine-in
     if resultInCashCount == "✅" and resultInCardCount == "✅" and resultInCash == "✅" and resultInCard == "✅" and resultInCount == "✅" and resultIn == "✅":
         statusTableIn = "✅"
@@ -302,7 +292,7 @@ def LunchResult(request,daily_report_id):
         'resultPhoneCard':resultPhoneCard,
         'resultPhoneCount': resultPhoneCount,
         'resultPhone': resultPhone,
-        'statusTableTaPhone': statusTableTaPhone,
+        'statusTableTa': statusTableTa,
 
         # Table 2 Dine-in
         'sumrealBillInCount': sumrealBillInCount,
@@ -333,9 +323,6 @@ def LunchReport(request,daily_report_id):
 
     date = daily_object.date
     bill_lunch_id = daily_object.bill_lunch.id
-    edc_detail_id = daily_object.edc_detail.id
-    pos_detail_id = daily_object.pos_detail.id
-    delivery_detail_id = daily_object.delivery_detail.id
 
     bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
     realBillPhoneCash = bill_lunch.real_bill_phone_cash
@@ -350,16 +337,7 @@ def LunchReport(request,daily_report_id):
     realBillInCashCount = bill_lunch.real_bill_in_cash_count
     realBillInCard = bill_lunch.real_bill_in_card
     realBillInCardCount = bill_lunch.real_bill_in_card_count
-    posTABillPhoneCash = bill_lunch.pos_ta_bill_phone_cash
-    posTABillPhoneCashCount = bill_lunch.pos_ta_bill_phone_cash_count
-    posTABillPhoneCard = bill_lunch.pos_ta_bill_phone_card
-    posTABillPhoneCardCount = bill_lunch.pos_ta_bill_phone_card_count
-    posInCash = bill_lunch.pos_in_bill_cash
-    posInCashCount = bill_lunch.pos_in_bill_cash_count
-    posInCard = bill_lunch.pos_in_bill_card
-    posInCardCount = bill_lunch.pos_in_bill_card_count
     edcInCredit = bill_lunch.edc_in_credit
-    detailStatus = bill_lunch.detail_status
 
 
     # Summary
@@ -413,30 +391,428 @@ def DinnerInputQuick(request,daily_report_id):
 
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
     date = daily_object.date
-    bill_lunch_id = daily_object.bill_lunch.id
+    bill_dinner_id = daily_object.bill_dinner.id
 
-    bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
+    bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
 
     if request.method == 'POST':
         realBillOnlineCard = request.POST.get('real_bill_online_card')
         posTABillPhoneCard = request.POST.get('pos_ta_bill_phone_card')
+        realBillHomePhoneCard = request.POST.get('real_bill_home_phone_card')
+        realBillHomeOnlineCard = request.POST.get('real_bill_home_online_card')
         posInCard = request.POST.get('pos_in_bill_card')
         edcInCredit = request.POST.get('edc_in_credit')
 
-        bill_lunch =  get_object_or_404(BillLunchModel, id=bill_lunch_id)
-        bill_lunch.real_bill_online_card = realBillOnlineCard
-        bill_lunch.pos_ta_bill_phone_card = posTABillPhoneCard
-        bill_lunch.pos_in_bill_card = posInCard
-        bill_lunch.edc_in_credit = edcInCredit
-        bill_lunch.detail_status = 1
+        bill_dinner =  get_object_or_404(BillDinnerModel, id=bill_dinner_id)
+        bill_dinner.real_bill_online_card = realBillOnlineCard
+        bill_dinner.pos_ta_bill_phone_card = posTABillPhoneCard
+        bill_dinner.pos_in_bill_card = posInCard
+        bill_dinner.real_bill_home_phone_card = realBillHomePhoneCard
+        bill_dinner.real_bill_home_online_card = realBillHomeOnlineCard
+        
+
+        bill_dinner.edc_in_credit = edcInCredit
+        bill_dinner.detail_status = 1
 
         # Save the updated object
-        bill_lunch.save()
+        bill_dinner.save()
         
-        return redirect(reverse('lunch-input', kwargs={'daily_report_id':daily_report_id}))
+        return redirect(reverse('dinner-input-detail', kwargs={'daily_report_id':daily_report_id}))
 
-    return render(request,'keywordapp/lunch-input-quick.html',context={'date':date,'data':bill})
+    return render(request,'keywordapp/dinner-input-quick.html',context={'date':date,'bill_dinner':bill_dinner})
 
+def DinnerInputDetail(request, daily_report_id):
+
+    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_object.date
+    bill_dinner_id = daily_object.bill_dinner.id
+
+    bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
+
+    if request.method == 'POST':
+        realBillPhoneCash = request.POST.get('real_bill_phone_cash')
+        realBillPhoneCashCount = request.POST.get('real_bill_phone_cash_count')
+        realBillPhoneCard = request.POST.get('real_bill_phone_card')
+        realBillPhoneCardCount = request.POST.get('real_bill_phone_card_count')
+        realBillOnlineCash = request.POST.get('real_bill_online_cash')
+        realBillOnlineCashCount = request.POST.get('real_bill_online_cash_count')
+        realBillOnlineCard = request.POST.get('real_bill_online_card')
+        realBillOnlineCardCount = request.POST.get('real_bill_online_card_count')
+        realBillInCash = request.POST.get('real_bill_in_cash')
+        realBillInCashCount = request.POST.get('real_bill_in_cash_count')
+        realBillInCard = request.POST.get('real_bill_in_card')
+        realBillInCardCount = request.POST.get('real_bill_in_card_count')
+        posTABillPhoneCash = request.POST.get('pos_ta_bill_phone_cash')
+        posTABillPhoneCashCount = request.POST.get('pos_ta_bill_phone_cash_count')
+        posTABillPhoneCard = request.POST.get('pos_ta_bill_phone_card')
+        posTABillPhoneCardCount = request.POST.get('pos_ta_bill_phone_card_count')
+        posInCash = request.POST.get('pos_in_bill_cash')
+        posInCashCount = request.POST.get('pos_in_bill_cash_count')
+        posInCard = request.POST.get('pos_in_bill_card')
+        posInCardCount = request.POST.get('pos_in_bill_card_count')
+        # Home
+        realBillHomePhoneCashCount = request.POST.get('real_bill_home_phone_cash_count')
+        realBillHomePhoneCash = request.POST.get('real_bill_home_phone_cash')
+        realBillHomePhoneCardCount = request.POST.get('real_bill_home_phone_card_count')
+        realBillHomePhoneCard = request.POST.get('real_bill_home_phone_card')
+        realBillHomeOnlineCashCount = request.POST.get('real_bill_home_online_cash_count')
+        realBillHomeOnlineCash = request.POST.get('real_bill_home_online_cash')
+        realBillHomeOnlineCardCount = request.POST.get('real_bill_home_online_card_count')
+        realBillHomeOnlineCard = request.POST.get('real_bill_home_online_card')
+        copyData = request.POST.get('copy_data')
+
+        edcInCredit = request.POST.get('edc_in_credit')
+
+        bill_dinner =  get_object_or_404(BillDinnerModel, id=bill_dinner_id)
+        # Update the attributes of the existing object
+        if copyData == "on":
+            realBillPhoneCashCount = posTABillPhoneCashCount
+            realBillPhoneCash = posTABillPhoneCash
+            realBillPhoneCardCount = posTABillPhoneCardCount
+            realBillPhoneCard = posTABillPhoneCard
+            realBillInCashCount = posInCashCount
+            realBillInCash = posInCash
+            realBillInCardCount = posInCardCount
+            realBillInCard = posInCard
+
+        # Real Bill TA Phone
+        bill_dinner.real_bill_phone_cash_count = realBillPhoneCashCount
+        bill_dinner.real_bill_phone_cash = realBillPhoneCash
+        bill_dinner.real_bill_phone_card_count = realBillPhoneCardCount
+        bill_dinner.real_bill_phone_card = realBillPhoneCard
+        # Real Bill TA Online
+        bill_dinner.real_bill_online_cash_count = realBillOnlineCashCount
+        bill_dinner.real_bill_online_cash = realBillOnlineCash
+        bill_dinner.real_bill_online_card_count = realBillOnlineCardCount
+        bill_dinner.real_bill_online_card = realBillOnlineCard
+        # Real Bill Dine in
+        bill_dinner.real_bill_in_cash_count = realBillInCashCount
+        bill_dinner.real_bill_in_cash = realBillInCash
+        bill_dinner.real_bill_in_card_count = realBillInCardCount
+        bill_dinner.real_bill_in_card = realBillInCard
+        # POS TA Phone
+        bill_dinner.pos_ta_bill_phone_cash = posTABillPhoneCash
+        bill_dinner.pos_ta_bill_phone_cash_count = posTABillPhoneCashCount
+        bill_dinner.pos_ta_bill_phone_card = posTABillPhoneCard
+        bill_dinner.pos_ta_bill_phone_card_count = posTABillPhoneCardCount
+        # POS Dine in
+        bill_dinner.pos_in_bill_cash = posInCash
+        bill_dinner.pos_in_bill_cash_count = posInCashCount
+        bill_dinner.pos_in_bill_card = posInCard
+        bill_dinner.pos_in_bill_card_count = posInCardCount
+        # Home  Phone
+        bill_dinner.real_bill_home_phone_cash_count = realBillHomePhoneCashCount
+        bill_dinner.real_bill_home_phone_cash = realBillHomePhoneCash
+        bill_dinner.real_bill_home_phone_card_count = realBillHomePhoneCardCount
+        bill_dinner.real_bill_home_phone_card = realBillHomePhoneCard
+        # Home  Online
+        bill_dinner.real_bill_home_online_cash_count = realBillHomeOnlineCashCount
+        bill_dinner.real_bill_home_online_cash = realBillHomeOnlineCash
+        bill_dinner.real_bill_home_online_card_count = realBillHomeOnlineCardCount
+        bill_dinner.real_bill_home_online_card = realBillHomeOnlineCard
+        # EDC Dine in
+        bill_dinner.edc_in_credit = edcInCredit
+        bill_dinner.detail_status = 1
+
+        # Save the updated object
+        bill_dinner.save()
+        return redirect(reverse('dinner-result', kwargs={'daily_report_id': daily_report_id}))
+
+    date = daily_object.date
+    bill_dinner_id = daily_object.bill_dinner.id
+
+    bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
+    # get data for general data
+    posTABillPhoneCard = bill_dinner.pos_ta_bill_phone_card
+    posInCard = bill_dinner.pos_in_bill_card
+    realBillOnlineCard = bill_dinner.real_bill_online_card
+    realBillHomePhoneCard = bill_dinner.real_bill_home_phone_card
+    edcInCredit = bill_dinner.edc_in_credit
+
+    # Status
+    sumBillPhoneCard = posTABillPhoneCard + posInCard + realBillOnlineCard
+    minusHomeFromPhone = sumBillPhoneCard - realBillHomePhoneCard
+    resultCheckEqual = "✅" if edcInCredit == minusHomeFromPhone else "❌"
+
+    context = {
+        'date': date,
+        'bill_dinner': bill_dinner,
+        'posInCard': posInCard,
+        'posTABillPhoneCard': posTABillPhoneCard,
+        'realBillOnlineCard': realBillOnlineCard,
+        'sumBillPhoneCard': sumBillPhoneCard,
+        'realBillHomePhoneCard': realBillHomePhoneCard,
+        'minusHomeFromPhone': minusHomeFromPhone,
+        'resultCheckEqual': resultCheckEqual,
+        'edcInCredit': edcInCredit,
+        'daily_report_id': daily_report_id,
+    }
+    return render(request, 'keywordapp/dinner-input-detail.html', context)
+
+def DinnerResult(request,daily_report_id):
+
+    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
+    # Retrieve other related models or fields if needed
+
+    date = daily_object.date
+    bill_dinner_id = daily_object.bill_dinner.id
+
+    bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
+    realBillPhoneCash = bill_dinner.real_bill_phone_cash
+    realBillPhoneCashCount = bill_dinner.real_bill_phone_cash_count
+    realBillPhoneCard = bill_dinner.real_bill_phone_card
+    realBillPhoneCardCount = bill_dinner.real_bill_phone_card_count
+    realBillOnlineCash = bill_dinner.real_bill_online_cash
+    realBillOnlineCashCount = bill_dinner.real_bill_online_cash_count
+    realBillOnlineCard = bill_dinner.real_bill_online_card
+    realBillOnlineCardCount = bill_dinner.real_bill_online_card_count
+    realBillInCash = bill_dinner.real_bill_in_cash
+    realBillInCashCount = bill_dinner.real_bill_in_cash_count
+    realBillInCard = bill_dinner.real_bill_in_card
+    realBillInCardCount = bill_dinner.real_bill_in_card_count
+    # Home Phone
+    realBillHomePhoneCashCount = bill_dinner.real_bill_home_phone_cash_count
+    realBillHomePhoneCash = bill_dinner.real_bill_home_phone_cash
+    realBillHomePhoneCardCount = bill_dinner.real_bill_home_phone_card_count
+    realBillHomePhoneCard = bill_dinner.real_bill_home_phone_card
+    # Home Online
+    realBillHomeOnlineCashCount = bill_dinner.real_bill_home_online_cash_count
+    realBillHomeOnlineCash = bill_dinner.real_bill_home_online_cash
+    realBillHomeOnlineCardCount = bill_dinner.real_bill_home_online_card_count
+    realBillHomeOnlineCard = bill_dinner.real_bill_home_online_card
+    posTABillPhoneCash = bill_dinner.pos_ta_bill_phone_cash
+    posTABillPhoneCashCount = bill_dinner.pos_ta_bill_phone_cash_count
+    posTABillPhoneCard = bill_dinner.pos_ta_bill_phone_card
+    posTABillPhoneCardCount = bill_dinner.pos_ta_bill_phone_card_count
+    posInCash = bill_dinner.pos_in_bill_cash
+    posInCashCount = bill_dinner.pos_in_bill_cash_count
+    posInCard = bill_dinner.pos_in_bill_card
+    posInCardCount = bill_dinner.pos_in_bill_card_count
+    edcInCredit = bill_dinner.edc_in_credit
+    detailStatus = bill_dinner.detail_status
+
+    # Status
+    # Table 1 TA Phone
+    resultPhoneCashCount = "✅" if realBillPhoneCashCount + realBillHomePhoneCashCount  == posTABillPhoneCashCount else "❌"
+    resultPhoneCardCount = "✅" if realBillPhoneCardCount + realBillHomePhoneCardCount == posTABillPhoneCardCount else "❌"
+    resultPhoneCash = "✅" if realBillPhoneCash + realBillHomePhoneCash == posTABillPhoneCash else "❌"
+    resultPhoneCard = "✅" if realBillPhoneCard + realBillHomePhoneCard == posTABillPhoneCard else "❌"
+
+    # Table 2 Dine-in
+    resultInCashCount = "✅" if realBillInCashCount == posInCashCount else "❌"
+    resultInCardCount = "✅" if realBillInCardCount == posInCardCount else "❌"
+    resultInCash = "✅" if realBillInCash == posInCash else "❌"
+    resultInCard = "✅" if realBillInCard == posInCard else "❌"
+
+    # Summary
+    # Table 1 TA Phone + Home Phone
+    sumrealBillPhoneCount = realBillPhoneCashCount + realBillPhoneCardCount
+    sumrealBillPhone = realBillPhoneCash + realBillPhoneCard
+    sumrealBillHomePhoneCount = realBillHomePhoneCashCount + realBillHomePhoneCardCount
+    sumrealBillHomePhone = realBillHomePhoneCash + realBillHomePhoneCard
+    sumposTABillPhoneCount = posTABillPhoneCashCount + posTABillPhoneCardCount 
+    sumposTABillPhone = posTABillPhoneCash + posTABillPhoneCard
+    
+    # Table 2 Dine-in
+    sumrealBillInCount = realBillInCashCount + realBillInCardCount
+    sumrealBillIn = realBillInCash + realBillInCard
+    sumposInCount = posInCashCount + posInCardCount
+    sumposIn = posInCash + posInCard
+
+    # Table 3 TA Online
+    sumrealBillOnlineCount = realBillOnlineCashCount + realBillOnlineCardCount
+    sumrealBillOnline = realBillOnlineCash + realBillOnlineCard
+    sumrealBillhomeOnlineCount = realBillHomeOnlineCashCount + realBillHomeOnlineCardCount
+    sumrealBillhomeOnline = realBillHomeOnlineCash + realBillHomeOnlineCard
+
+    # Table 4 Conclusions
+
+    sumBillPhoneCard = posTABillPhoneCard + posInCard + realBillOnlineCard
+    minusHomeFromPhone = sumBillPhoneCard - realBillHomePhoneCard
+
+    # Check equality 
+    # TABLE 1 TA Phone
+    resultPhoneCount = "✅" if sumrealBillPhoneCount + sumrealBillHomePhoneCount == sumposTABillPhoneCount else "❌"
+    resultPhone = "✅" if sumrealBillPhone + sumrealBillHomePhone == sumposTABillPhone else "❌"
+    # TABLE 2 Dine-in
+    resultInCount = "✅" if sumrealBillInCount == sumposInCount else "❌"
+    resultIn = "✅" if sumrealBillIn == sumposIn else "❌"
+
+    # Status of each result table
+    # Table 1 Ta Phone
+    if resultPhoneCashCount == "✅" and resultPhoneCardCount == "✅" and resultPhoneCash == "✅" and resultPhoneCard == "✅" and resultPhoneCount == "✅" and resultPhone == "✅":
+        statusTableTaPhone = "✅"
+    else:
+        statusTableTaPhone = "❌"
+    # Table 2 Dine-in
+    if resultInCashCount == "✅" and resultInCardCount == "✅" and resultInCash == "✅" and resultInCard == "✅" and resultInCount == "✅" and resultIn == "✅":
+        statusTableIn = "✅"
+    else:
+        statusTableIn = "❌"
+
+    context = {
+        'date': date,
+        'bill_dinner': bill_dinner,
+        'daily_report_id': daily_report_id,
+
+        # Table 1 Ta Phone
+        'sumrealBillPhoneCount': sumrealBillPhoneCount,
+        'sumrealBillPhone': sumrealBillPhone,
+        'sumrealBillHomePhoneCount': sumrealBillHomePhoneCount,
+        'sumrealBillHomePhone': sumrealBillHomePhone,
+        'sumposTABillPhoneCount': sumposTABillPhoneCount,
+        'sumposTABillPhone': sumposTABillPhone,
+        
+        'resultPhoneCashCount':resultPhoneCashCount,
+        'resultPhoneCardCount':resultPhoneCardCount,
+        'resultPhoneCash':resultPhoneCash,
+        'resultPhoneCard':resultPhoneCard,
+        'resultPhoneCount': resultPhoneCount,
+        'resultPhone': resultPhone,
+        'statusTableTaPhone': statusTableTaPhone,
+
+        # Table 2 Dine-in
+        'sumrealBillInCount': sumrealBillInCount,
+        'sumrealBillIn': sumrealBillIn,
+        'sumposInCount': sumposInCount,
+        'sumposIn': sumposIn,
+        'resultInCashCount':resultInCashCount,
+        'resultInCardCount':resultInCardCount,
+        'resultInCash':resultInCash,
+        'resultInCard':resultInCard,
+        'resultInCount': resultInCount,
+        'resultIn': resultIn,
+        'statusTableIn': statusTableIn,
+
+        # Table 3 Ta Online
+        'sumrealBillOnlineCount': sumrealBillOnlineCount,
+        'sumrealBillOnline': sumrealBillOnline,
+        'sumrealBillhomeOnlineCount': sumrealBillhomeOnlineCount,
+        'sumrealBillhomeOnline': sumrealBillhomeOnline,
+
+        # Table 4 Conclusion
+        'sumBillPhoneCard': sumBillPhoneCard,
+        'minusHomeFromPhone': minusHomeFromPhone,
+        
+
+        'edcInCredit':edcInCredit,
+    }
+    return render(request,'keywordapp/dinner-result.html',context)
+
+
+def DinnerReport(request,daily_report_id):
+
+    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
+    # Retrieve other related models or fields if needed
+
+    date = daily_object.date
+    bill_lunch_id = daily_object.bill_lunch.id
+    bill_dinner_id = daily_object.bill_dinner.id
+
+    #* Lunch Data
+    bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
+    realBillPhoneCashLunch = bill_lunch.real_bill_phone_cash
+    realBillPhoneCashCountLunch = bill_lunch.real_bill_phone_cash_count
+    realBillPhoneCardLunch = bill_lunch.real_bill_phone_card
+    realBillPhoneCardCountLunch = bill_lunch.real_bill_phone_card_count
+    realBillOnlineCashLunch = bill_lunch.real_bill_online_cash
+    realBillOnlineCashCountLunch = bill_lunch.real_bill_online_cash_count
+    realBillOnlineCardLunch = bill_lunch.real_bill_online_card
+    realBillOnlineCardCountLunch = bill_lunch.real_bill_online_card_count
+    realBillInCashLunch = bill_lunch.real_bill_in_cash
+    realBillInCashCountLunch = bill_lunch.real_bill_in_cash_count
+    realBillInCardLunch = bill_lunch.real_bill_in_card
+    realBillInCardCountLunch = bill_lunch.real_bill_in_card_count
+    edcInCreditLunch = bill_lunch.edc_in_credit
+
+    #* Dinner Data
+    bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
+    realBillPhoneCashDinner = bill_dinner.real_bill_phone_cash
+    realBillPhoneCashCountDinner = bill_dinner.real_bill_phone_cash_count
+    realBillPhoneCardDinner = bill_dinner.real_bill_phone_card
+    realBillPhoneCardCountDinner = bill_dinner.real_bill_phone_card_count
+    realBillOnlineCashDinner = bill_dinner.real_bill_online_cash
+    realBillOnlineCashCountDinner = bill_dinner.real_bill_online_cash_count
+    realBillOnlineCardDinner = bill_dinner.real_bill_online_card
+    realBillOnlineCardCountDinner = bill_dinner.real_bill_online_card_count
+    realBillInCashDinner = bill_dinner.real_bill_in_cash
+    realBillInCashCountDinner = bill_dinner.real_bill_in_cash_count
+    realBillInCardDinner = bill_dinner.real_bill_in_card
+    realBillInCardCountDinner = bill_dinner.real_bill_in_card_count
+    # Home Phone
+    realBillHomePhoneCashCountDinner = bill_dinner.real_bill_home_phone_cash_count
+    realBillHomePhoneCashDinner = bill_dinner.real_bill_home_phone_cash
+    realBillHomePhoneCardCountDinner = bill_dinner.real_bill_home_phone_card_count
+    realBillHomePhoneCardDinner = bill_dinner.real_bill_home_phone_card
+    # Home Online
+    realBillHomeOnlineCashCountDinner = bill_dinner.real_bill_home_online_cash_count
+    realBillHomeOnlineCashDinner = bill_dinner.real_bill_home_online_cash
+    realBillHomeOnlineCardCountDinner = bill_dinner.real_bill_home_online_card_count
+    realBillHomeOnlineCardDinner = bill_dinner.real_bill_home_online_card
+    # EDC
+    edcInCreditDinner = bill_dinner.edc_in_credit
+
+    #? Summary
+    totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
+    totalCount = realBillOnlineCashCountLunch + realBillOnlineCardCountLunch + realBillPhoneCashCountLunch + realBillPhoneCardCountLunch + realBillInCashCountLunch + realBillInCardCountLunch + realBillHomePhoneCashCountDinner + realBillHomePhoneCardCountDinner + realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner + realBillPhoneCashCountDinner + realBillPhoneCardCountDinner + realBillOnlineCashCountDinner + realBillOnlineCardCountDinner + realBillInCashCountDinner + realBillInCardCountDinner
+    sumTotal = realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner + realBillPhoneCashDinner + realBillPhoneCardDinner + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillInCashDinner + realBillInCardDinner
+    sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner
+    sumCard = realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner
+
+    context = {
+        'date': date,
+        'daily_report_id': daily_report_id,
+        #! Lunch
+        # Row 1 Ta Online Lunch
+        'sumrealBillOnlineCount': realBillOnlineCashCountLunch + realBillOnlineCardCountLunch,
+        'sumrealBillOnline': realBillOnlineCashLunch + realBillOnlineCardLunch,
+        'realBillOnlineCash': realBillOnlineCashLunch,
+        'realBillOnlineCard': realBillOnlineCardLunch,
+        # Row 2 Ta Phone Lunch
+        'sumrealBillPhoneCount': realBillPhoneCashCountLunch + realBillPhoneCardCountLunch,
+        'sumrealBillPhone': realBillPhoneCashLunch + realBillPhoneCardLunch,
+        'realBillPhoneCash': realBillPhoneCashLunch,
+        'realBillPhoneCard': realBillPhoneCardLunch,
+        # Row 3 Dine-in Lunch
+        'sumrealBillInCount': realBillInCashCountLunch + realBillInCardCountLunch,
+        'sumrealBillIn': realBillInCashLunch + realBillInCardLunch,
+        'realBillInCash': realBillInCashLunch,
+        'realBillInCard': realBillInCardLunch,
+        #! Dinner
+        # Row 4 Home Phone
+        'sumrealBillHomePhoneCountDinner': realBillHomePhoneCashCountDinner + realBillHomePhoneCardCountDinner,
+        'sumrealBillHomePhoneDinner': realBillHomePhoneCashDinner + realBillHomePhoneCardDinner,
+        'realBillHomePhoneCashDinner': realBillHomePhoneCashDinner,
+        'realBillHomePhoneCardDinner': realBillHomePhoneCardDinner,
+        # Row 5 Home Online
+        'sumrealBillHomeOnlineCountDinner': realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner,
+        'sumrealBillHomeOnlineDinner': realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner,
+        'realBillHomeOnlineCashDinner': realBillHomeOnlineCashDinner,
+        'realBillHomeOnlineCardDinner': realBillHomeOnlineCardDinner,
+        # Row 6 T/A Phone Dinner
+        'sumrealBillPhoneCountDinner': realBillPhoneCashCountDinner + realBillPhoneCardCountDinner,
+        'sumrealBillPhoneDinner': realBillPhoneCashDinner + realBillPhoneCardDinner,
+        'realBillPhoneCashDinner': realBillPhoneCashDinner,
+        'realBillPhoneCardDinner': realBillPhoneCardDinner,
+        # Row 7 T/A Online Dinner
+        'sumrealBillOnlineCountDinner': realBillOnlineCashCountDinner + realBillOnlineCardCountDinner,
+        'sumrealBillOnlineDinner': realBillOnlineCashDinner + realBillOnlineCardDinner,
+        'realBillOnlineCashDinner': realBillOnlineCashDinner,
+        'realBillOnlineCardDinner': realBillOnlineCardDinner,
+        # Row 8 Dine-in Dinner
+        'sumrealBillInCountDinner': realBillInCashCountDinner + realBillInCardCountDinner,
+        'sumrealBillInDinner': realBillInCashDinner + realBillInCardDinner,
+        'realBillInCashDinner': realBillInCashDinner,
+        'realBillInCardDinner': realBillInCardDinner,
+        #! Total
+        'totalBillLunch': totalBillLunch,
+        'totalCount': totalCount,
+        'sumTotal': sumTotal,
+        'sumCash': sumCash,
+        'sumCard': sumCard,
+        
+    }
+    return render(request,'keywordapp/dinner-report.html',context)
 
 def HomeResult(request):
     return render(request,'keywordapp/home-result.html')

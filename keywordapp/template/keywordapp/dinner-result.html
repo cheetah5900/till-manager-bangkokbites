@@ -6,14 +6,14 @@
   <div class="weekly-best-seller-area py-3">
     <div class="container">
       <div class="section-heading">
-        <h2>รายงานผลการปิดยอด Lunch ({{ date }})</h2>
+        <h2>รายงานผลการปิดยอด Dinner ({{ date }})</h2>
       </div>
       <div class="row">
         <div class="col-12">
           <div class="card weekly-product-card">
             <div class="card-body align-items-center">
               <div class="product-description" style="width:100%;max-width: 100%;">
-                <div class="product-title d-block">เปรียบเทียบรายละเอียด TA Phone {{statusTableTa}}</div>
+                <div class="product-title d-block">รายละเอียดเครื่อง POS TA (TA Phone + Home Phone) {{statusTableTaPhone}}</div>
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <table class="table table-bordered">
                     <tr>
@@ -34,19 +34,28 @@
                     </tr>
                     <tr>
                       <td>บิล TA Phone</td>
-                      <td class="text-end">{{bill_lunch.real_bill_phone_cash_count}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_phone_card_count}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_phone_cash_count}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_phone_card_count}}</td>
                       <td class="text-end table-danger">{{sumrealBillPhoneCount}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_phone_cash}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_phone_card}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_phone_cash}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_phone_card}}</td>
                       <td class="text-end table-danger">{{sumrealBillPhone}}</td>
                     <tr>
+                      <tr>
+                        <td>บิล Home Phone</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_phone_cash_count}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_phone_card_count}}</td>
+                        <td class="text-end table-danger">{{sumrealBillHomePhoneCount}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_phone_cash}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_phone_card}}</td>
+                        <td class="text-end table-danger">{{sumrealBillHomePhone}}</td>
+                      <tr>
                       <td>เครื่อง POS TA</td>
-                      <td class="text-end">{{bill_lunch.pos_ta_bill_phone_cash_count}}</td>
-                      <td class="text-end">{{bill_lunch.pos_ta_bill_phone_card_count}}</td>
+                      <td class="text-end">{{bill_dinner.pos_ta_bill_phone_cash_count}}</td>
+                      <td class="text-end">{{bill_dinner.pos_ta_bill_phone_card_count}}</td>
                       <td class="table-danger text-end">{{sumposTABillPhoneCount}}</td>
-                      <td class="text-end">{{bill_lunch.pos_ta_bill_phone_cash}}</td>
-                      <td class="text-end">{{bill_lunch.pos_ta_bill_phone_card}}</td>
+                      <td class="text-end">{{bill_dinner.pos_ta_bill_phone_cash}}</td>
+                      <td class="text-end">{{bill_dinner.pos_ta_bill_phone_card}}</td>
                       <td class="table-danger text-end">{{sumposTABillPhone}}</td>
                     </tr>
                     <tr>
@@ -60,7 +69,7 @@
                     </tr>
                   </table>
                 </div>
-                <div class="product-title d-block">เปรียบเทียบรายละเอียด Dine-in {{statusTableIn}}</div>
+                <div class="product-title d-block">รายละเอียดเครื่อง POS Dine-in (Dine-in) {{statusTableIn}}</div>
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <table class="table table-bordered">
                     <tr>
@@ -80,20 +89,20 @@
                       <td class="table-danger text-center">รวม</td>
                     </tr>
                     <tr>
-                      <td>ใบบิลจริง</td>
-                      <td class="text-end">{{bill_lunch.real_bill_in_cash_count}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_in_card_count}}</td>
+                      <td>บิล Dine-in</td>
+                      <td class="text-end">{{bill_dinner.real_bill_in_cash_count}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_in_card_count}}</td>
                       <td class="text-end table-danger">{{sumrealBillInCount}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_in_cash}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_in_card}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_in_cash}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_in_card}}</td>
                       <td class="text-end table-danger">{{sumrealBillIn}}</td>
                     <tr>
                       <td>เครื่อง POS Dine-in</td>
-                      <td class="text-end">{{bill_lunch.pos_in_bill_cash_count}}</td>
-                      <td class="text-end">{{bill_lunch.pos_in_bill_card_count}}</td>
+                      <td class="text-end">{{bill_dinner.pos_in_bill_cash_count}}</td>
+                      <td class="text-end">{{bill_dinner.pos_in_bill_card_count}}</td>
                       <td class="table-danger text-end">{{sumposInCount}}</td>
-                      <td class="text-end">{{bill_lunch.pos_in_bill_cash}}</td>
-                      <td class="text-end">{{bill_lunch.pos_in_bill_card}}</td>
+                      <td class="text-end">{{bill_dinner.pos_in_bill_cash}}</td>
+                      <td class="text-end">{{bill_dinner.pos_in_bill_card}}</td>
                       <td class="table-danger text-end">{{sumposIn}}</td>
                     </tr>
                     <tr>
@@ -107,7 +116,7 @@
                     </tr>
                   </table>
                 </div>
-                <div class="product-title d-block">รายละเอียด TA Online</div>
+                <div class="product-title d-block">อื่นๆ</div>
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <table class="table table-bordered">
                     <tr>
@@ -127,29 +136,62 @@
                       <td class="table-danger text-center">รวม</td>
                     </tr>
                     <tr>
-                      <td>ใบบิลจริง</td>
-                      <td class="text-end">{{bill_lunch.real_bill_online_cash_count}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_online_card_count}}</td>
+                      <td>บิล TA Online</td>
+                      <td class="text-end">{{bill_dinner.real_bill_online_cash_count}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_online_card_count}}</td>
                       <td class="text-end table-danger">{{sumrealBillOnlineCount}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_online_cash}}</td>
-                      <td class="text-end">{{bill_lunch.real_bill_online_card}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_online_cash}}</td>
+                      <td class="text-end">{{bill_dinner.real_bill_online_card}}</td>
                       <td class="text-end table-danger">{{sumrealBillOnline}}</td>
                     <tr>
+                      <tr>
+                        <td>บิล Home Online</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_online_cash_count}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_online_card_count}}</td>
+                        <td class="text-end table-danger">{{sumrealBillhomeOnlineCount}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_online_cash}}</td>
+                        <td class="text-end">{{bill_dinner.real_bill_home_online_card}}</td>
+                        <td class="text-end table-danger">{{sumrealBillhomeOnline}}</td>
+                      <tr>
                   </table>
                 </div>
-                <div class="product-title d-block">รายละเอียด EDC</div>
+                <div class="product-title d-block">สรุปยอดเงินบัตรเครดิต</div>
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <table class="table table-bordered">
                     <tr>
-                      <td class="text-center align-middle">ยอดเงิน</td>
+                      <td class="align-middle">ยอด POS TA</td>
+                      <td class="text-center align-middle">{{bill_dinner.pos_ta_bill_phone_card}}</td>
+                    </tr>
+                    <tr>
+                      <td class="align-middle">ยอด POS Dine-in</td>
+                      <td class="text-center align-middle">{{bill_dinner.pos_in_bill_card}}</td>
+                    </tr>
+                    <tr>
+                      <td class="align-middle">ยอด TA Online</td>
+                      <td class="text-center align-middle">{{bill_dinner.real_bill_online_card}}</td>
+                    </tr>
+                    <tr>
+                      <td class="align-middle"><b>ยอดรวม POS + TA Online</b></td>
+                      <td class="text-center align-middle">{{sumBillPhoneCard}}</td>
+                    </tr>
+                    <tr>
+                      <td class="align-middle">ยอด Home Phone</td>
+                      <td class="text-center align-middle">{{bill_dinner.real_bill_home_phone_card}}</td>
+                    </tr>
+                    <tr class="table-info">
+                      <td class="align-middle">ลบ Home ออกจาก POS TA</td>
+                      <td class="text-center align-middle">{{minusHomeFromPhone}}</td>
+                    </tr>
+                    <tr class="table-success">
+                      <td class="align-middle">ยอด EDC Dine-in</td>
                       <td class="text-center align-middle">{{edcInCredit}}</td>
                     </tr>
                   </table>
                 </div>
                 <div class="justify-content-center d-flex">
-                  <a href="/lunch-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg"
+                  <a href="/dinner-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg"
                     type="submit">ย้อนกลับ</a>
-                  <a href="/lunch-report/{{daily_report_id}}" class="btn btn-primary btn-lg" type="submit">ถัดไป</a>
+                  <a href="/dinner-report/{{daily_report_id}}" class="btn btn-primary btn-lg" type="submit">ถัดไป</a>
                 </div>
               </div>
             </div>
