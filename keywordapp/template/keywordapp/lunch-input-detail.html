@@ -1,0 +1,154 @@
+{% extends 'keywordapp/layout.html' %}
+{% block activework %}active{% endblock activework %}
+{% block content %}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>กรอกข้อมูลปิดยอด Lunch ({{ date }})</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <h1 class="mb-3">ข้อมูลเบื้องต้น {{ resultCheckEqual }}</h1>
+                    <div class="col-12">
+                      <div class="row">
+                        <div class="col-12 col-md-2">ยอด POS TA</div>
+                        <div class="col-12 col-md-2">
+                          <input type="text" disabled value="{{ real_bill.pos_ta_bill_phone_card }}"
+                            class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอด POS Dine-in</div>
+                        <div class="col-12 col-md-2">
+                          <input type="text" disabled value="{{ real_bill.pos_in_bill_card }}" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอด TA Online</div>
+                        <div class="col-12 col-md-2">
+                          <input type="text" disabled value="{{ real_bill.real_bill_online_card }}"
+                            class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2 mt-3"><b>ผลรวม</b></div>
+                        <div class="col-12 col-md-2 mt-3">
+                          <input type="text" disabled value="{{ sumBillPhoneCard }}" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2 mt-3"><b>ยอด EDC</b></div>
+                        <div class="col-12 col-md-2 mt-3"><input type="text" disabled
+                            value="{{ real_bill.edc_in_credit }}" class="form-control">
+                          <input type="hidden" value="{{ real_bill.edc_in_credit }}" name="edc_in_credit">
+                        </div>
+                      </div>
+
+
+                      <div class="row">
+                        <h1 class="my-5">ข้อมูลแบบละเอียด</h1>
+                        <div class="col-12">
+                            <div class="row">
+                              <div class="col-12 col-md-3 mt-5">
+                                <b>เครื่อง POS TA Phone</b>
+                              </div>
+                              <div class="col-12 col-md-2">
+                                จำนวนใบเงินสด
+                                <input type="number" value="{{ real_bill.pos_ta_bill_phone_cash_count }}"
+                                  name="pos_ta_bill_phone_cash_count" class="form-control">
+                              </div>
+                              <div class="col-12 col-md-2">
+                                ยอดเงินสด<input type="text" value="{{ real_bill.pos_ta_bill_phone_cash }}"
+                                  name="pos_ta_bill_phone_cash" class="form-control"></div>
+                              <div class="col-12 col-md-3">
+                                จำนวนใบบัตรเครดิต<input type="text" value="{{ real_bill.pos_ta_bill_phone_card_count }}"
+                                  name="pos_ta_bill_phone_card_count" class="form-control"></div>
+                              <div class="col-12 col-md-2">
+                                ยอดบัตรเครดิต<input type="text" value="{{ real_bill.pos_ta_bill_phone_card }}"
+                                  name="pos_ta_bill_phone_card" class="form-control"></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-12 col-md-3 mt-5">
+                                <b>เครื่อง POS Dine-in</b>
+                              </div>
+                              <div class="col-12 col-md-2">
+                                จำนวนใบเงินสด<input type="number" value="{{ real_bill.pos_in_bill_cash_count }}"
+                                  name="pos_in_bill_cash_count" class="form-control"></div>
+                              <div class="col-12 col-md-2">
+                                ยอดเงินสด<input type="text" value="{{ real_bill.pos_in_bill_cash }}"
+                                  name="pos_in_bill_cash" class="form-control"></div>
+                              <div class="col-12 col-md-3">
+                                จำนวนใบบัตรเครดิต<input type="text" value="{{ real_bill.pos_in_bill_card_count }}"
+                                  name="pos_in_bill_card_count" class="form-control"></div>
+                              <div class="col-12 col-md-2">
+                                ยอดบัตรครดิต<input type="text" value="{{ real_bill.pos_in_bill_card }}"
+                                  name="pos_in_bill_card" class="form-control"></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-12 col-md-3 mt-5"><b>บิล TA Online</b></div>
+                              <div class="col-12 col-md-2">
+                                จำนวนใบเงินสด<input type="number" value="{{ real_bill.real_bill_online_cash_count }}"
+                                  name="real_bill_online_cash_count" class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
+                                  value="{{ real_bill.real_bill_online_cash }}" name="real_bill_online_cash"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_online_card_count }}" name="real_bill_online_card_count"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดบัตรเครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_online_card }}" name="real_bill_online_card"
+                                  class="form-control"></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-12 col-md-3 mt-5"><b>บิล TA Phone</b></div>
+                              <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
+                                  value="{{ real_bill.real_bill_phone_cash_count }}" name="real_bill_phone_cash_count"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
+                                  value="{{ real_bill.real_bill_phone_cash }}" name="real_bill_phone_cash"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_phone_card_count }}" name="real_bill_phone_card_count"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดบัตรครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_phone_card }}" name="real_bill_phone_card"
+                                  class="form-control"></div>
+                            </div>
+
+                            <div class="row">
+                              <div class="col-12 col-md-3 mt-5"><b>บิล กินในร้าน</b></div>
+                              <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
+                                  value="{{ real_bill.real_bill_in_cash_count }}" name="real_bill_in_cash_count"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
+                                  value="{{ real_bill.real_bill_in_cash }}" name="real_bill_in_cash"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_in_card_count }}" name="real_bill_in_card_count"
+                                  class="form-control"></div>
+                              <div class="col-12 col-md-2">ยอดบัตรครดิต<input type="text"
+                                  value="{{ real_bill.real_bill_in_card }}" name="real_bill_in_card"
+                                  class="form-control"></div>
+                            </div>
+
+
+
+                        </div>
+                        <div class="justify-content-center d-flex mt-5">
+                          <a href="/lunch-input-quick/{{daily_report_id}}/"
+                            class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                          <button class="btn btn-primary btn-lg" type="submit" name="updateandcalculate">ถัดไป</button>
+                        </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,38 @@
+{%extends 'keywordapp/layout.html'%}
+{%block activework%}active{%endblock activework%}
+{%block content%}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>ปิดบัญชีร้าน Bangkok Bite</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width:100%;max-width: 100%;">
+                <form method="post">
+                  {% csrf_token %}
+                <div class="product-title d-block">เลือกวันที่</div>
+                <input type="date" name="choose_date" class="form-control" value="{{ current_date|date:'Y-m-d' }}">
+                <div class="product-title d-block">เลือกโหมด</div>
+                <select name="mode" class="form-control">
+                  <option value="lunch">Lunch</option>
+                  <option value="home">Home เย็น</option>
+                  <option value="tiw">Tiw เย็น</option>
+                </select>
+                <div class="justify-content-center d-flex">
+                  <button class="btn btn-primary btn-lg" type="submit">ยืนยัน</button>
+                </div>
+              </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock content%}

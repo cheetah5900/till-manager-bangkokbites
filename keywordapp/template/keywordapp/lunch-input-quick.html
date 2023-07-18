@@ -1,0 +1,52 @@
+{% extends 'keywordapp/layout.html' %}
+{% block activework %}active{% endblock activework %}
+{% block content %}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>กรอกข้อมูลปิดยอด Lunch ({{ date }})</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <h1 class="mb-3">เช็คยอดบัตรเครดิตเบื้องต้น</h1>
+                    <div class="col-12">
+                      <div class="row">
+                        <div class="col-12 col-md-3">ยอด EDC หน้าร้าน
+                          <input type="text" value="{{ data.edc_in_credit }}" name="edc_in_credit" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอด POS TA
+                          <input type="text" value="{{ data.pos_ta_bill_phone_card }}" name="pos_ta_bill_phone_card"
+                            class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอด POS Dine-in
+                          <input type="text" value="{{ data.pos_in_bill_card }}" name="pos_in_bill_card"
+                            class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอด TA Online
+                          <input type="text" value="{{ data.real_bill_online_card }}" name="real_bill_online_card"
+                            class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="justify-content-center d-flex mt-5 mb-3">
+                      <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                      <button class="btn btn-primary btn-lg" type="submit">ถัดไป</button>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
