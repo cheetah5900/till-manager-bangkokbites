@@ -215,6 +215,9 @@ textarea:invalid {
 .bg-gray {
   background-color: #fef8ff; }
 
+.border-bottom{
+  border-bottom: 2px solid black;
+}
 .btn,
 .btn:hover,
 .btn:focus {

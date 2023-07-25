@@ -16,38 +16,60 @@
                 <form action="" method="post">
                   {% csrf_token %}
                   <div class="row">
-                    <h1 class="mb-3">ข้อมูลเบื้องต้น {{ resultCheckEqual }}</h1>
+                    <h1 class="mb-3">ข้อมูลบัตรเครดิตเบื้องต้น {{ resultCheckEqual }}</h1>
                     <div class="col-12">
-                      <div class="row">
-                        <div class="col-12 col-md-2">ยอด POS TA</div>
-                        <div class="col-12 col-md-2">
-                          <input type="text" disabled value="{{ bill_lunch.pos_ta_bill_phone_card }}"
-                            class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">ยอด POS Dine-in</div>
-                        <div class="col-12 col-md-2">
-                          <input type="text" disabled value="{{ bill_lunch.pos_in_bill_card }}" class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">ยอด TA Online</div>
-                        <div class="col-12 col-md-2">
-                          <input type="text" disabled value="{{ bill_lunch.real_bill_online_card }}"
-                            class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2 mt-3"><b>ผลรวม</b></div>
-                        <div class="col-12 col-md-2 mt-3">
-                          <input type="text" disabled value="{{ sumBillPhoneCard }}" class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2 mt-3"><b>ยอด EDC</b></div>
-                        <div class="col-12 col-md-2 mt-3"><input type="text" disabled
-                            value="{{ bill_lunch.edc_in_credit }}" class="form-control">
-                          <input type="hidden" value="{{ bill_lunch.edc_in_credit }}" name="edc_in_credit">
-                        </div>
-                      </div>
+
+                      <table class="table table-bordered">
+                        <tr class="table-dark">
+                          <td class="align-middle"><b>ตอนเที่ยง</b></td>
+                          <td></td>
+                        </tr>
+                        <tr class="table-success">
+                          <td class="align-middle"><b>ยอดที่ใช้เครื่อง EDC หน้าร้านคิดเงิน</b></td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td class="align-middle">1. ยอด POS TA</td>
+                          <td class="text-center align-middle"> {{bill_lunch.pos_ta_bill_phone_card}}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-middle">2. ยอด POS Dine-in</td>
+                          <td class="text-center align-middle">{{bill_lunch.pos_in_bill_card}}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-middle">3. ยอด TA Online</td>
+                          <td class="text-center align-middle">{{bill_lunch.real_bill_online_card}}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-middle">4. ยอด Tip</td>
+                          <td class="text-center align-middle">{{bill_lunch.tip_credit}}</td>
+                        </tr>
+                        <tr>
+                          <td class="align-middle" style="border-bottom: 1px solid black;"><b>Total - Credit ขาด ({{addTipToSum}} - {{bill_lunch.wrong_credit}})</b></td>
+                          <td class="text-center align-middle" style="border-bottom: 1px solid black;">
+                            <b>{{minusWrongCreditFromSumBillCard}}</b>
+                          </td>
+                        </tr>
+                        <tr class="table-info">
+                          <td class="align-middle">ยอด EDC หน้าร้าน</td>
+                          <td class="text-center align-middle">{{edcInCredit}}
+
+                            <input type="hidden" value="{{ edcInCredit }}" name="edc_in_credit">
+
+                          </td>
+                        </tr>
+                      </table>
 
 
                       <div class="row">
-                        <h1 class="my-5">ข้อมูลแบบละเอียด</h1>
+                        <h1 class="mt-5">ข้อมูลแบบละเอียด</h1>
                         <div class="col-12">
+
+                          <div class="row">
+                            <div class="col-12 col-md-3 mt-5">
+                              <h3>เช็คจากเครื่อง</h3>
+                            </div>
+                          </div>
                           <div class="row">
                             <div class="col-12 col-md-3 mt-5">
                               <b>เครื่อง POS TA Phone</b>
@@ -64,8 +86,12 @@
                               จำนวนใบบัตรเครดิต<input type="text" value="{{ bill_lunch.pos_ta_bill_phone_card_count }}"
                                 name="pos_ta_bill_phone_card_count" class="form-control"></div>
                             <div class="col-12 col-md-2">
-                              ยอดบัตรเครดิต<input type="text" value="{{ bill_lunch.pos_ta_bill_phone_card }}"
-                                name="pos_ta_bill_phone_card" class="form-control"></div>
+                              ยอดบัตรเครดิต
+                              <input type="text" disabled value="{{ bill_lunch.pos_ta_bill_phone_card }}"
+                                class="form-control">
+                              <input type="hidden" value="{{ bill_lunch.pos_ta_bill_phone_card }}"
+                                name="pos_ta_bill_phone_card">
+                            </div>
                           </div>
 
                           <div class="row">
@@ -82,10 +108,18 @@
                               จำนวนใบบัตรเครดิต<input type="text" value="{{ bill_lunch.pos_in_bill_card_count }}"
                                 name="pos_in_bill_card_count" class="form-control"></div>
                             <div class="col-12 col-md-2">
-                              ยอดบัตรครดิต<input type="text" value="{{ bill_lunch.pos_in_bill_card }}"
-                                name="pos_in_bill_card" class="form-control"></div>
+                              ยอดบัตรครดิต
+                              <input type="text" disabled value="{{ bill_lunch.pos_in_bill_card }}"
+                                class="form-control">
+                              <input type="hidden" value="{{ bill_lunch.pos_in_bill_card }}" name="pos_in_bill_card">
+                            </div>
                           </div>
 
+                          <div class="row">
+                            <div class="col-12 col-md-3 mt-5">
+                              <h3>เช็คจากบิล</h3>
+                            </div>
+                          </div>
                           <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล TA Online</b></div>
                             <div class="col-12 col-md-2">
@@ -97,57 +131,32 @@
                             <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
                                 value="{{ bill_lunch.real_bill_online_card_count }}" name="real_bill_online_card_count"
                                 class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดบัตรเครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_online_card }}" name="real_bill_online_card"
-                                class="form-control"></div>
+                                <div class="col-12 col-md-2">ยอดบัตรเครดิต
+                                  <input type="text" disabled value="{{ bill_lunch.real_bill_online_card }}"
+                                    class="form-control">
+                                  <input type="hidden" value="{{ bill_lunch.real_bill_online_card }}"
+                                    name="real_bill_online_card">
+                                </div>
                           </div>
                           <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล TA Phone</b></div>
-                            <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
-                                value="{{ bill_lunch.real_bill_phone_cash_count }}" name="real_bill_phone_cash_count"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
-                                value="{{ bill_lunch.real_bill_phone_cash }}" name="real_bill_phone_cash"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_phone_card_count }}" name="real_bill_phone_card_count"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดบัตรครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_phone_card }}" name="real_bill_phone_card"
-                                class="form-control"></div>
+                            <div class="col-12 col-md-2">
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_lunch.real_bill_taphone_dividepay_count }}"
+                                name="real_bill_taphone_dividepay_count" class="form-control"></div>
                           </div>
-
+                          
                           <div class="row">
-                            <div class="col-12 col-md-3 mt-5"><b>บิล กินในร้าน</b></div>
-                            <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
-                                value="{{ bill_lunch.real_bill_in_cash_count }}" name="real_bill_in_cash_count"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
-                                value="{{ bill_lunch.real_bill_in_cash }}" name="real_bill_in_cash"
-                                class="form-control">
-                            </div>
-                            <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_in_card_count }}" name="real_bill_in_card_count"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดบัตรครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_in_card }}" name="real_bill_in_card"
-                                class="form-control">
-                            </div>
+                            <div class="col-12 col-md-3 mt-5"><b>บิล Dine in</b></div>
+                            <div class="col-12 col-md-2">
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_lunch.real_bill_dinein_dividepay_count }}"
+                                name="real_bill_dinein_dividepay_count" class="form-control"></div>
                           </div>
-
-
-
-                          <div class="row my-5">
-                            <div class="col-12"><input type="checkbox" name="copy_data" id=""> บิล TA Phone และ บิล
-                              กินในร้าน | ข้อมูลตรงกับใน POS</div>
+                          
+                          <div class="justify-content-center d-flex mt-5">
+                            <a href="/lunch-input-quick/{{daily_report_id}}/"
+                              class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                            <button class="btn btn-primary btn-lg" type="submit">ถัดไป</button>
                           </div>
-
-                        </div>
-                        <div class="justify-content-center d-flex mt-5">
-                          <a href="/lunch-input-quick/{{daily_report_id}}/"
-                            class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                          <button class="btn btn-primary btn-lg" type="submit" name="updateandcalculate">ถัดไป</button>
-                        </div>
                 </form>
               </div>
             </div>

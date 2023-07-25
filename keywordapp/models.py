@@ -14,6 +14,8 @@ class BillLunchModel(models.Model):
     real_bill_in_cash_count = models.IntegerField(default=0)
     real_bill_in_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     real_bill_in_card_count = models.IntegerField(default=0)
+    real_bill_taphone_dividepay_count = models.IntegerField(default=0)
+    real_bill_dinein_dividepay_count = models.IntegerField(default=0)
     pos_ta_bill_phone_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     pos_ta_bill_phone_cash_count = models.IntegerField(default=0)
     pos_ta_bill_phone_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -22,6 +24,8 @@ class BillLunchModel(models.Model):
     pos_in_bill_cash_count = models.IntegerField(default=0)
     pos_in_bill_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     pos_in_bill_card_count = models.IntegerField(default=0)
+    tip_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    wrong_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     edc_in_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     detail_status = models.IntegerField(default=0)
 
@@ -42,6 +46,8 @@ class BillDinnerModel(models.Model):
     real_bill_in_cash_count = models.IntegerField(default=0)
     real_bill_in_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     real_bill_in_card_count = models.IntegerField(default=0)
+    real_bill_taphone_dividepay_count = models.IntegerField(default=0)
+    real_bill_dinein_dividepay_count = models.IntegerField(default=0)
 
     real_bill_home_phone_cash_count = models.IntegerField(default=0)
     real_bill_home_phone_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -60,7 +66,10 @@ class BillDinnerModel(models.Model):
     pos_in_bill_cash_count = models.IntegerField(default=0)
     pos_in_bill_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     pos_in_bill_card_count = models.IntegerField(default=0)
+    tip_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    wrong_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     edc_in_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    edc_home_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     detail_status = models.IntegerField(default=0)
 
     def __str__(self):

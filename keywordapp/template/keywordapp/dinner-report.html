@@ -83,7 +83,7 @@
                       <td>{{realBillInCardDinner}}</td>
                     </tr>
                     <tr>
-                      <td>{{totalCount}}</td>
+                      <td></td>
                       <td>Total</td>
                       <td>{{sumTotal}}</td>
                       <td>{{sumCash}}</td>
@@ -91,18 +91,34 @@
                     </tr>
                   </table>
                 </div>
-                <div class="product-title d-block">ปริ้นท์ Report</div>
+                <div class="product-title d-block">อื่นๆ</div>
                     <div class="card-body">
                       <div class="coupon-text-wrap d-flex align-items-center">
-                        1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Dinner"<br>
-                        2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Dinner"<br>
-                        3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"<br>
-                        4. เครื่อง EDC Home เขียนหัวกระดาษว่า "Home"<br>
+                        <table class="table">
+                          <tr>
+                            <td>Tip</td>
+                            <td>{{sumTip}}</td>
+                            <td>กดเครดิตขาด</td>
+                            <td>{{sumWrongCredit}}</td>
+                          </tr>
+                          <tr>
+                            <td>Total Online</td>
+                            <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
+                          </tr>
+                        </table>
                       </div>
                     </div>
+                    <div class="product-title d-block">ปริ้นท์ Report</div>
+                        <div class="card-body">
+                          <div class="coupon-text-wrap d-flex align-items-center">
+                            1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Dinner"<br>
+                            2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Dinner"<br>
+                            3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"<br>
+                            4. เครื่อง EDC Home เขียนหัวกระดาษว่า "Home"<br>
+                          </div>
+                        </div>
                 <div class="justify-content-center d-flex">
-                  <a href="/lunch-result/{{daily_report_id}}" class="btn btn-secondary btn-lg" type="submit">ย้อนกลับ</a>
-                  <a href="/lunch-input-detail/{{daily_report_id}}" class="btn btn-warning btn-lg" type="submit">แก้ไข</a>
+                  <a href="/dinner-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg" type="submit">ย้อนกลับ</a>
                   <a href="/" class="btn btn-primary btn-lg" type="submit">กลับหน้าแรก</a>
                 </div>
               </div>
