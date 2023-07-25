@@ -10,8 +10,7 @@ from django.utils import timezone
 from decimal import Decimal
 
 
-
-from datetime import date,timedelta,datetime
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 # require login to enter function
 # import model
@@ -769,6 +768,14 @@ def DinnerReport(request,daily_report_id):
     tipLunch = bill_lunch.tip_credit
     wrongCreditLunch = bill_lunch.wrong_credit
 
+    #* "Reformat" amount lunch
+    realBillPhoneCashLunchReformat = intcomma(bill_lunch.real_bill_phone_cash)
+    realBillPhoneCardLunchReformat = intcomma(bill_lunch.real_bill_phone_card)
+    realBillOnlineCashLunchReformat = intcomma(bill_lunch.real_bill_online_cash)
+    realBillOnlineCardLunchReformat = intcomma(bill_lunch.real_bill_online_card)
+    realBillInCashLunchReformat = intcomma(bill_lunch.real_bill_in_cash)
+    realBillInCardLunchReformat = intcomma(bill_lunch.real_bill_in_card)
+
     #* Dinner Data
     bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
     realBillPhoneCashDinner = bill_dinner.real_bill_phone_cash
@@ -798,68 +805,85 @@ def DinnerReport(request,daily_report_id):
     realBillHomeOnlineCardCountDinner = bill_dinner.real_bill_home_online_card_count
     realBillHomeOnlineCardDinner = bill_dinner.real_bill_home_online_card
 
+    #* "Reformat" amount dinner
+    realBillPhoneCashDinnerReformat = intcomma(bill_dinner.real_bill_phone_cash)
+    realBillPhoneCardDinnerReformat = intcomma(bill_dinner.real_bill_phone_card)
+    realBillOnlineCashDinnerReformat = intcomma(bill_dinner.real_bill_online_cash)
+    realBillOnlineCardDinnerReformat = intcomma(bill_dinner.real_bill_online_card)
+    realBillInCashDinnerReformat = intcomma(bill_dinner.real_bill_in_cash)
+    realBillInCardDinnerReformat = intcomma(bill_dinner.real_bill_in_card)
+    # Home Phone
+    realBillHomePhoneCashDinnerReformat = intcomma(bill_dinner.real_bill_home_phone_cash)
+    realBillHomePhoneCardDinnerReformat = intcomma(bill_dinner.real_bill_home_phone_card)
+    # Home Online
+    realBillHomeOnlineCashDinnerReformat = intcomma(bill_dinner.real_bill_home_online_cash)
+    realBillHomeOnlineCardDinnerReformat = intcomma(bill_dinner.real_bill_home_online_card)
+
     #? Summary
     totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
+    totalBillLunchReformat = intcomma(realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch)
     sumTotal = realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner + realBillPhoneCashDinner + realBillPhoneCardDinner + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillInCashDinner + realBillInCardDinner
-    sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner
-    sumCard = realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner
-    sumTip = tipLunch + tipDinner
-    sumWrongCredit = wrongCreditLunch + wrongCreditDinner
-    sumrealBillOnlineCountDinner = realBillOnlineCashCountDinner + realBillOnlineCardCountDinner
-    sumrealBillHomeOnlineCountDinner = realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner
-    sumrealBillOnlineDinner = realBillOnlineCashDinner + realBillOnlineCardDinner
-    sumrealBillHomeOnlineDinner = realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner
-    totalOnlineCount = realBillOnlineCardCountLunch + realBillOnlineCashCountLunch + sumrealBillOnlineCountDinner + sumrealBillHomeOnlineCountDinner
-    totalOnlineAmount = realBillOnlineCardLunch + realBillOnlineCashLunch + sumrealBillOnlineDinner + sumrealBillHomeOnlineDinner
-    
+    sumTotalReformat = intcomma(realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner + realBillPhoneCashDinner + realBillPhoneCardDinner + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillInCashDinner + realBillInCardDinner)
+    totalBillDinner = intcomma(sumTotal - totalBillLunch)
+    sumCash = intcomma(realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner)
+    sumCard = intcomma(realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner)
+    sumTip = intcomma(tipLunch + tipDinner)
+    sumWrongCredit = intcomma(wrongCreditLunch + wrongCreditDinner)
+    sumrealBillOnlineCountDinner = intcomma(realBillOnlineCashCountDinner + realBillOnlineCardCountDinner)
+    sumrealBillHomeOnlineCountDinner = intcomma(realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner)
+    totalOnlineCount = intcomma(realBillOnlineCardCountLunch + realBillOnlineCashCountLunch + realBillOnlineCashCountDinner + realBillOnlineCardCountDinner + realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner)
+    totalOnlineAmount = intcomma(realBillOnlineCardLunch + realBillOnlineCashLunch + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner)
+
+
     context = {
         'date': date,
         'daily_report_id': daily_report_id,
         #! Lunch
         # Row 1 Ta Online Lunch
         'sumrealBillOnlineCount': realBillOnlineCashCountLunch + realBillOnlineCardCountLunch,
-        'sumrealBillOnline': realBillOnlineCashLunch + realBillOnlineCardLunch,
-        'realBillOnlineCash': realBillOnlineCashLunch,
-        'realBillOnlineCard': realBillOnlineCardLunch,
+        'sumrealBillOnline': intcomma(realBillOnlineCashLunch + realBillOnlineCardLunch),
+        'realBillOnlineCashLunchReformat': realBillOnlineCashLunchReformat,
+        'realBillOnlineCardLunchReformat': realBillOnlineCardLunchReformat,
         # Row 2 Ta Phone Lunch
         'sumrealBillPhoneCount': realBillPhoneCashCountLunch + realBillPhoneCardCountLunch - realBillTaPhoneDividePayCountLunch,
-        'sumrealBillPhone': realBillPhoneCashLunch + realBillPhoneCardLunch,
-        'realBillPhoneCash': realBillPhoneCashLunch,
-        'realBillPhoneCard': realBillPhoneCardLunch,
+        'sumrealBillPhone': intcomma(realBillPhoneCashLunch + realBillPhoneCardLunch),
+        'realBillPhoneCashLunchReformat': realBillPhoneCashLunchReformat,
+        'realBillPhoneCardLunchReformat': realBillPhoneCardLunchReformat,
         # Row 3 Dine-in Lunch
         'sumrealBillInCount': realBillInCashCountLunch + realBillInCardCountLunch - realBillDineInDividePayCountLunch,
-        'sumrealBillIn': realBillInCashLunch + realBillInCardLunch,
-        'realBillInCash': realBillInCashLunch,
-        'realBillInCard': realBillInCardLunch,
+        'sumrealBillIn': intcomma(realBillInCashLunch + realBillInCardLunch),
+        'realBillInCashLunchReformat': realBillInCashLunchReformat,
+        'realBillInCardLunchReformat': realBillInCardLunchReformat,
         #! Dinner
         # Row 4 Home Phone
         'sumrealBillHomePhoneCountDinner': realBillHomePhoneCashCountDinner + realBillHomePhoneCardCountDinner,
-        'sumrealBillHomePhoneDinner': realBillHomePhoneCashDinner + realBillHomePhoneCardDinner,
-        'realBillHomePhoneCashDinner': realBillHomePhoneCashDinner,
-        'realBillHomePhoneCardDinner': realBillHomePhoneCardDinner,
+        'sumrealBillHomePhoneDinner': intcomma(realBillHomePhoneCashDinner + realBillHomePhoneCardDinner),
+        'realBillHomePhoneCashDinnerReformat': realBillHomePhoneCashDinnerReformat,
+        'realBillHomePhoneCardDinnerReformat': realBillHomePhoneCardDinnerReformat,
         # Row 5 Home Online
         'sumrealBillHomeOnlineCountDinner': sumrealBillHomeOnlineCountDinner,
-        'sumrealBillHomeOnlineDinner': realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner,
-        'realBillHomeOnlineCashDinner': realBillHomeOnlineCashDinner,
-        'realBillHomeOnlineCardDinner': realBillHomeOnlineCardDinner,
+        'sumrealBillHomeOnlineDinner': intcomma(realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner),
+        'realBillHomeOnlineCashDinnerReformat': realBillHomeOnlineCashDinnerReformat,
+        'realBillHomeOnlineCardDinnerReformat': realBillHomeOnlineCardDinnerReformat,
         # Row 6 T/A Phone Dinner
         'sumrealBillPhoneCountDinner': realBillPhoneCashCountDinner + realBillPhoneCardCountDinner - realBillTaPhoneDividePayCountDinner,
-        'sumrealBillPhoneDinner': realBillPhoneCashDinner + realBillPhoneCardDinner,
-        'realBillPhoneCashDinner': realBillPhoneCashDinner,
-        'realBillPhoneCardDinner': realBillPhoneCardDinner,
+        'sumrealBillPhoneDinner': intcomma(realBillPhoneCashDinner + realBillPhoneCardDinner),
+        'realBillPhoneCashDinnerReformat': realBillPhoneCashDinnerReformat,
+        'realBillPhoneCardDinnerReformat': realBillPhoneCardDinnerReformat,
         # Row 7 T/A Online Dinner
         'sumrealBillOnlineCountDinner': sumrealBillOnlineCountDinner,
-        'sumrealBillOnlineDinner': realBillOnlineCashDinner + realBillOnlineCardDinner,
-        'realBillOnlineCashDinner': realBillOnlineCashDinner,
-        'realBillOnlineCardDinner': realBillOnlineCardDinner,
+        'sumrealBillOnlineDinner': intcomma(realBillOnlineCashDinner + realBillOnlineCardDinner),
+        'realBillOnlineCashDinnerReformat': realBillOnlineCashDinnerReformat,
+        'realBillOnlineCardDinnerReformat': realBillOnlineCardDinnerReformat,
         # Row 8 Dine-in Dinner
         'sumrealBillInCountDinner': realBillInCashCountDinner + realBillInCardCountDinner - realBillDineInDividePayCountDinner,
-        'sumrealBillInDinner': realBillInCashDinner + realBillInCardDinner,
-        'realBillInCashDinner': realBillInCashDinner,
-        'realBillInCardDinner': realBillInCardDinner,
+        'sumrealBillInDinner': intcomma(realBillInCashDinner + realBillInCardDinner),
+        'realBillInCashDinnerReformat': realBillInCashDinnerReformat,
+        'realBillInCardDinnerReformat': realBillInCardDinnerReformat,
         #! Total
-        'totalBillLunch': totalBillLunch,
-        'sumTotal': sumTotal,
+        'totalBillLunchReformat': totalBillLunchReformat,
+        'totalBillDinner': totalBillDinner,
+        'sumTotalReformat': sumTotalReformat,
         'sumCash': sumCash,
         'sumCard': sumCard,
         'sumTip': sumTip,
