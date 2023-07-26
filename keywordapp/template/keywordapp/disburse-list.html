@@ -1,0 +1,50 @@
+{% extends 'keywordapp/layout.html' %}
+{% block activework %}active{% endblock activework %}
+{% block content %}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>เบิกจ่าย ({{ date }})</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="row">
+                        <table class="table">
+                          <tr>
+                            <td>รายการ</td>
+                            <td>ราคา</td>
+                            <td></td>
+                          </tr>
+                          {% for item in related_disburse_details %}
+                          <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.price }}</td>
+                            <td><a href="/disburse-input/{{daily_report_id}}/{{item.id}}" class="btn btn-success">แก้ไข</a></td>
+                          </tr>
+                          {% endfor %}
+                        </table>
+                      </div>
+                    </div>
+                    <div class="justify-content-center d-flex mt-5 mb-3">
+                      <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                      <a href="/disburse-input/{{daily_report_id}}/0" class="btn btn-primary btn-lg">เพิ่มข้อมูลคนส่ง</a>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

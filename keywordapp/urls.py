@@ -4,6 +4,10 @@ from keywordapp.views import *
 urlpatterns = [
     path('', Index, name='index'),
 
+    #? Disburse
+    path('disburse-list/<str:daily_report_id>/', DisburseList, name='disburse-list'),
+    path('disburse-input/<str:daily_report_id>/<int:disburse_id>/', DisburseInput, name='disburse-input'),
+
     #? Lunch
     path('lunch-input-quick/<str:daily_report_id>/', LunchInputQuick, name='lunch-input-quick'),
     path('lunch-input-detail/<str:daily_report_id>/', LunchInputDetail, name='lunch-input-detail'),

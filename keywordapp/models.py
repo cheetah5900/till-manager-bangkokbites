@@ -67,6 +67,15 @@ class BillDinnerModel(models.Model):
         return self.real_bill_phone_cash
     
     
+class DisburseModel(models.Model):
+    name = models.CharField(max_length=100,default='')
+    price = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    bill_dinner = models.ForeignKey(BillDinnerModel, on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return self.name
+    
 class DeliveryDetailModel(models.Model):
     delivery_name = models.CharField(max_length=100,default='')
     wage_per_home = models.DecimalField(max_digits=10, decimal_places=2,default=0)

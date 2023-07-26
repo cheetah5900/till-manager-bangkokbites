@@ -87,8 +87,8 @@
                       <td></td>
                       <td>Total</td>
                       <td>{{sumTotal|intcomma}}</td>
-                      <td>{{sumCash}}</td>
-                      <td>{{sumCard}}</td>
+                      <td>{{sumCash|intcomma}}</td>
+                      <td>{{sumCard|intcomma}}</td>
                     </tr>
                   </table>
                 </div>
@@ -111,6 +111,23 @@
                         </table>
                       </div>
                     </div>
+                    <div class="product-title d-block">รายการเบิก</div>
+                    <div class="card-body">
+                      <div class="coupon-text-wrap d-flex align-items-center">
+                        <table class="table">
+                          <tr>
+                            <td><b>รายการ</b></td>
+                            <td><b>ราคา</b></td>
+                          </tr>
+                          {% for item in related_disburse_details %}
+                          <tr>
+                            <td>{{item.name}}</td>
+                            <td>{{item.price}}</td>
+                          </tr>
+                          {% endfor %}
+                        </table>
+                      </div>
+                    </div>
                     <div class="product-title d-block">อื่นๆ</div>
                         <div class="card-body">
                           <div class="coupon-text-wrap d-flex align-items-center">
@@ -124,17 +141,19 @@
                               <tr>
                                 <td>Total Online</td>
                                 <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
+                                <td>Balance</td>
+                                <td>{{balanceAfterMinusExpense}}</td>
                               </tr>
                             </table>
                           </div>
                         </div>
                     <div class="product-title d-block">ปริ้นท์ Report</div>
-                        <div class="card-body">
-                          <div class="coupon-text-wrap d-flex align-items-center">
-                            1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Dinner"<br>
-                            2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Dinner"<br>
-                            3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"<br>
-                            4. เครื่อง EDC Home เขียนหัวกระดาษว่า "Home"<br>
+                    <div class="card-body">
+                      <div class="coupon-text-wrap d-flex align-items-center">
+                        1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Dinner"<br>
+                        2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Dinner"<br>
+                        3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"<br>
+                        4. เครื่อง EDC Home เขียนหัวกระดาษว่า "Home"<br>
                           </div>
                         </div>
                 <div class="justify-content-center d-flex">

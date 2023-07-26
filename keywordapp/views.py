@@ -56,15 +56,68 @@ def Index(request):
             return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report.id}))
         if mode == 'dinner':
             return redirect(reverse('dinner-input-quick', kwargs={'daily_report_id': daily_report.id}))
-
+        if mode == 'disburse':
+            return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report.id}))
 
     return render(request, 'keywordapp/index.html', context)
 
+#! DISBURSE
+
+def DisburseList(request,daily_report_id):
+
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+
+    # You can also access the related DeliveryDetailModel instances from a DailyReportModel instance
+    related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
+    context ={
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'related_disburse_details': related_disburse_details,
+    }
+    return render(request,'keywordapp/disburse-list.html',context)
+
+def DisburseInput(request,daily_report_id,disburse_id):
+
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    bill_dinner = daily_report.bill_dinner
+    if disburse_id == 0:
+        newDisburse = DisburseModel.objects.create(bill_dinner=bill_dinner)
+        newDisburseId = newDisburse.id
+        return redirect(reverse('disburse-input', kwargs={'daily_report_id':daily_report_id,'disburse_id':newDisburseId}))
+
+    if request.method == 'POST':
+        # Home
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+
+        disburse_detail =  DisburseModel.objects.get(id=disburse_id)
+
+
+        disburse_detail.name = name
+        disburse_detail.price = price
+        disburse_detail.save()
+
+        return redirect(reverse('disburse-list', kwargs={'daily_report_id':daily_report_id}))
+
+
+    disburse_detail =  DisburseModel.objects.get(id=disburse_id)
+
+
+    context ={
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'disburse_detail': disburse_detail,
+    }
+    return render(request,'keywordapp/disburse-input.html',context)
+
+#! LUNCH
 def LunchInputQuick(request,daily_report_id):
 
-    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
-    date = daily_object.date
-    bill_lunch_id = daily_object.bill_lunch.id
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    bill_lunch_id = daily_report.bill_lunch.id
 
     bill_lunch =  BillLunchModel.objects.get(id=bill_lunch_id)
 
@@ -505,6 +558,10 @@ def DinnerReport(request,daily_report_id):
     #* Delivery Section
     # Access the related DeliveryDetailModel instances using the foreign key relationship
     related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
+
+    #* Disburse Section
+    # You can also access the related DeliveryDetailModel instances from a DailyReportModel instance
+    related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
     
     # Summarize the number of delivery man
     for detail in related_delivery_details:
@@ -516,9 +573,6 @@ def DinnerReport(request,daily_report_id):
             if detail.real_bill_home_oa_amount > 0:
                 detail.show_oa_amount = " + "+str(int(detail.real_bill_home_oa_amount))
         
-    totalSumCommissionAndOa = sum(detail.sum_commission_and_oa for detail in related_delivery_details)
-
-
     # sum all without separating delivery man
     realBillHomePhoneCashCountDinner = sum(detail.real_bill_home_phone_cash_count for detail in related_delivery_details)
     realBillHomePhoneCashDinner = sum(detail.real_bill_home_phone_cash for detail in related_delivery_details)
@@ -544,13 +598,14 @@ def DinnerReport(request,daily_report_id):
     # Row 7
     sumrealBillOnlineCountDinner = realBillOnlineCashCountDinner + realBillOnlineCardCountDinner
     # Row 10 Column 4
-    sumCash = intcomma(realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner)
+    sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner
     # Row 10 Column 5
-    sumCard = intcomma(realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner)
+    sumCard = realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner
     
     #* Delivery section
     # Sum all count both phone and online and
     sumrealBillHomeCountDinner = sumrealBillHomePhoneCountDinner + sumrealBillHomeOnlineCountDinner
+    totalSumCommissionAndOa = sum(detail.sum_commission_and_oa for detail in related_delivery_details)
 
     #* Other section
     sumTip = intcomma(tipLunch + tipDinner)
@@ -558,6 +613,9 @@ def DinnerReport(request,daily_report_id):
     totalOnlineCount = intcomma(realBillOnlineCardCountLunch + realBillOnlineCashCountLunch + realBillOnlineCashCountDinner + realBillOnlineCardCountDinner + realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner)
     totalOnlineAmount = intcomma(realBillOnlineCardLunch + realBillOnlineCashLunch + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner)
 
+    # Disburse Section
+    totalSumDisburse = sum(detail.price for detail in related_disburse_details)
+    balanceAfterMinusExpense = sumCash - totalSumCommissionAndOa - totalSumDisburse
 
 
     context = {
@@ -621,6 +679,9 @@ def DinnerReport(request,daily_report_id):
         'sumrealBillHomeCountDinner': sumrealBillHomeCountDinner,
         'totalSumCommissionAndOa': totalSumCommissionAndOa,
         
+        #! Disburse Section
+        'related_disburse_details': related_disburse_details,
+        'balanceAfterMinusExpense': balanceAfterMinusExpense,
     }
     return render(request,'keywordapp/dinner-report.html',context)
 
