@@ -23,9 +23,6 @@
                         <div class="col-12 col-md-2">EDC หน้าร้าน
                           <input type="text" value="{{ bill_dinner.edc_in_credit }}" name="edc_in_credit" class="form-control">
                         </div>
-                        <div class="col-12 col-md-2">EDC Home
-                          <input type="text" value="{{ bill_dinner.edc_home_credit }}" name="edc_home_credit" class="form-control">
-                        </div>
                         <div class="col-12 col-md-2">POS TA
                           <input type="text" value="{{ bill_dinner.pos_ta_bill_phone_card }}" name="pos_ta_bill_phone_card"
                             class="form-control">
@@ -34,22 +31,14 @@
                           <input type="text" value="{{ bill_dinner.pos_in_bill_card }}" name="pos_in_bill_card"
                             class="form-control">
                         </div>
+                      </div>
+                      <h5 class="mt-3">เช็คจากบิล</h5>
+                      <div class="row">
                         <div class="col-12 col-md-2">TA Online
                           <input type="text" value="{{ bill_dinner.real_bill_online_card }}" name="real_bill_online_card"
                             class="form-control">
                         </div>
-                      </div>
-                      <h5 class="mt-3">เช็คจากบิล</h5>
-                      <div class="row">
-                        <div class="col-12 col-md-2">Home Phone
-                          <input type="text" value="{{ bill_dinner.real_bill_home_phone_card }}" name="real_bill_home_phone_card"
-                            class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">Home Online
-                          <input type="text" value="{{ bill_dinner.real_bill_home_online_card }}" name="real_bill_home_online_card"
-                            class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">Tip
+                        <div class="col-12 col-md-2">Tip บัตร
                           <input type="text" value="{{ bill_dinner.tip_credit }}" name="tip_credit"
                             class="form-control">
                         </div>

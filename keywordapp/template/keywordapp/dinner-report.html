@@ -1,4 +1,5 @@
 {%extends 'keywordapp/layout.html'%}
+{% load humanize %}
 {%block activework%}active{%endblock activework%}
 {%block content%}
 <div class="page-content-wrapper">
@@ -22,70 +23,70 @@
                       <th>TOTAL</th>
                       <th>CASH</th>
                       <th>CREDIT</th>
-                      <th rowspan="4" class="align-middle text-center"><h3>{{totalBillLunchReformat}}</h3></th>
+                      <th rowspan="4" class="align-middle text-center"><h3>{{totalBillLunch|intcomma}}</h3></th>
                     </tr>
                     <tr>
                       <td>{{sumrealBillOnlineCount}}</td>
                       <td>T/A Online Lunch</td>
                       <td>{{sumrealBillOnline}}</td>
-                      <td>{{realBillOnlineCashLunchReformat}}</td>
-                      <td>{{realBillOnlineCardLunchReformat}}</td>
+                      <td>{{realBillOnlineCashLunch|intcomma}}</td>
+                      <td>{{realBillOnlineCardLunch|intcomma}}</td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillPhoneCount}}</td>
                       <td>T/A Lunch</td>
                       <td>{{sumrealBillPhone}}</td>
-                      <td>{{realBillPhoneCashLunchReformat}}</td>
-                      <td>{{realBillPhoneCardLunchReformat}}</td>
+                      <td>{{realBillPhoneCashLunch|intcomma}}</td>
+                      <td>{{realBillPhoneCardLunch|intcomma}}</td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillInCount}}</td>
                       <td>EAT-IN Lunch</td>
                       <td>{{sumrealBillIn}}</td>
-                      <td>{{realBillInCashLunchReformat}}</td>
-                      <td>{{realBillInCardLunchReformat}}</td>
+                      <td>{{realBillInCashLunch|intcomma}}</td>
+                      <td>{{realBillInCardLunch|intcomma}}</td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillHomePhoneCountDinner}}</td>
                       <td>Home Phone</td>
                       <td>{{sumrealBillHomePhoneDinner}}</td>
-                      <td>{{realBillHomePhoneCashDinnerReformat}}</td>
-                      <td>{{realBillHomePhoneCardDinnerReformat}}</td>
+                      <td>{{realBillHomePhoneCashDinner|intcomma}}</td>
+                      <td>{{realBillHomePhoneCardDinner|intcomma}}</td>
                       <th rowspan="6" class="align-middle text-center"><h3>{{totalBillDinner}}</h3></th>
                     </tr>
                     <tr>
                       <td>{{sumrealBillHomeOnlineCountDinner}}</td>
                       <td>Home Online</td>
                       <td>{{sumrealBillHomeOnlineDinner}}</td>
-                      <td>{{realBillHomeOnlineCashDinnerReformat}}</td>
-                      <td>{{realBillHomeOnlineCardDinnerReformat}}</td>
+                      <td>{{realBillHomeOnlineCashDinner|intcomma}}</td>
+                      <td>{{realBillHomeOnlineCardDinner|intcomma}}</td>
                       <td></td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillPhoneCountDinner}}</td>
                       <td>T/A Phone Dinner</td>
                       <td>{{sumrealBillPhoneDinner}}</td>
-                      <td>{{realBillPhoneCashDinnerReformat}}</td>
-                      <td>{{realBillPhoneCardDinnerReformat}}</td>
+                      <td>{{realBillPhoneCashDinner|intcomma}}</td>
+                      <td>{{realBillPhoneCardDinner|intcomma}}</td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillOnlineCountDinner}}</td>
                       <td>T/A Online Dinner</td>
                       <td>{{sumrealBillOnlineDinner}}</td>
-                      <td>{{realBillOnlineCashDinnerReformat}}</td>
-                      <td>{{realBillOnlineCardDinnerReformat}}</td>
+                      <td>{{realBillOnlineCashDinner|intcomma}}</td>
+                      <td>{{realBillOnlineCardDinner|intcomma}}</td>
                     </tr>
                     <tr>
                       <td>{{sumrealBillInCountDinner}}</td>
                       <td>Dinner</td>
                       <td>{{sumrealBillInDinner}}</td>
-                      <td>{{realBillInCashDinnerReformat}}</td>
-                      <td>{{realBillInCardDinnerReformat}}</td>
+                      <td>{{realBillInCashDinner|intcomma}}</td>
+                      <td>{{realBillInCardDinner|intcomma}}</td>
                     </tr>
                     <tr>
                       <td></td>
                       <td>Total</td>
-                      <td>{{sumTotalReformat}}</td>
+                      <td>{{sumTotal|intcomma}}</td>
                       <td>{{sumCash}}</td>
                       <td>{{sumCard}}</td>
                     </tr>

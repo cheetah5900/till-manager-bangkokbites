@@ -1,0 +1,90 @@
+{% extends 'keywordapp/layout.html' %}
+{% block activework %}active{% endblock activework %}
+{% block content %}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>กรอกข้อมูลปิดยอด Home ({{ date }})</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="row">
+                        <h5 class="mt-3">ข้อมูลทั่วไป</h5>
+                        <div class="col-12 col-md-3">คนส่ง
+                          <input type="text" value="{{ delivery_detail.delivery_name }}"
+                            name="delivery_name" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ค่าคอมมิชชั่น/ใบ
+                          <input type="text" value="{{ delivery_detail.wage_per_home }}"
+                            name="wage_per_home" class="form-control">
+                        </div>
+                        <hr class="mt-5">
+                        <h4 class="mt-3">เช็คจากบิล</h4>
+                        <h5 class="mt-3">Home Online</h5>
+                        <div class="col-12 col-md-2">จำนวนใบเงินสด
+                          <input type="text" value="{{ delivery_detail.real_bill_home_online_cash_count }}"
+                            name="real_bill_home_online_cash_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอดเงินสด
+                          <input type="text" value="{{ delivery_detail.real_bill_home_online_cash }}"
+                            name="real_bill_home_online_cash" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">จำนวนใบบัตร
+                          <input type="text" value="{{ delivery_detail.real_bill_home_online_card_count }}"
+                            name="real_bill_home_online_card_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอดบัตร
+                          <input type="text" value="{{ delivery_detail.real_bill_home_online_card }}"
+                            name="real_bill_home_online_card" class="form-control">
+                        </div>
+                        <h5 class="mt-3">Home Phone</h5>
+                        <div class="col-12 col-md-2">จำนวนใบเงินสด
+                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_cash_count }}"
+                            name="real_bill_home_phone_cash_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอดเงินสด
+                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_cash }}"
+                            name="real_bill_home_phone_cash" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">จำนวนใบบัตร
+                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_card_count }}"
+                            name="real_bill_home_phone_card_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอดบัตร
+                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_card }}"
+                            name="real_bill_home_phone_card" class="form-control">
+                        </div>
+                        <h5 class="mt-3">Over Area (OA)</h5>
+                        <div class="col-12 col-md-2">จำนวนใบ OA
+                          <input type="text" value="{{ delivery_detail.real_bill_home_oa_count }}"
+                            name="real_bill_home_oa_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">จำนวนเงิน OA
+                          <input type="text" value="{{ delivery_detail.real_bill_home_oa_amount }}"
+                            name="real_bill_home_oa_amount" class="form-control">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="justify-content-center d-flex mt-5 mb-3">
+                      <a href="/home-list/{{daily_report_id}}/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                      <button class="btn btn-primary btn-lg" type="submit">ถัดไป</button>
+                    </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

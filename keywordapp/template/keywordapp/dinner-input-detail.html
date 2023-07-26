@@ -34,7 +34,7 @@
                           </tr>
                           <tr>
                             <td class="align-middle">1. ยอด POS TA - ยอด Home Phone
-                              ({{bill_dinner.pos_ta_bill_phone_card}} - {{bill_dinner.real_bill_home_phone_card}})</td>
+                              ({{bill_dinner.pos_ta_bill_phone_card}} - {{realBillHomePhoneCard}})</td>
                             <td class="text-center align-middle"> {{minusHomePhoneOutFromPosTa}}</td>
                           </tr>
                           <tr>
@@ -68,15 +68,17 @@
                           </tr>
                           <tr class="table-success">
                             <td class="align-middle"><b>ยอดที่ใช้เครื่อง EDC Home คิดเงิน</b></td>
-                            <td class="text-center"><h3>{{ resultCheckEqual2 }}</h3></td>
+                            <td class="text-center">
+                              <h3>{{ resultCheckEqual2 }}</h3>
+                            </td>
                           </tr>
                           <tr>
                             <td class="align-middle">1. ยอด Home Phone จาก POS TA</td>
-                            <td class="text-center align-middle">{{bill_dinner.real_bill_home_phone_card}}</td>
+                            <td class="text-center align-middle">{{realBillHomePhoneCard}}</td>
                           </tr>
                           <tr>
                             <td class="align-middle">2. ยอด Home Online</td>
-                            <td class="text-center align-middle">{{bill_dinner.real_bill_home_online_card}}</td>
+                            <td class="text-center align-middle">{{realBillHomeOnlineCard}}</td>
                           </tr>
                           <tr>
                             <td class="align-middle" style="border-bottom: 1px solid black;"><b>Total</b></td>
@@ -172,53 +174,18 @@
                           </div>
 
                           <div class="row">
-                            <div class="col-12 col-md-3 mt-5"><b>บิล Home Online</b></div>
-                            <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
-                                value="{{ bill_dinner.real_bill_home_online_cash_count }}"
-                                name="real_bill_home_online_cash_count" class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
-                                value="{{ bill_dinner.real_bill_home_online_cash }}" name="real_bill_home_online_cash"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
-                                value="{{ bill_dinner.real_bill_home_online_card_count }}"
-                                name="real_bill_home_online_card_count" class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดบัตรครดิต
-                              <input type="text" disabled value="{{ bill_dinner.real_bill_home_online_card }}"
-                                class="form-control">
-                              <input type="hidden" value="{{ bill_dinner.real_bill_home_online_card }}"
-                                name="real_bill_home_online_card">
-                            </div>
-                          </div>
-
-                          <div class="row">
-                            <div class="col-12 col-md-3 mt-5"><b>บิล Home Phone</b></div>
-                            <div class="col-12 col-md-2">จำนวนใบเงินสด<input type="number"
-                                value="{{ bill_dinner.real_bill_home_phone_cash_count }}"
-                                name="real_bill_home_phone_cash_count" class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
-                                value="{{ bill_dinner.real_bill_home_phone_cash }}" name="real_bill_home_phone_cash"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
-                                value="{{ bill_dinner.real_bill_home_phone_card_count }}"
-                                name="real_bill_home_phone_card_count" class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดบัตรครดิต<input type="text" disabled
-                                value="{{ bill_dinner.real_bill_home_phone_card }}" class="form-control">
-                              <input type="hidden" value="{{ bill_dinner.real_bill_home_phone_card }}"
-                                name="real_bill_home_phone_card">
-                            </div>
-                          </div>
-
-                          <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล TA Phone</b></div>
                             <div class="col-12 col-md-2">
-                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_dinner.real_bill_taphone_dividepay_count }}"
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number"
+                                value="{{ bill_dinner.real_bill_taphone_dividepay_count }}"
                                 name="real_bill_taphone_dividepay_count" class="form-control"></div>
                           </div>
-                          
+
                           <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล Dine in</b></div>
                             <div class="col-12 col-md-2">
-                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_dinner.real_bill_dinein_dividepay_count }}"
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number"
+                                value="{{ bill_dinner.real_bill_dinein_dividepay_count }}"
                                 name="real_bill_dinein_dividepay_count" class="form-control"></div>
                           </div>
                         </div>
@@ -226,7 +193,7 @@
                           <a href="/dinner-input-quick/{{daily_report_id}}/"
                             class="btn btn-secondary btn-lg">ย้อนกลับ</a>
                           <input type="hidden" name="edc_in_credit" value="{{edcInCredit}}">
-                          <button class="btn btn-primary btn-lg" type="submit" name="updateandcalculate">ถัดไป</button>
+                          <button class="btn btn-primary btn-lg" type="submit">ถัดไป</button>
                         </div>
                 </form>
               </div>

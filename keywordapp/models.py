@@ -49,15 +49,6 @@ class BillDinnerModel(models.Model):
     real_bill_taphone_dividepay_count = models.IntegerField(default=0)
     real_bill_dinein_dividepay_count = models.IntegerField(default=0)
 
-    real_bill_home_phone_cash_count = models.IntegerField(default=0)
-    real_bill_home_phone_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    real_bill_home_phone_card_count = models.IntegerField(default=0)
-    real_bill_home_phone_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    real_bill_home_online_cash_count = models.IntegerField(default=0)
-    real_bill_home_online_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    real_bill_home_online_card_count = models.IntegerField(default=0)
-    real_bill_home_online_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-
     pos_ta_bill_phone_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     pos_ta_bill_phone_cash_count = models.IntegerField(default=0)
     pos_ta_bill_phone_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -69,16 +60,28 @@ class BillDinnerModel(models.Model):
     tip_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     wrong_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     edc_in_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    edc_home_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     detail_status = models.IntegerField(default=0)
+
 
     def __str__(self):
         return self.real_bill_phone_cash
     
+    
 class DeliveryDetailModel(models.Model):
     delivery_name = models.CharField(max_length=100,default='')
-    commission = models.DecimalField(max_digits=10, decimal_places=2,default=0)
-    wageperhr = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    wage_per_home = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    real_bill_home_oa_count = models.IntegerField(default=0)
+    real_bill_home_oa_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    real_bill_home_phone_cash_count = models.IntegerField(default=0)
+    real_bill_home_phone_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    real_bill_home_phone_card_count = models.IntegerField(default=0)
+    real_bill_home_phone_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    real_bill_home_online_cash_count = models.IntegerField(default=0)
+    real_bill_home_online_cash = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    real_bill_home_online_card_count = models.IntegerField(default=0)
+    real_bill_home_online_card = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    bill_dinner = models.ForeignKey(BillDinnerModel, on_delete=models.CASCADE)
+
 
     def __str__(self):
         return self.delivery_name

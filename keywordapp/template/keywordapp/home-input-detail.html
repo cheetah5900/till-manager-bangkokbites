@@ -1,0 +1,66 @@
+{% extends 'keywordapp/layout.html' %}
+{% block activework %}active{% endblock activework %}
+{% block content %}
+<div class="page-content-wrapper">
+  <!-- Weekly Best Sellers-->
+  <div class="weekly-best-seller-area py-3">
+    <div class="container">
+      <div class="section-heading">
+        <h2>กรอกข้อมูลปิดยอด Home ({{ date }})</h2>
+      </div>
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+                <form action="" method="post">
+                  {% csrf_token %}
+                  <div class="row">
+                    <h2 class="mb-3">คิดค่า Commission </h2>
+                    <hr>
+                    <div class="col-12">
+                      <div class="coupon-text-wrap d-flex align-items-center table-responsive">
+                        <table class="table table-bordered">
+                          <tr class="table-dark">
+                            <td class="align-middle"><b>Home ตอนเย็น</b></td>
+                            <td></td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">จำนวนใบ Phone + Online ({{sumHomePhoneCount}} +
+                              {{sumHomeOnlineCount}})</td>
+                            <td class="text-center align-middle"> {{sumHomeCount}}</td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">ค่าคอมมิชชั่น/ใบ</td>
+                            <td class="text-center align-middle">{{delivery_detail.wage_per_home}}</td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">ค่า Commission ยังไม่รวม OA</td>
+                            <td class="text-center align-middle">{{sumHomeCommission}}</td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">ยอด OA ({{delivery_detail.real_bill_home_oa_count}}) </td>
+                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_oa_amount}}</td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle"><b>Total ค่าคอมมิชชั่น</b></td>
+                            <td class="text-center align-middle">{{sumHomeCommissionAndOa}}
+                            </td>
+                          </tr>
+                        </table>
+                      </div>
+                      <div class="row">
+                        <div class="justify-content-center d-flex mt-3">
+                          <a href="/home-input-quick/{{daily_report_id}}/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                          <a href="/" class="btn btn-primary btn-lg" type="submit">กลับหน้าแรก</a>
+                        </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
