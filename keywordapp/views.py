@@ -330,9 +330,6 @@ def DinnerInputDetail(request, daily_report_id):
     realBillHomePhoneCash = sum(detail.real_bill_home_phone_cash for detail in related_delivery_details)
     realBillHomePhoneCardCount = sum(detail.real_bill_home_phone_card_count for detail in related_delivery_details)
     realBillHomePhoneCard = sum(detail.real_bill_home_phone_card for detail in related_delivery_details)
-    # realBillHomeOnlineCashCount = sum(detail.real_bill_home_online_cash_count for detail in related_delivery_details)
-    # realBillHomeOnlineCash = sum(detail.real_bill_home_online_cash for detail in related_delivery_details)
-    # realBillHomeOnlineCardCount = sum(detail.real_bill_home_online_card_count for detail in related_delivery_details)
     realBillHomeOnlineCard = sum(detail.real_bill_home_online_card for detail in related_delivery_details)
 
 
@@ -486,14 +483,6 @@ def DinnerReport(request,daily_report_id):
     tipLunch = bill_lunch.tip_credit
     wrongCreditLunch = bill_lunch.wrong_credit
 
-    #* "Reformat" amount lunch
-    realBillPhoneCashLunchReformat = intcomma(bill_lunch.real_bill_phone_cash)
-    realBillPhoneCardLunchReformat = intcomma(bill_lunch.real_bill_phone_card)
-    realBillOnlineCashLunchReformat = intcomma(bill_lunch.real_bill_online_cash)
-    realBillOnlineCardLunchReformat = intcomma(bill_lunch.real_bill_online_card)
-    realBillInCashLunchReformat = intcomma(bill_lunch.real_bill_in_cash)
-    realBillInCardLunchReformat = intcomma(bill_lunch.real_bill_in_card)
-
     #* Dinner Data
     bill_dinner =  BillDinnerModel.objects.get(id=bill_dinner_id)
     realBillPhoneCashDinner = bill_dinner.real_bill_phone_cash
@@ -513,10 +502,24 @@ def DinnerReport(request,daily_report_id):
     tipDinner = bill_dinner.tip_credit
     wrongCreditDinner = bill_dinner.wrong_credit
 
+    #* Delivery Section
     # Access the related DeliveryDetailModel instances using the foreign key relationship
     related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
+    
+    # Summarize the number of delivery man
+    for detail in related_delivery_details:
+            detail.sum_commission = int(detail.wage_per_home * (detail.real_bill_home_phone_cash_count + detail.real_bill_home_phone_card_count + detail.real_bill_home_online_cash_count + detail.real_bill_home_online_card_count))
+            detail.home_count = detail.real_bill_home_phone_cash_count + detail.real_bill_home_phone_card_count + detail.real_bill_home_online_cash_count + detail.real_bill_home_online_card_count
+            detail.sum_commission_and_oa = int((detail.real_bill_home_oa_count * detail.real_bill_home_oa_amount) + detail.sum_commission)
+            if detail.real_bill_home_oa_count > 0:
+                detail.show_oa_count = " + "+str(detail.real_bill_home_oa_count)+" OA"
+            if detail.real_bill_home_oa_amount > 0:
+                detail.show_oa_amount = " + "+str(int(detail.real_bill_home_oa_amount))
+        
+    totalSumCommissionAndOa = sum(detail.sum_commission_and_oa for detail in related_delivery_details)
 
-    # Calculate the sum of the real_bill_home_oa_amount attribute for all DeliveryDetailModel instances
+
+    # sum all without separating delivery man
     realBillHomePhoneCashCountDinner = sum(detail.real_bill_home_phone_cash_count for detail in related_delivery_details)
     realBillHomePhoneCashDinner = sum(detail.real_bill_home_phone_cash for detail in related_delivery_details)
     realBillHomePhoneCardCountDinner = sum(detail.real_bill_home_phone_card_count for detail in related_delivery_details)
@@ -527,17 +530,34 @@ def DinnerReport(request,daily_report_id):
     realBillHomeOnlineCardDinner = sum(detail.real_bill_home_online_card for detail in related_delivery_details)
 
     #? Summary
+    #* Report Section
+    # Row 1
     totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
+    # Row 10
     sumTotal = realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner + realBillPhoneCashDinner + realBillPhoneCardDinner + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillInCashDinner + realBillInCardDinner
+    # Row 4
     totalBillDinner = intcomma(sumTotal - totalBillLunch)
+    # Row 4
+    sumrealBillHomePhoneCountDinner = realBillHomePhoneCashCountDinner + realBillHomePhoneCardCountDinner
+    # Row 5
+    sumrealBillHomeOnlineCountDinner = realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner
+    # Row 7
+    sumrealBillOnlineCountDinner = realBillOnlineCashCountDinner + realBillOnlineCardCountDinner
+    # Row 10 Column 4
     sumCash = intcomma(realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + realBillHomeOnlineCashDinner + realBillPhoneCashDinner + realBillOnlineCashDinner + realBillInCashDinner)
+    # Row 10 Column 5
     sumCard = intcomma(realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + realBillHomeOnlineCardDinner + realBillPhoneCardDinner + realBillOnlineCardDinner + realBillInCardDinner)
+    
+    #* Delivery section
+    # Sum all count both phone and online and
+    sumrealBillHomeCountDinner = sumrealBillHomePhoneCountDinner + sumrealBillHomeOnlineCountDinner
+
+    #* Other section
     sumTip = intcomma(tipLunch + tipDinner)
     sumWrongCredit = intcomma(wrongCreditLunch + wrongCreditDinner)
-    sumrealBillOnlineCountDinner = intcomma(realBillOnlineCashCountDinner + realBillOnlineCardCountDinner)
-    sumrealBillHomeOnlineCountDinner = intcomma(realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner)
     totalOnlineCount = intcomma(realBillOnlineCardCountLunch + realBillOnlineCashCountLunch + realBillOnlineCashCountDinner + realBillOnlineCardCountDinner + realBillHomeOnlineCashCountDinner + realBillHomeOnlineCardCountDinner)
     totalOnlineAmount = intcomma(realBillOnlineCardLunch + realBillOnlineCashLunch + realBillOnlineCashDinner + realBillOnlineCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner)
+
 
 
     context = {
@@ -563,7 +583,7 @@ def DinnerReport(request,daily_report_id):
         # Row 4 Home Phone
         'realBillHomePhoneCashDinner': realBillHomePhoneCashDinner,
         'realBillHomePhoneCardDinner': realBillHomePhoneCardDinner,
-        'sumrealBillHomePhoneCountDinner': realBillHomePhoneCashCountDinner + realBillHomePhoneCardCountDinner,
+        'sumrealBillHomePhoneCountDinner': sumrealBillHomePhoneCountDinner,
         'sumrealBillHomePhoneDinner': intcomma(realBillHomePhoneCashDinner + realBillHomePhoneCardDinner),
         # Row 5 Home Online
         'realBillHomeOnlineCashDinner': realBillHomeOnlineCashDinner,
@@ -595,6 +615,11 @@ def DinnerReport(request,daily_report_id):
         'sumWrongCredit': sumWrongCredit,
         'totalOnlineAmount': totalOnlineAmount,
         'totalOnlineCount': totalOnlineCount,
+
+        #! Home section
+        'related_delivery_details': related_delivery_details,
+        'sumrealBillHomeCountDinner': sumrealBillHomeCountDinner,
+        'totalSumCommissionAndOa': totalSumCommissionAndOa,
         
     }
     return render(request,'keywordapp/dinner-report.html',context)

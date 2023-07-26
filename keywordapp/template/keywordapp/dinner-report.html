@@ -92,23 +92,42 @@
                     </tr>
                   </table>
                 </div>
-                <div class="product-title d-block">อื่นๆ</div>
+                <div class="product-title d-block">รายละเอียด Delivery</div>
                     <div class="card-body">
                       <div class="coupon-text-wrap d-flex align-items-center">
                         <table class="table">
+                          {% for item in related_delivery_details %}
                           <tr>
-                            <td>Tip</td>
-                            <td>{{sumTip}}</td>
-                            <td>กดเครดิตขาด</td>
-                            <td>{{sumWrongCredit}}</td>
+                            <td>H{{forloop.counter}}</td>
+                            <td>{{item.home_count}}{{item.show_oa_count}}</td>
+                            <td>{{item.sum_commission}}{{item.show_oa_amount}}</td>
                           </tr>
+                          {%endfor%}
                           <tr>
-                            <td>Total Online</td>
-                            <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
+                            <td></td>
+                            <td>{{sumrealBillHomeCountDinner}}</td>
+                            <td>{{totalSumCommissionAndOa}}</td>
                           </tr>
                         </table>
                       </div>
                     </div>
+                    <div class="product-title d-block">อื่นๆ</div>
+                        <div class="card-body">
+                          <div class="coupon-text-wrap d-flex align-items-center">
+                            <table class="table">
+                              <tr>
+                                <td>Tip</td>
+                                <td>{{sumTip}}</td>
+                                <td>กดเครดิตขาด</td>
+                                <td>{{sumWrongCredit}}</td>
+                              </tr>
+                              <tr>
+                                <td>Total Online</td>
+                                <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
+                              </tr>
+                            </table>
+                          </div>
+                        </div>
                     <div class="product-title d-block">ปริ้นท์ Report</div>
                         <div class="card-body">
                           <div class="coupon-text-wrap d-flex align-items-center">
