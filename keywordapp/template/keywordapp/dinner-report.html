@@ -23,7 +23,9 @@
                       <th>TOTAL</th>
                       <th>CASH</th>
                       <th>CREDIT</th>
-                      <th rowspan="4" class="align-middle text-center"><h3>{{totalBillLunch|intcomma}}</h3></th>
+                      <th rowspan="4" class="align-middle text-center">
+                        <h3>{{totalBillLunch|intcomma}}</h3>
+                      </th>
                     </tr>
                     <tr>
                       <td>{{sumrealBillOnlineCount}}</td>
@@ -52,7 +54,9 @@
                       <td>{{sumrealBillHomePhoneDinner}}</td>
                       <td>{{realBillHomePhoneCashDinner|intcomma}}</td>
                       <td>{{realBillHomePhoneCardDinner|intcomma}}</td>
-                      <th rowspan="6" class="align-middle text-center"><h3>{{totalBillDinner}}</h3></th>
+                      <th rowspan="6" class="align-middle text-center">
+                        <h3>{{totalBillDinner}}</h3>
+                      </th>
                     </tr>
                     <tr>
                       <td>{{sumrealBillHomeOnlineCountDinner}}</td>
@@ -93,71 +97,92 @@
                   </table>
                 </div>
                 <div class="product-title d-block">รายละเอียด Delivery</div>
-                    <div class="card-body">
-                      <div class="coupon-text-wrap d-flex align-items-center">
-                        <table class="table">
-                          {% for item in related_delivery_details %}
-                          <tr>
-                            <td>H{{forloop.counter}}</td>
-                            <td>{{item.home_count}}{{item.show_oa_count}}</td>
-                            <td>{{item.sum_commission}}{{item.show_oa_amount}}</td>
-                          </tr>
-                          {%endfor%}
-                          <tr>
-                            <td></td>
-                            <td>{{sumrealBillHomeCountDinner}}</td>
-                            <td>{{totalSumCommissionAndOa}}</td>
-                          </tr>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="product-title d-block">รายการเบิก</div>
-                    <div class="card-body">
-                      <div class="coupon-text-wrap d-flex align-items-center">
-                        <table class="table">
-                          <tr>
-                            <td><b>รายการ</b></td>
-                            <td><b>ราคา</b></td>
-                          </tr>
-                          {% for item in related_disburse_details %}
-                          <tr>
-                            <td>{{item.name}}</td>
-                            <td>{{item.price}}</td>
-                          </tr>
-                          {% endfor %}
-                        </table>
-                      </div>
-                    </div>
-                    <div class="product-title d-block">อื่นๆ</div>
-                        <div class="card-body">
-                          <div class="coupon-text-wrap d-flex align-items-center">
-                            <table class="table">
-                              <tr>
-                                <td>Tip</td>
-                                <td>{{sumTip}}</td>
-                                <td>กดเครดิตขาด</td>
-                                <td>{{sumWrongCredit}}</td>
-                              </tr>
-                              <tr>
-                                <td>Total Online</td>
-                                <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
-                                <td>Balance</td>
-                                <td>{{balanceAfterMinusExpense}}</td>
-                              </tr>
-                            </table>
-                          </div>
-                        </div>
-                    <div class="product-title d-block">ปริ้นท์ Report</div>
-                    <div class="card-body">
-                      <div class="coupon-text-wrap d-flex align-items-center">
-                        1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Dinner"<br>
-                        2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Dinner"<br>
-                        3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"<br>
-                        4. เครื่อง EDC Home เขียนหัวกระดาษว่า "Home"<br>
-                          </div>
-                        </div>
+                <div class="card-body">
+                  <div class="coupon-text-wrap d-flex align-items-center">
+                    <table class="table">
+                      {% for item in related_delivery_details %}
+                      <tr>
+                        <td>H{{forloop.counter}}</td>
+                        <td>{{item.home_count}}{{item.show_oa_count}}</td>
+                        <td>{{item.sum_commission}}{{item.show_oa_amount}}</td>
+                      </tr>
+                      {%endfor%}
+                      <tr class="table-primary">
+                        <td>Total</td>
+                        <td>{{sumrealBillHomeCountDinner}}</td>
+                        <td>{{totalSumCommissionAndOa}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="product-title d-block">รายการเบิก</div>
+                <div class="card-body">
+                  <div class="coupon-text-wrap d-flex align-items-center">
+                    <table class="table">
+                      <tr>
+                        <td><b>รายการ</b></td>
+                        <td><b>ราคา</b></td>
+                      </tr>
+                      {% for item in related_disburse_details %}
+                      <tr>
+                        <td>{{item.name}}</td>
+                        <td>{{item.price}}</td>
+                      </tr>
+                      {% endfor %}
+                      <tr class="table-primary">
+                        <th>ยอดรวม</th>
+                        <td>{{totalSumDisburse}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="product-title d-block">อื่นๆ</div>
+                <div class="card-body">
+                  <div class="coupon-text-wrap d-flex align-items-center">
+                    <table class="table">
+                      <tr>
+                        <td>Tip</td>
+                        <td>{{sumTip}}</td>
+                        <td>กดเครดิตขาด</td>
+                        <td>{{sumWrongCredit}}</td>
+                      </tr>
+                      <tr>
+                        <td>Total Online</td>
+                        <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
+                        <td>Balance</td>
+                        <td>{{balanceAfterMinusExpense}}</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="product-title d-block">ปริ้นท์ Report</div>
+                <div class="card-body">
+                  <div class="coupon-text-wrap d-flex align-items-center">
+                    <table class="table table-stripped">
+                      <tr>
+                        <td>1. เครื่อง POS Dine-in ของ<b>ช่วงเย็น</b> เขียนหัวกระดาษว่า "Dine-in Dinner"</td>
+                      </tr>
+                      <tr>
+                        <td>2. เครื่อง POS Dine-in ของ<b>ทั้งวัน</b> เขียนหัวกระดาษว่า "Dine-in All Day"</td>
+                      </tr>
+                      <tr>
+                        <td>3. เครื่อง POS TA ของ<b>ช่วงเย็น</b> เขียนหัวกระดาษว่า "TA/HOME Dinner"</td>
+                      </tr>
+                      <tr>
+                        <td>4. เครื่อง POS TA ของ<b>ทั้งวัน</b> เขียนหัวกระดาษว่า "TA/HOME All Day"</td>
+                      </tr>
+                      <tr>
+                        <td>5. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"</td>
+                      </tr>
+                      <tr>
+                        <td>6. เครื่อง EDC Home ของแต่ละคนเขียนหัวกระดาษตามชื่อคนส่ง "P' Peter"</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
                 <div class="justify-content-center d-flex">
-                  <a href="/dinner-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg" type="submit">ย้อนกลับ</a>
+                  <a href="/dinner-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg"
+                    type="submit">ย้อนกลับ</a>
                   <a href="/" class="btn btn-primary btn-lg" type="submit">กลับหน้าแรก</a>
                 </div>
               </div>

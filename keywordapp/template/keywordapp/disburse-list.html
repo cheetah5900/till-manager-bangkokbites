@@ -22,21 +22,34 @@
                           <tr>
                             <td>รายการ</td>
                             <td>ราคา</td>
-                            <td></td>
+                            <td>แก้ไข</td>
+                            <td>ลบ</td>
                           </tr>
                           {% for item in related_disburse_details %}
                           <tr>
                             <td>{{ item.name }}</td>
                             <td>{{ item.price }}</td>
                             <td><a href="/disburse-input/{{daily_report_id}}/{{item.id}}" class="btn btn-success">แก้ไข</a></td>
+                            <td>
+                              <a class="btn btn-danger"
+                                href="{% url 'delete-disburse' item.id daily_report_id %}"
+                                onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                            </td>
                           </tr>
                           {% endfor %}
+                          <tr>
+                            <th>ยอดรวม</th>
+                            <td>{{totalDisburse}}</td>
+                            <td></td>
+                            <td></td>
+                          </tr>
                         </table>
                       </div>
                     </div>
                     <div class="justify-content-center d-flex mt-5 mb-3">
                       <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                      <a href="/disburse-input/{{daily_report_id}}/0" class="btn btn-primary btn-lg">เพิ่มข้อมูลคนส่ง</a>
+                      <a href="/disburse-input/{{daily_report_id}}/0" class="btn btn-success btn-lg">เพิ่มรายการเบิก</a>
+                      <a href="/" class="btn btn-primary btn-lg">กลับหน้าแรก</a>
                     </div>
                 </form>
               </div>

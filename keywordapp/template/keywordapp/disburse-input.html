@@ -20,11 +20,12 @@
                       <div class="row">
                         <h5 class="mt-3">ข้อมูลทั่วไป</h5>
                         <div class="col-12 col-md-3">รายการที่ซื้อ
-                          <input type="text" value="{{ disburse_detail.name }}" name="name"
-                            class="form-control">
+                          <input onfocus="clearInputValue(this)" type="text"
+                            value="{{ disburse_detail.name }}" name="name" class="form-control">
                         </div>
                         <div class="col-12 col-md-2">ราคา
-                          <input type="text" value="{{ disburse_detail.price }}" name="price"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ disburse_detail.price }}" name="price"
                             class="form-control">
                         </div>
                       </div>

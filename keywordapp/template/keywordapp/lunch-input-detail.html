@@ -37,7 +37,8 @@
                           <td class="text-center align-middle">{{bill_lunch.pos_in_bill_card}}</td>
                         </tr>
                         <tr>
-                          <td class="align-middle">3. ยอด TA Online</td>
+                          <td class="align-middle">3. ยอด TA Online <a href="/get-online-data/{{daily_report_id}}/lunch"
+                              class="btn btn-primary">ดึงข้อมูล</a></td>
                           <td class="text-center align-middle">{{bill_lunch.real_bill_online_card}}</td>
                         </tr>
                         <tr>
@@ -45,7 +46,8 @@
                           <td class="text-center align-middle">{{bill_lunch.tip_credit}}</td>
                         </tr>
                         <tr>
-                          <td class="align-middle" style="border-bottom: 1px solid black;"><b>Total - Credit ขาด ({{addTipToSum}} - {{bill_lunch.wrong_credit}})</b></td>
+                          <td class="align-middle" style="border-bottom: 1px solid black;"><b>Total - Credit ขาด
+                              ({{addTipToSum}} - {{bill_lunch.wrong_credit}})</b></td>
                           <td class="text-center align-middle" style="border-bottom: 1px solid black;">
                             <b>{{minusWrongCreditFromSumBillCard}}</b>
                           </td>
@@ -54,7 +56,9 @@
                           <td class="align-middle">ยอด EDC หน้าร้าน</td>
                           <td class="text-center align-middle">{{edcInCredit}}
 
-                            <input type="hidden" value="{{ edcInCredit }}" name="edc_in_credit">
+                            <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                              placeholder="0.00" inputmode="numeric" type="hidden" value="{{ edcInCredit }}"
+                              name="edc_in_credit">
 
                           </td>
                         </tr>
@@ -76,21 +80,28 @@
                             </div>
                             <div class="col-12 col-md-2">
                               จำนวนใบเงินสด
-                              <input type="number" value="{{ bill_lunch.pos_ta_bill_phone_cash_count }}"
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                                inputmode="numeric" type="number" value="{{ bill_lunch.pos_ta_bill_phone_cash_count }}"
                                 name="pos_ta_bill_phone_cash_count" class="form-control">
                             </div>
                             <div class="col-12 col-md-2">
-                              ยอดเงินสด<input type="text" value="{{ bill_lunch.pos_ta_bill_phone_cash }}"
-                                name="pos_ta_bill_phone_cash" class="form-control"></div>
+                              ยอดเงินสด<input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.pos_ta_bill_phone_cash }}" name="pos_ta_bill_phone_cash"
+                                class="form-control"></div>
                             <div class="col-12 col-md-3">
-                              จำนวนใบบัตรเครดิต<input type="text" value="{{ bill_lunch.pos_ta_bill_phone_card_count }}"
+                              จำนวนใบบัตรเครดิต<input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                placeholder="0" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.pos_ta_bill_phone_card_count }}"
                                 name="pos_ta_bill_phone_card_count" class="form-control"></div>
                             <div class="col-12 col-md-2">
                               ยอดบัตรเครดิต
-                              <input type="text" disabled value="{{ bill_lunch.pos_ta_bill_phone_card }}"
-                                class="form-control">
-                              <input type="hidden" value="{{ bill_lunch.pos_ta_bill_phone_card }}"
-                                name="pos_ta_bill_phone_card">
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text" disabled
+                                value="{{ bill_lunch.pos_ta_bill_phone_card }}" class="form-control">
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="hidden"
+                                value="{{ bill_lunch.pos_ta_bill_phone_card }}" name="pos_ta_bill_phone_card">
                             </div>
                           </div>
 
@@ -99,19 +110,28 @@
                               <b>เครื่อง POS Dine-in</b>
                             </div>
                             <div class="col-12 col-md-2">
-                              จำนวนใบเงินสด<input type="number" value="{{ bill_lunch.pos_in_bill_cash_count }}"
-                                name="pos_in_bill_cash_count" class="form-control"></div>
+                              จำนวนใบเงินสด<input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                placeholder="0" inputmode="numeric" type="number"
+                                value="{{ bill_lunch.pos_in_bill_cash_count }}" name="pos_in_bill_cash_count"
+                                class="form-control"></div>
                             <div class="col-12 col-md-2">
-                              ยอดเงินสด<input type="text" value="{{ bill_lunch.pos_in_bill_cash }}"
-                                name="pos_in_bill_cash" class="form-control"></div>
+                              ยอดเงินสด<input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.pos_in_bill_cash }}" name="pos_in_bill_cash" class="form-control">
+                            </div>
                             <div class="col-12 col-md-3">
-                              จำนวนใบบัตรเครดิต<input type="text" value="{{ bill_lunch.pos_in_bill_card_count }}"
-                                name="pos_in_bill_card_count" class="form-control"></div>
+                              จำนวนใบบัตรเครดิต<input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                placeholder="0" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.pos_in_bill_card_count }}" name="pos_in_bill_card_count"
+                                class="form-control"></div>
                             <div class="col-12 col-md-2">
                               ยอดบัตรครดิต
-                              <input type="text" disabled value="{{ bill_lunch.pos_in_bill_card }}"
-                                class="form-control">
-                              <input type="hidden" value="{{ bill_lunch.pos_in_bill_card }}" name="pos_in_bill_card">
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text" disabled
+                                value="{{ bill_lunch.pos_in_bill_card }}" class="form-control">
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="hidden"
+                                value="{{ bill_lunch.pos_in_bill_card }}" name="pos_in_bill_card">
                             </div>
                           </div>
 
@@ -121,37 +141,58 @@
                             </div>
                           </div>
                           <div class="row">
-                            <div class="col-12 col-md-3 mt-5"><b>บิล TA Online</b></div>
-                            <div class="col-12 col-md-2">
-                              จำนวนใบเงินสด<input type="number" value="{{ bill_lunch.real_bill_online_cash_count }}"
-                                name="real_bill_online_cash_count" class="form-control"></div>
-                            <div class="col-12 col-md-2">ยอดเงินสด<input type="text"
-                                value="{{ bill_lunch.real_bill_online_cash }}" name="real_bill_online_cash"
-                                class="form-control"></div>
-                            <div class="col-12 col-md-3">จำนวนใบบัตรเครดิต<input type="text"
-                                value="{{ bill_lunch.real_bill_online_card_count }}" name="real_bill_online_card_count"
-                                class="form-control"></div>
-                                <div class="col-12 col-md-2">ยอดบัตรเครดิต
-                                  <input type="text" disabled value="{{ bill_lunch.real_bill_online_card }}"
-                                    class="form-control">
-                                  <input type="hidden" value="{{ bill_lunch.real_bill_online_card }}"
-                                    name="real_bill_online_card">
-                                </div>
-                          </div>
-                          <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล TA Phone</b></div>
                             <div class="col-12 col-md-2">
-                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_lunch.real_bill_taphone_dividepay_count }}"
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input onfocus="clearInputValue(this)"
+                                onblur="restoreInputValue(this)" placeholder="0" inputmode="numeric" type="number"
+                                value="{{ bill_lunch.real_bill_taphone_dividepay_count }}"
                                 name="real_bill_taphone_dividepay_count" class="form-control"></div>
                           </div>
-                          
+
                           <div class="row">
                             <div class="col-12 col-md-3 mt-5"><b>บิล Dine in</b></div>
                             <div class="col-12 col-md-2">
-                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input type="number" value="{{ bill_lunch.real_bill_dinein_dividepay_count }}"
+                              จำนวนใบที่แบ่งจ่ายเงินสด/บัตร<input onfocus="clearInputValue(this)"
+                                onblur="restoreInputValue(this)" placeholder="0" inputmode="numeric" type="number"
+                                value="{{ bill_lunch.real_bill_dinein_dividepay_count }}"
                                 name="real_bill_dinein_dividepay_count" class="form-control"></div>
                           </div>
-                          
+
+
+                          <div class="row">
+                            <div class="col-12 mt-5">
+                              <h3>แก้ไขยอด Online</h3>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-12 col-md-3 mt-5">
+                              <b>TA Online</b>
+                            </div>
+                            <div class="col-12 col-md-2">
+                              จำนวนใบเงินสด
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                                inputmode="numeric" type="number" value="{{ bill_lunch.real_bill_online_cash_count }}"
+                                name="real_bill_online_cash_count" class="form-control">
+                            </div>
+                            <div class="col-12 col-md-2">
+                              ยอดเงินสด<input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.real_bill_online_cash }}" name="real_bill_online_cash"
+                                class="form-control"></div>
+                            <div class="col-12 col-md-3">
+                              จำนวนใบบัตรเครดิต<input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                placeholder="0" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.real_bill_online_card_count }}" name="real_bill_online_card_count"
+                                class="form-control"></div>
+                            <div class="col-12 col-md-2">
+                              ยอดบัตรเครดิต
+                              <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                placeholder="0.00" inputmode="numeric" type="text"
+                                value="{{ bill_lunch.real_bill_online_card }}" class="form-control"
+                                name="real_bill_online_card">
+                            </div>
+                          </div>
+
                           <div class="justify-content-center d-flex mt-5">
                             <a href="/lunch-input-quick/{{daily_report_id}}/"
                               class="btn btn-secondary btn-lg">ย้อนกลับ</a>

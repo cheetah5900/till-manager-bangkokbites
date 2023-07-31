@@ -21,27 +21,29 @@
                       <div class="row">
                         <h5 class="mt-3">เช็คจากเครื่อง</h5>
                         <div class="col-12 col-md-3">EDC หน้าร้าน
-                          <input type="text" value="{{ bill_lunch.edc_in_credit }}" name="edc_in_credit" class="form-control">
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ bill_lunch.edc_in_credit }}" name="edc_in_credit"
+                            class="form-control">
                         </div>
                         <div class="col-12 col-md-3">POS TA
-                          <input type="text" value="{{ bill_lunch.pos_ta_bill_phone_card }}" name="pos_ta_bill_phone_card"
-                            class="form-control">
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ bill_lunch.pos_ta_bill_phone_card }}"
+                            name="pos_ta_bill_phone_card" class="form-control">
                         </div>
                         <div class="col-12 col-md-3">POS Dine-in
-                          <input type="text" value="{{ bill_lunch.pos_in_bill_card }}" name="pos_in_bill_card"
-                            class="form-control">
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ bill_lunch.pos_in_bill_card }}"
+                            name="pos_in_bill_card" class="form-control">
                         </div>
                         <h5 class="mt-3">เช็คจากบิล</h5>
-                        <div class="col-12 col-md-3">TA Online
-                          <input type="text" value="{{ bill_lunch.real_bill_online_card }}" name="real_bill_online_card"
-                            class="form-control">
-                        </div>
-                        <div class="col-12 col-md-3">Tip
-                          <input type="text" value="{{ bill_lunch.tip_credit }}" name="tip_credit"
+                        <div class="col-12 col-md-3">Tip EDC หน้าร้าน
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ bill_lunch.tip_credit }}" name="tip_credit"
                             class="form-control">
                         </div>
                         <div class="col-12 col-md-2">กดเครดิตขาด
-                          <input type="text" value="{{ bill_lunch.wrong_credit }}" name="wrong_credit"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ bill_lunch.wrong_credit }}" name="wrong_credit"
                             class="form-control">
                         </div>
                       </div>

@@ -6,7 +6,7 @@
   <div class="weekly-best-seller-area py-3">
     <div class="container">
       <div class="section-heading">
-        <h2>รายการคนส่ง Home ({{ date }})</h2>
+        <h2>รายละเอียดHome ({{ date }})</h2>
       </div>
       <div class="row g-3">
         <div class="col-12">
@@ -17,7 +17,8 @@
                   {% csrf_token %}
                   <div class="row">
                     <div class="col-12">
-                      <div class="row">
+                      <div class="row table-responsive">
+                        <h5>คนส่ง</h5>
                         <table class="table">
                           <tr>
                             <td>ชื่อคนส่ง</td>
@@ -27,7 +28,8 @@
                             <td>จำนวน OA</td>
                             <td>ยอด OA</td>
                             <td><b>Total</b></td>
-                            <td></td>
+                            <td>Edit</td>
+                            <td>Delete</td>
                           </tr>
                           {% for delivery_detail in related_delivery_details %}
                           <tr>
@@ -38,7 +40,13 @@
                             <td>{{ delivery_detail.real_bill_home_oa_count }}</td>
                             <td>{{ delivery_detail.real_bill_home_oa_amount }}</td>
                             <td>{{ delivery_detail.sum_commission_and_oa }}</td>
-                            <td><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}" class="btn btn-success">แก้ไข</a></td>
+                            <td><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}"
+                                class="btn btn-success">แก้ไข</a></td>
+                            <td>
+                              <a class="btn btn-danger"
+                                href="{% url 'delete-delivery-detail' delivery_detail.id daily_report_id %}"
+                                onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                            </td>
                           </tr>
                           {% endfor %}
                         </table>
@@ -46,7 +54,8 @@
                     </div>
                     <div class="justify-content-center d-flex mt-5 mb-3">
                       <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                      <a href="/home-input-quick/{{daily_report_id}}/0" class="btn btn-primary btn-lg">เพิ่มข้อมูลคนส่ง</a>
+                      <a href="/home-input-quick/{{daily_report_id}}/0"
+                        class="btn btn-primary btn-lg">เพิ่มข้อมูลคนส่ง</a>
                     </div>
                 </form>
               </div>
@@ -54,7 +63,69 @@
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
-{% endblock content %}
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card weekly-product-card">
+            <div class="card-body align-items-center">
+              <div class="product-description" style="width: 100%; max-width: 100%;">
+
+                <div class="row">
+                  <div class="col-12 mt-3">
+                    <h3>เปรียบเทียบยอด Home Online</h3>
+
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-12">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <tr>
+                          <td>จำนวนใบเงินสด</td>
+                          <td>จำนวนเงินสด</td>
+                          <td>จำนวนใบบัตร</td>
+                          <td>จำนวนบัตร</td>
+                        </tr>
+                        <tr class="table-primary">
+                          <td colspan="3">ยอด Home Online จากระบบ</td>
+                          <td> <a href="/get-online-data/{{daily_report_id}}/home" class="btn btn-primary">ดึงข้อมูล</a>
+                          </td>
+                        </tr>
+
+                        <tr>
+                          <td>{{ bill_dinner.delivery_cash_count_in_online_system }}</td>
+                          <td>{{ bill_dinner.delivery_cash_amount_in_online_system }}</td>
+                          <td>{{ bill_dinner.delivery_card_count_in_online_system }}</td>
+                          <td>{{ bill_dinner.delivery_card_amount_in_online_system }}</td>
+                        </tr>
+                        <tr class="table-primary">
+                          <td colspan="4">ยอด Home Online จากการรวมรายการด้านบน</td>
+                        </tr>
+
+                        <tr>
+                          <td>{{ deliveryTotalCount }}</td>
+                          <td>{{ deliveryTotalCommissionAndOa }}</td>
+                          <td>{{ deliveryTotalCommissionAndOa }}</td>
+                          <td>{{ deliveryTotalCommissionAndOa }}</td>
+                        </tr>
+
+                      </table>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12">
+
+
+                        </table>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endblock content %}

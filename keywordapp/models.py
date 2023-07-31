@@ -62,6 +62,10 @@ class BillDinnerModel(models.Model):
     edc_in_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     detail_status = models.IntegerField(default=0)
 
+    delivery_cash_count_in_online_system = models.IntegerField(default=0)
+    delivery_cash_amount_in_online_system = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    delivery_card_count_in_online_system = models.IntegerField(default=0)
+    delivery_card_amount_in_online_system = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return self.real_bill_phone_cash
@@ -79,6 +83,8 @@ class DisburseModel(models.Model):
 class DeliveryDetailModel(models.Model):
     delivery_name = models.CharField(max_length=100,default='')
     wage_per_home = models.DecimalField(max_digits=10, decimal_places=2,default=0)
+    edc_home_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    moto_credit = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     real_bill_home_oa_count = models.IntegerField(default=0)
     real_bill_home_oa_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     real_bill_home_phone_cash_count = models.IntegerField(default=0)

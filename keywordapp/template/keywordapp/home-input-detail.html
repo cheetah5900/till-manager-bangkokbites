@@ -16,13 +16,12 @@
                 <form action="" method="post">
                   {% csrf_token %}
                   <div class="row">
-                    <h2 class="mb-3">คิดค่า Commission </h2>
                     <hr>
                     <div class="col-12">
                       <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                         <table class="table table-bordered">
                           <tr class="table-dark">
-                            <td class="align-middle"><b>Home ตอนเย็น</b></td>
+                            <td class="align-middle"><b>คิดค่า Commission</b></td>
                             <td></td>
                           </tr>
                           <tr>
@@ -45,6 +44,30 @@
                           <tr>
                             <td class="align-middle"><b>Total ค่าคอมมิชชั่น</b></td>
                             <td class="text-center align-middle">{{sumHomeCommissionAndOa}}
+                            </td>
+                          </tr>
+                          <tr class="table-dark">
+                            <td class="align-middle"><b>เทียบยอดบัตร กับยอด Home</b></td>
+                            <td class="text-center"><h3>{{resultCheckEqual}}</h3></td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">Online จ่ายบัตร</td>
+                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_online_card}}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td class="align-middle">Phone จ่ายบัตร</td>
+                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_phone_card}}
+                            </td>
+                          </tr>
+                          <tr class="table-info">
+                            <td class="align-middle"><b>รวมยอดจ่ายบัตร</b></td>
+                            <td class="text-center align-middle">{{sumHomeCardAmount}}
+                            </td>
+                          </tr>
+                          <tr class="table-success">
+                            <td class="align-middle"><b>EDC Home + MOTO</b> ({{delivery_detail.edc_home_credit}} + {{delivery_detail.moto_credit}})</td>
+                            <td class="text-center align-middle">{{AddMotoToEdcCard}} 
                             </td>
                           </tr>
                         </table>

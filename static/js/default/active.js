@@ -5,12 +5,6 @@
     var sideNavWrapper = $("#sidenavWrapper");
     var blackOverlay = $(".sidenav-black-overlay");
 
-    // :: Preloader
-    suhaWindow.on('load', function () {
-        $('#preloader').fadeOut('1000', function () {
-            $(this).remove();
-        });
-    });
 
     // :: Navbar
     $("#suhaNavbarToggler").on("click", function () {

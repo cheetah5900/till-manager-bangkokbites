@@ -20,56 +20,88 @@
                       <div class="row">
                         <h5 class="mt-3">ข้อมูลทั่วไป</h5>
                         <div class="col-12 col-md-3">คนส่ง
-                          <input type="text" value="{{ delivery_detail.delivery_name }}"
-                            name="delivery_name" class="form-control">
+                          <input type="text" value="{{ delivery_detail.delivery_name }}" name="delivery_name"
+                            class="form-control">
                         </div>
                         <div class="col-12 col-md-2">ค่าคอมมิชชั่น/ใบ
-                          <input type="text" value="{{ delivery_detail.wage_per_home }}"
-                            name="wage_per_home" class="form-control">
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                            placeholder="0.00" inputmode="numeric" type="text"
+                            value="{{ delivery_detail.wage_per_home }}" name="wage_per_home" class="form-control">
                         </div>
                         <hr class="mt-5">
+                        <h4 class="mt-3">เช็คจากเครื่อง</h4>
+                        <h5 class="mt-3">EDC Home</h5>
+                        <div class="col-12 col-md-2">ยอด EDC
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                            placeholder="0.00" inputmode="numeric" type="text"
+                            value="{{ delivery_detail.edc_home_credit }}" name="edc_home_credit" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอด MOTO
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                            placeholder="0.00" inputmode="numeric" type="text" value="{{ delivery_detail.moto_credit }}"
+                            name="moto_credit" class="form-control">
+                        </div>
                         <h4 class="mt-3">เช็คจากบิล</h4>
-                        <h5 class="mt-3">Home Online</h5>
-                        <div class="col-12 col-md-2">จำนวนใบเงินสด
-                          <input type="text" value="{{ delivery_detail.real_bill_home_online_cash_count }}"
-                            name="real_bill_home_online_cash_count" class="form-control">
-                        </div>
-                        <div class="col-12 col-md-3">ยอดเงินสด
-                          <input type="text" value="{{ delivery_detail.real_bill_home_online_cash }}"
-                            name="real_bill_home_online_cash" class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">จำนวนใบบัตร
-                          <input type="text" value="{{ delivery_detail.real_bill_home_online_card_count }}"
-                            name="real_bill_home_online_card_count" class="form-control">
-                        </div>
-                        <div class="col-12 col-md-2">ยอดบัตร
-                          <input type="text" value="{{ delivery_detail.real_bill_home_online_card }}"
-                            name="real_bill_home_online_card" class="form-control">
-                        </div>
                         <h5 class="mt-3">Home Phone</h5>
                         <div class="col-12 col-md-2">จำนวนใบเงินสด
-                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_cash_count }}"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                            inputmode="numeric" type="text"
+                            value="{{ delivery_detail.real_bill_home_phone_cash_count }}"
                             name="real_bill_home_phone_cash_count" class="form-control">
                         </div>
                         <div class="col-12 col-md-3">ยอดเงินสด
-                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_cash }}"
-                            name="real_bill_home_phone_cash" class="form-control">
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                            placeholder="0.00" inputmode="numeric" type="text"
+                            value="{{ delivery_detail.real_bill_home_phone_cash }}" name="real_bill_home_phone_cash"
+                            class="form-control">
+
+
+
+
                         </div>
                         <div class="col-12 col-md-2">จำนวนใบบัตร
-                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_card_count }}"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                            inputmode="numeric" type="text"
+                            value="{{ delivery_detail.real_bill_home_phone_card_count }}"
                             name="real_bill_home_phone_card_count" class="form-control">
                         </div>
                         <div class="col-12 col-md-2">ยอดบัตร
-                          <input type="text" value="{{ delivery_detail.real_bill_home_phone_card }}"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ delivery_detail.real_bill_home_phone_card }}"
                             name="real_bill_home_phone_card" class="form-control">
+                        </div>
+                        <h5 class="mt-3">Home Online</h5>
+                        <div class="col-12 col-md-2">จำนวนใบเงินสด
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                            inputmode="numeric" type="text"
+                            value="{{ delivery_detail.real_bill_home_online_cash_count }}"
+                            name="real_bill_home_online_cash_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-3">ยอดเงินสด
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ delivery_detail.real_bill_home_online_cash }}"
+                            name="real_bill_home_online_cash" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">จำนวนใบบัตร
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                            inputmode="numeric" type="text"
+                            value="{{ delivery_detail.real_bill_home_online_card_count }}"
+                            name="real_bill_home_online_card_count" class="form-control">
+                        </div>
+                        <div class="col-12 col-md-2">ยอดบัตร
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ delivery_detail.real_bill_home_online_card }}"
+                            name="real_bill_home_online_card" class="form-control">
                         </div>
                         <h5 class="mt-3">Over Area (OA)</h5>
                         <div class="col-12 col-md-2">จำนวนใบ OA
-                          <input type="text" value="{{ delivery_detail.real_bill_home_oa_count }}"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0"
+                            inputmode="numeric" type="text" value="{{ delivery_detail.real_bill_home_oa_count }}"
                             name="real_bill_home_oa_count" class="form-control">
                         </div>
                         <div class="col-12 col-md-3">จำนวนเงิน OA
-                          <input type="text" value="{{ delivery_detail.real_bill_home_oa_amount }}"
+                          <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                            inputmode="numeric" type="text" value="{{ delivery_detail.real_bill_home_oa_amount }}"
                             name="real_bill_home_oa_amount" class="form-control">
                         </div>
                       </div>

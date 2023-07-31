@@ -24,7 +24,6 @@ Created: 15 Dec 2019
     * Main Styles
         + Reboot CSS
         + Shortcode CSS
-        + Preloader CSS
         + Animation CSS
         + Demo CSS
         + Header CSS
@@ -163,26 +162,6 @@ textarea:invalid {
 @media only screen and (min-width: 576px) and (max-width: 767px) {
   .container {
     max-width: 450px; } }
-
-/* Preloader CSS */
-#preloader {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  z-index: 9999999;
-  top: 0;
-  left: 0;
-  background-color: #fef8ff;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  overflow: hidden; }
 
 /* Shortcodes CSS */
 .h-100vh {
@@ -1290,6 +1269,15 @@ textarea:invalid {
   .suha-sidenav-wrapper.filter-nav {
     background: #fef8ff; }
 
+    .radio-container {
+      display: flex; /* Use flexbox to display radio inputs in a row */
+  }
+  
+  /* Add some margin to separate the labels (you can adjust the value as needed) */
+  .radio-container label {
+      margin-right: 20px;
+  }
+  
 .sidenav-black-overlay {
   -webkit-transition-duration: 500ms;
           transition-duration: 500ms;

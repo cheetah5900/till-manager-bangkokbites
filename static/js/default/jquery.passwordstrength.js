@@ -13,7 +13,7 @@
             minimumChars: 8
         }, options);
         var parentContainer = this.parent();
-        var progressHtml = "<div class='password-meter-wrapper progress'><div id='password-progress' class='progress-bar' role='progressbar' aria-valuenow='1' aria-valuemin='0' aria-valuemax='100' style='width:1%;'></div></div><div id='password-score' class='password-score'></div><div id='password-recommendation' class='password-recommendation'></div><input type='hidden' id='password-strength-score' value='0'>";
+        var progressHtml = "<div class='password-meter-wrapper progress'><div id='password-progress' class='progress-bar' role='progressbar' aria-valuenow='1' aria-valuemin='0' aria-valuemax='100' style='width:1%;'></div></div><div id='password-score' class='password-score'></div><div id='password-recommendation' class='password-recommendation'></div><input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00" inputmode="numeric" type='hidden' id='password-strength-score' value='0'>";
         $(progressHtml).insertAfter('input[type=password]:last');
         $('#password-score').text(defaults.defaultMessage);
         $('.password-meter-wrapper').hide();
