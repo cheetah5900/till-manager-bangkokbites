@@ -23,6 +23,12 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 # import model
 from keywordapp.models import *
 
+# IMAGE
+import os
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+
 
 def Index(request):
     context = {}
@@ -537,6 +543,9 @@ def DinnerReport(request, daily_report_id):
     # Retrieve other related models or fields if needed
 
     date = daily_report.date
+    day = date.strftime("%A")
+    dateForImage = date.strftime("%d / %m / %y")
+
     bill_lunch_id = daily_report.bill_lunch.id
     bill_dinner_id = daily_report.bill_dinner.id
 
@@ -583,7 +592,6 @@ def DinnerReport(request, daily_report_id):
     related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
 
     # * Disburse Section
-    # You can also access the related DeliveryDetailModel instances from a DailyReportModel instance
     related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
 
     # Summarize the number of delivery man
@@ -598,9 +606,11 @@ def DinnerReport(request, daily_report_id):
         if detail.real_bill_home_oa_count > 0:
             detail.show_oa_count = " + " + \
                 str(detail.real_bill_home_oa_count)+" OA"
+        else: detail.show_oa_count = ''
         if detail.real_bill_home_oa_amount > 0:
             detail.show_oa_amount = " + " + \
                 str(int(detail.real_bill_home_oa_amount))
+        else: detail.show_oa_amount = ''
 
     # sum all without separating delivery man
     realBillHomePhoneCashCountDinner = sum(
@@ -622,25 +632,41 @@ def DinnerReport(request, daily_report_id):
 
     # ? Summary
     # * Report Section
-    # Row 1
+    # Row 1 Ta Online Lunch
     totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + \
         realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
+    sumrealBillOnlineCount = realBillOnlineCashCountLunch + realBillOnlineCardCountLunch
+    sumrealBillOnline = realBillOnlineCashLunch + realBillOnlineCardLunch
+    # Row 2 Ta Phone Lunch
+    sumrealBillPhoneCount = realBillPhoneCashCountLunch + realBillPhoneCardCountLunch - realBillTaPhoneDividePayCountLunch
+    realBillPhoneLunch = realBillPhoneCashLunch + realBillPhoneCardLunch
+    # Row 3 Dine-in Lunch
+    sumrealBillInCount = realBillInCashCountLunch + realBillInCardCountLunch - realBillDineInDividePayCountLunch
+    sumrealBillIn = realBillInCashLunch + realBillInCardLunch
     # Row 10
     sumTotal = realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + \
         realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner + realBillPhoneCashDinner + realBillPhoneCardDinner + \
         realBillOnlineCashDinner + realBillOnlineCardDinner + \
         realBillInCashDinner + realBillInCardDinner
     # Row 4
-    totalBillDinner = intcomma(sumTotal - totalBillLunch)
-    # Row 4
+    sumrealBillHomePhoneDinner = realBillHomePhoneCashDinner + realBillHomePhoneCardDinner
+    # Row 4 Home Phone
     sumrealBillHomePhoneCountDinner = realBillHomePhoneCashCountDinner + \
         realBillHomePhoneCardCountDinner
-    # Row 5
+    # Row 5 Home Online
     sumrealBillHomeOnlineCountDinner = realBillHomeOnlineCashCountDinner + \
         realBillHomeOnlineCardCountDinner
-    # Row 7
+    sumrealBillHomeOnlineDinner = realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner
+    # Row 6 T/A Phone Dinner
+    sumrealBillPhoneCountDinner = realBillPhoneCashCountDinner + realBillPhoneCardCountDinner - realBillTaPhoneDividePayCountDinner
+    sumrealBillPhoneDinner = realBillPhoneCashDinner + realBillPhoneCardDinner
+    # Row 7 T/A Online Dinner
     sumrealBillOnlineCountDinner = realBillOnlineCashCountDinner + \
         realBillOnlineCardCountDinner
+    sumrealBillOnlineDinner = realBillOnlineCashDinner + realBillOnlineCardDinner
+    # Row 8 Dine-in Dinner
+    sumrealBillInCountDinner = realBillInCashCountDinner + realBillInCardCountDinner - realBillDineInDividePayCountDinner
+    sumrealBillInDinner = realBillInCashDinner + realBillInCardDinner
     # Row 10 Column 4
     sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + \
         realBillHomeOnlineCashDinner + realBillPhoneCashDinner + \
@@ -649,6 +675,8 @@ def DinnerReport(request, daily_report_id):
     sumCard = realBillOnlineCardLunch + realBillPhoneCardLunch + realBillInCardLunch + realBillHomePhoneCardDinner + \
         realBillHomeOnlineCardDinner + realBillPhoneCardDinner + \
         realBillOnlineCardDinner + realBillInCardDinner
+    # Right Section
+    totalBillDinner = intcomma(sumTotal - totalBillLunch)
 
     # * Delivery section
     # Sum all count both phone and online and
@@ -671,51 +699,57 @@ def DinnerReport(request, daily_report_id):
     balanceAfterMinusExpense = sumCash - \
         totalSumCommissionAndOa - totalSumDisburse - sumTip
 
+    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlineCashLunch,realBillOnlineCardLunch,sumrealBillPhoneCount,realBillPhoneLunch,realBillPhoneCashLunch,realBillPhoneCardLunch,sumrealBillInCount,sumrealBillIn,realBillInCashLunch,realBillInCardLunch,realBillHomePhoneCashDinner,realBillHomePhoneCardDinner,sumrealBillHomePhoneCountDinner,sumrealBillHomePhoneDinner,realBillHomeOnlineCashDinner,realBillHomeOnlineCardDinner,sumrealBillHomeOnlineCountDinner,sumrealBillHomeOnlineDinner,sumrealBillPhoneCountDinner,sumrealBillPhoneDinner,realBillPhoneCashDinner,realBillPhoneCardDinner,sumrealBillOnlineCountDinner,sumrealBillOnlineDinner,realBillOnlineCashDinner,realBillOnlineCardDinner,sumrealBillInCountDinner,sumrealBillInDinner,realBillInCashDinner,realBillInCardDinner,sumTotal,sumCash,sumCard,totalBillLunch,totalBillDinner,tipLunch,tipDinner,related_delivery_details,sumrealBillHomeCountDinner,totalSumCommissionAndOa,totalOnlineCount,totalOnlineAmount,day,dateForImage,related_disburse_details,totalSumDisburse,balanceAfterMinusExpense,wrongCreditLunch,wrongCreditDinner)
+
     context = {
         'date': date,
         'daily_report_id': daily_report_id,
         #! Lunch
         # Row 1 Ta Online Lunch
-        'sumrealBillOnlineCount': realBillOnlineCashCountLunch + realBillOnlineCardCountLunch,
-        'sumrealBillOnline': intcomma(realBillOnlineCashLunch + realBillOnlineCardLunch),
+        'sumrealBillOnlineCount': sumrealBillOnlineCount,
+        'sumrealBillOnline': sumrealBillOnline,
         'realBillOnlineCashLunch': realBillOnlineCashLunch,
         'realBillOnlineCardLunch': realBillOnlineCardLunch,
         # Row 2 Ta Phone Lunch
-        'sumrealBillPhoneCount': realBillPhoneCashCountLunch + realBillPhoneCardCountLunch - realBillTaPhoneDividePayCountLunch,
-        'sumrealBillPhone': intcomma(realBillPhoneCashLunch + realBillPhoneCardLunch),
+        'sumrealBillPhoneCount': sumrealBillPhoneCount,
+        'sumrealBillPhone': realBillPhoneLunch,
         'realBillPhoneCashLunch': realBillPhoneCashLunch,
         'realBillPhoneCardLunch': realBillPhoneCardLunch,
         # Row 3 Dine-in Lunch
-        'sumrealBillInCount': realBillInCashCountLunch + realBillInCardCountLunch - realBillDineInDividePayCountLunch,
-        'sumrealBillIn': intcomma(realBillInCashLunch + realBillInCardLunch),
+        'sumrealBillInCount': sumrealBillInCount,
+        'sumrealBillIn': sumrealBillIn,
         'realBillInCashLunch': realBillInCashLunch,
         'realBillInCardLunch': realBillInCardLunch,
+        # Row other
+        'tipLunch': tipLunch,
         #! Dinner
         # Row 4 Home Phone
         'realBillHomePhoneCashDinner': realBillHomePhoneCashDinner,
         'realBillHomePhoneCardDinner': realBillHomePhoneCardDinner,
         'sumrealBillHomePhoneCountDinner': sumrealBillHomePhoneCountDinner,
-        'sumrealBillHomePhoneDinner': intcomma(realBillHomePhoneCashDinner + realBillHomePhoneCardDinner),
+        'sumrealBillHomePhoneDinner': sumrealBillHomePhoneDinner,
         # Row 5 Home Online
         'realBillHomeOnlineCashDinner': realBillHomeOnlineCashDinner,
         'realBillHomeOnlineCardDinner': realBillHomeOnlineCardDinner,
         'sumrealBillHomeOnlineCountDinner': sumrealBillHomeOnlineCountDinner,
-        'sumrealBillHomeOnlineDinner': intcomma(realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner),
+        'sumrealBillHomeOnlineDinner': sumrealBillHomeOnlineDinner,
         # Row 6 T/A Phone Dinner
-        'sumrealBillPhoneCountDinner': realBillPhoneCashCountDinner + realBillPhoneCardCountDinner - realBillTaPhoneDividePayCountDinner,
-        'sumrealBillPhoneDinner': intcomma(realBillPhoneCashDinner + realBillPhoneCardDinner),
+        'sumrealBillPhoneCountDinner': sumrealBillPhoneCountDinner,
+        'sumrealBillPhoneDinner': sumrealBillPhoneDinner,
         'realBillPhoneCashDinner': realBillPhoneCashDinner,
         'realBillPhoneCardDinner': realBillPhoneCardDinner,
         # Row 7 T/A Online Dinner
         'sumrealBillOnlineCountDinner': sumrealBillOnlineCountDinner,
-        'sumrealBillOnlineDinner': intcomma(realBillOnlineCashDinner + realBillOnlineCardDinner),
+        'sumrealBillOnlineDinner': sumrealBillOnlineDinner,
         'realBillOnlineCashDinner': realBillOnlineCashDinner,
         'realBillOnlineCardDinner': realBillOnlineCardDinner,
         # Row 8 Dine-in Dinner
-        'sumrealBillInCountDinner': realBillInCashCountDinner + realBillInCardCountDinner - realBillDineInDividePayCountDinner,
-        'sumrealBillInDinner': intcomma(realBillInCashDinner + realBillInCardDinner),
+        'sumrealBillInCountDinner': sumrealBillInCountDinner,
+        'sumrealBillInDinner': sumrealBillInDinner,
         'realBillInCashDinner': realBillInCashDinner,
         'realBillInCardDinner': realBillInCardDinner,
+        # Row other
+        'tipDinner': tipDinner,
         #! Total
         'totalBillLunch': totalBillLunch,
         'totalBillDinner': totalBillDinner,
@@ -736,8 +770,13 @@ def DinnerReport(request, daily_report_id):
         #! Disburse Section
         'related_disburse_details': related_disburse_details,
         'balanceAfterMinusExpense': balanceAfterMinusExpense,
+
+        # Image
+        'imgLocation': imgLocation,
     }
-    return render(request, 'keywordapp/dinner-report.html', context)
+
+    return render(request, 'keywordapp/report-image.html', context)
+    # return render(request, 'keywordapp/dinner-report.html', context)
 
 
 def HomeList(request, daily_report_id):
@@ -892,6 +931,10 @@ def GetOnlineOrderData(request, daily_report_id, shift='dinner'):
     input_date = input_date.strftime('%b %d, %Y')
 
     options = webdriver.ChromeOptions()
+    # Specify the path to your custom user data directory
+    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
+    options.add_argument(f'--user-data-dir={custom_user_data_dir}')
+
     # options.add_argument("--headless")
     #! PC
     # driver = webdriver.Chrome(options=options)
@@ -1071,3 +1114,174 @@ def DeleteDisburse(request, disburse_id, daily_report_id):
     disburse = get_object_or_404(DisburseModel, id=disburse_id)
     disburse.delete()
     return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report_id}))
+
+def GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlineCashLunch,realBillOnlineCardLunch,sumrealBillPhoneCount,realBillPhoneLunch,realBillPhoneCashLunch,realBillPhoneCardLunch,sumrealBillInCount,sumrealBillIn,realBillInCashLunch,realBillInCardLunch,realBillHomePhoneCashDinner,realBillHomePhoneCardDinner,sumrealBillHomePhoneCountDinner,sumrealBillHomePhoneDinner,realBillHomeOnlineCashDinner,realBillHomeOnlineCardDinner,sumrealBillHomeOnlineCountDinner,sumrealBillHomeOnlineDinner,sumrealBillPhoneCountDinner,sumrealBillPhoneDinner,realBillPhoneCashDinner,realBillPhoneCardDinner,sumrealBillOnlineCountDinner,sumrealBillOnlineDinner,realBillOnlineCashDinner,realBillOnlineCardDinner,sumrealBillInCountDinner,sumrealBillInDinner,realBillInCashDinner,realBillInCardDinner,sumTotal,sumCash,sumCard,totalBillLunch,totalBillDinner,tipLunch,tipDinner,related_delivery_details,sumrealBillHomeCountDinner,totalSumCommissionAndOa,totalOnlineCount,totalOnlineAmount,day,dateForImage,related_disburse_details,totalSumDisburse,balanceAfterMinusExpense,wrongCreditLunch,wrongCreditDinner):
+
+    path = os.getcwd()
+    locationTemplate = os.path.join(path, 'static', 'img', 'template.jpg')
+
+    # * ================= START :  SET FONT =================
+    fontPath = os.path.join(path, 'static', 'fonts', 'kanit.ttf')
+    fontThai = ImageFont.truetype(fontPath, 24)
+    fontTotalShift = ImageFont.truetype(fontPath, 36)
+
+# * ================= END :  SET FONT =================
+
+    img = Image.open(locationTemplate)
+    imgObj = ImageDraw.Draw(img)
+
+    # * ================= START :  GET FONT COLOR =================
+    # ? date text
+    FontColor = (255, 255, 255)
+
+    # * ================= END :  GET FONT COLOR =================
+    # Row 1 Ta Online Lunch
+    imgObj.text((60, 50), str(sumrealBillOnlineCount), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((90, 50), str("TA Online"), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 50), str(sumrealBillOnline), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 50), str(realBillOnlineCashLunch), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 50), str(realBillOnlineCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    # Row 2 Ta Phone Lunch
+    imgObj.text((60, 130), str(sumrealBillPhoneCount), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 140), str(realBillPhoneLunch), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 140), str(realBillPhoneCashLunch), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 140), str(realBillPhoneCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    # Row 3 Dine-in Lunch
+    imgObj.text((60, 170), str(sumrealBillInCount), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 180), str(sumrealBillIn), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 180), str(realBillInCashLunch), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 180), str(realBillInCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    # Row 4 Home Phone
+    imgObj.text((60, 210), str(sumrealBillHomePhoneCountDinner), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 220), str(sumrealBillHomePhoneDinner), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 220), str(realBillHomePhoneCashDinner), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 220), str(realBillHomePhoneCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    # Row 5 Home Online
+    imgObj.text((60, 250), str(sumrealBillHomeOnlineCountDinner), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 260), str(sumrealBillHomeOnlineDinner), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 260), str(realBillHomeOnlineCashDinner), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 260), str(realBillHomeOnlineCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    # Row 6 T/A Phone Dinner
+    imgObj.text((60, 290), str(sumrealBillPhoneCountDinner), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 300), str(sumrealBillPhoneDinner), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 300), str(realBillPhoneCashDinner), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 300), str(realBillPhoneCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    # Row 7 T/A Online Dinner
+    imgObj.text((60, 330), str(sumrealBillOnlineCountDinner), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 340), str(sumrealBillOnlineDinner), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 340), str(realBillOnlineCashDinner), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 340), str(realBillOnlineCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    # Row 8 Dine-in Dinner
+    imgObj.text((60, 380), str(sumrealBillInCountDinner), font=fontThai, fill=FontColor) # Total Count
+    imgObj.text((300, 380), str(sumrealBillInDinner), font=fontThai, fill=FontColor) # Total Amount
+    imgObj.text((430, 380), str(realBillInCashDinner), font=fontThai, fill=FontColor) # Cash Amount
+    imgObj.text((590, 380), str(realBillInCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    # Row 9 Total
+    imgObj.text((300, 420), str(sumTotal), font=fontThai, fill=FontColor) # Total Amount
+    addTransparentHighlight(img, str(sumTotal), (300, 420), fontTotalShift, 0.2,'orange')
+    imgObj.text((430, 420), str(sumCash), font=fontThai, fill=FontColor) # Cash Amount
+    addTransparentHighlight(img, str(sumCash), (430, 420), fontTotalShift, 0.2,'orange')
+    imgObj.text((590, 420), str(sumCard), font=fontThai, fill=FontColor) # Card Amount
+    addTransparentHighlight(img, str(sumCard), (590, 420), fontTotalShift, 0.2,'orange')
+    # Right Column
+    imgObj.text((760, 160), str(totalBillLunch), font=fontTotalShift, fill=FontColor) # Total Bill Lunch
+    addTransparentHighlight(img, str(totalBillLunch), (760, 160), fontTotalShift, 0.2,'orange')
+
+    imgObj.text((710, 300), str(totalBillDinner), font=fontTotalShift, fill=FontColor) # Total Bill Dinner
+    addTransparentHighlight(img, str(totalBillDinner), (710, 300), fontTotalShift, 0.2,'orange')
+    # Tip
+    imgObj.text((590, 470), str('Tip Lunch '+str(tipLunch)), font=fontThai, fill=FontColor) # Tip Lunch
+    addTransparentHighlight(img, str('Tip Lunch '), (590, 470), fontTotalShift, 0.5,'pink')
+    imgObj.text((590, 500), str('Tip Dinner '+str(tipDinner)), font=fontThai, fill=FontColor) # Tip Dinner
+    addTransparentHighlight(img, str('Tip Dinner '), (590, 500), fontTotalShift, 0.5,'pink')
+    # Home Delivery
+    homePosXHomeCount = 100
+    homePosYHomeCount = 545
+    homePosXShowOaCount = 120
+    homePosYShowOaCount = 545
+    homePosXSumCommission = 330
+    homePosYSumCommission = 545
+    homePosXShowOaAmount = 360
+    homePosYShowOaAmount = 360
+    homePosXDeliveryName = 420
+    homePosYDeliveryName = 545
+
+    for item in related_delivery_details:
+        imgObj.text((homePosXHomeCount, homePosYHomeCount), str(item.home_count), font=fontThai, fill=FontColor) # Home Count
+        imgObj.text((homePosXShowOaCount, homePosYShowOaCount), str(item.show_oa_count), font=fontThai, fill=FontColor) # Show OA Count
+        imgObj.text((homePosXSumCommission, homePosYSumCommission), str(item.sum_commission), font=fontThai, fill=FontColor) # Sum Commission
+        imgObj.text((homePosXShowOaAmount, homePosYShowOaAmount), str(item.show_oa_amount), font=fontThai, fill=FontColor) # Show OA Amount
+        imgObj.text((homePosXDeliveryName, homePosYDeliveryName), str(item.delivery_name), font=fontThai, fill=FontColor) # Show OA Amount
+        # Step position down
+        homePosYHomeCount += 45
+        homePosYShowOaCount += 45
+        homePosYSumCommission += 45
+        homePosYShowOaAmount += 45
+        homePosYDeliveryName += 45
+    
+    imgObj.text((100, 670), str(sumrealBillHomeCountDinner)+'                      '+str(totalSumCommissionAndOa), font=fontThai, fill=FontColor) # Total Delivery
+    addTransparentHighlight(img, str(sumrealBillHomeCountDinner)+'                   ', (100, 670), fontTotalShift, 0.2,'pink')
+
+    # Total Online
+    imgObj.text((690, 545), '('+str(totalOnlineCount)+') '+str(totalOnlineAmount), font=fontThai, fill=FontColor) # Total Online
+    addTransparentHighlight(img,'  '+str(totalOnlineAmount), (690, 545), fontTotalShift, 0.2,'orange')
+
+    # Wrong Credit
+    imgObj.text((550, 700),'กดเครดิตขาด(เที่ยง) '+str(wrongCreditLunch), font=fontThai, fill=FontColor) # Wrong Credit Lunch
+    addTransparentHighlight(img,'                     ', (550, 700), fontTotalShift, 0.2,'orange')
+    imgObj.text((550, 730),'กดเครดิตขาด(เย็น) '+str(wrongCreditDinner), font=fontThai, fill=FontColor) # Wrong Credit Dinner
+    addTransparentHighlight(img,'                     ', (550, 730), fontTotalShift, 0.2,'orange')
+    # Dairy Record
+    imgObj.text((1000, 90), str(day), font=fontThai, fill=FontColor) # Day
+    imgObj.text((1000, 130), str(dateForImage), font=fontThai, fill=FontColor) # Date
+
+    # Dairy Expense
+    ExpensePosX = 950
+    ExpensePosY = 380
+    for item in related_disburse_details:
+        imgObj.text((ExpensePosX, ExpensePosY), str(str(item.name)+'  '+str(item.price)), font=fontThai, fill=FontColor) # Expense
+        # Step position down
+        ExpensePosY += 40
+    
+    imgObj.text((980, 780), str(totalSumDisburse), font=fontTotalShift, fill=FontColor) # Total
+    addTransparentHighlight(img,str(totalSumDisburse), (980, 780), fontTotalShift, 0.5,'pink')
+
+    # Balance
+    imgObj.text((350, 780), str(balanceAfterMinusExpense), font=fontTotalShift, fill=FontColor) # Balance
+    addTransparentHighlight(img,str(balanceAfterMinusExpense), (350, 780), fontTotalShift, 0.2,'orange')
+
+    locationSaved = path+'/static/img/result.jpg'
+    img.save(locationSaved)
+    imgLocation = '/static/img/result.jpg'
+
+    return imgLocation
+
+def addTransparentHighlight(image, text, text_position, font, opacity,color='orange'):
+    # Create a new transparent image with the same size as the original image
+    rect_img = Image.new('RGBA', image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(rect_img)
+
+    # Draw the text on the transparent image
+    draw.text(text_position, text, font=font)
+
+    # Calculate the size of the text
+    text_width, text_height = draw.textsize(text, font=font)
+
+    # Define the coordinates of the rectangle that will surround the text
+    rect_x1, rect_y1 = text_position
+    rect_x2, rect_y2 = text_position[0] + text_width, text_position[1] + text_height
+
+    # Calculate the fill color with the specified opacity
+    if color == 'orange':
+        fill_color = (255,69,0, int(255 * opacity))
+    elif color == 'pink':
+        fill_color = (255,105,180, int(255 * opacity))
+
+    # Draw a filled and transparent rectangle around the text
+    draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2], outline=None, fill=fill_color)
+
+    # Paste the transparent rectangle image over the original image
+    image.paste(rect_img, (0, 0), rect_img)
+    # path = os.getcwd()
+    # locationSaved = path+'/static/img/result.jpg'
+    # image.save(locationSaved)

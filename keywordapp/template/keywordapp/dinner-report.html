@@ -5,7 +5,7 @@
 <div class="page-content-wrapper">
   <!-- Weekly Best Sellers-->
   <div class="weekly-best-seller-area py-3">
-    <div class="container">
+    <div class="">
       <div class="section-heading">
         <h2>รายงานผลการปิดยอด Dinner ({{ date }})</h2>
       </div>
@@ -15,7 +15,7 @@
             <div class="card-body align-items-center">
               <div class="product-description" style="width:100%;max-width: 100%;">
                 <div class="product-title d-block">ตารางรายงานผล</div>
-                <div class="coupon-text-wrap d-flex align-items-center">
+                <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <table class="table table-bordered">
                     <tr>
                       <th>จำนวนใบ</th>
@@ -105,12 +105,14 @@
                         <td>H{{forloop.counter}}</td>
                         <td>{{item.home_count}}{{item.show_oa_count}}</td>
                         <td>{{item.sum_commission}}{{item.show_oa_amount}}</td>
+                        <td>{{item.delivery_name}}</td>
                       </tr>
                       {%endfor%}
                       <tr class="table-primary">
                         <td>Total</td>
                         <td>{{sumrealBillHomeCountDinner}}</td>
                         <td>{{totalSumCommissionAndOa}}</td>
+                        <td></td>
                       </tr>
                     </table>
                   </div>
@@ -141,12 +143,16 @@
                   <div class="coupon-text-wrap d-flex align-items-center">
                     <table class="table">
                       <tr>
-                        <td>Tip</td>
+                        <td>Tip Lunch</td>
+                        <td>{{tipLunch}}</td>
+                        <td>Tip Dinner</td>
+                        <td>{{tipDinner}}</td>
+                        <td>รวม Tip</td>
                         <td>{{sumTip}}</td>
-                        <td>กดเครดิตขาด</td>
-                        <td>{{sumWrongCredit}}</td>
                       </tr>
                       <tr>
+                        <td>กดเครดิตขาด</td>
+                        <td>{{sumWrongCredit}}</td>
                         <td>Total Online</td>
                         <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
                         <td>Balance</td>

@@ -28,4 +28,5 @@ urlpatterns = [
     
     #? Scraping Data
     path('get-online-data/<str:daily_report_id>/<str:shift>/', GetOnlineOrderData),
+    
 ]
