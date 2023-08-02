@@ -29,6 +29,13 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+# EMAIL
+import imaplib,ssl
+import email
+import time
+from itertools import chain
+import email
+import imaplib
 
 def Index(request):
     context = {}
@@ -1464,6 +1471,74 @@ def AddTransparentHighlight(image, text, text_position, font, opacity, color='or
 
     # Paste the transparent rectangle image over the original image
     image.paste(rect_img, (0, 0), rect_img)
-    # path = os.getcwd()
-    # locationSaved = path+'/static/img/result.jpg'
-    # image.save(locationSaved)
+
+
+
+
+
+
+def ConnectToEmail(request):
+
+    # Your Outlook email credentials
+    username = 'cheetah6541@gmail.com'
+    password = 'bitjqffhoygdllid'
+
+    # Outlook IMAP server and port
+    imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
+    imap_ssl_port = 993
+    try:
+        server = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
+        # Log in to your email account
+        server.login(username, password)
+
+        # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
+        # mailbox = 'INBOX'
+        # server.select(mailbox)
+    except:
+        print("ERROR")
+
+    # # Search for emails (optional)
+    # # Here, we search for all emails in the selected mailbox
+    # status, messages = server.search(None, 'ALL')
+
+    # # Get the list of email IDs
+    # email_ids = messages[0].split()
+
+    # for email_id in email_ids:
+    #     # Fetch the email by its ID
+    #     status, msg_data = server.fetch(email_id, '(RFC822)')
+
+
+    #     msg = email.message_from_bytes(msg_data[0][1])
+
+    #     # Extract email details (e.g., subject, sender, date, body)
+    #     subject = msg['subject']
+    #     sender = msg['from']
+    #     date = msg['date']
+    #     body = ''
+    #     # If the email has multiple parts (e.g., text and HTML), combine them
+    #     if msg.is_multipart():
+    #                     for part in msg.walk():
+    #                         content_type = part.get_content_type()
+    #                         if "text/plain" in content_type or "text/html" in content_type:
+    #                             body += part.get_payload(decode=True).decode()
+
+    #                 # If the email is in plain text, extract the body directly
+    #     else:
+    #         body = msg.get_payload(decode=True).decode()
+
+    #     # Print or process the email details
+    #     print("Subject:", subject)
+    #     print("From:", sender)
+    #     print("Date:", date)
+    #     print("Body:")
+    #     print(body)
+    #     print("==============================")
+    # server.logout()
+    # time.sleep(1)
+
+
+
+
+    return render(request, 'keywordapp/plain.html')
+

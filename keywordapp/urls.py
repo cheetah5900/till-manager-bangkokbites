@@ -30,4 +30,6 @@ urlpatterns = [
     path('online-order/<str:daily_report_id>/', OnlineOrder,name='online-order'),
     path('get-online-data/<str:daily_report_id>/', GetOnlineOrderData),
     
+    #? Email
+    path('email/', ConnectToEmail),
 ]
