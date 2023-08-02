@@ -16,28 +16,25 @@
                 <form method="post">
                   {% csrf_token %}
                   <div class="product-title d-block">เลือกวันที่</div>
-                  <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
-                    inputmode="numeric" type="date" name="choose_date" class="form-control"
-                    value="{{ current_date|date:'Y-m-d' }}">
+                  <input type="date" name="choose_date" class="form-control" value="{{ current_date|date:'Y-m-d' }}">
                   <div class="product-title d-block mt-4">เลือกโหมด</div>
                   <div class="radio-container my-3">
                     <label>
-                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
-                        inputmode="numeric" type="radio" name="mode" value="lunch" checked>
+                      <input type="radio" name="mode" value="lunch" checked>
                       Lunch
                     </label>
                     <label>
-                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
-                        inputmode="numeric" type="radio" name="mode" value="home"> Home
+                      <input type="radio" name="mode" value="home"> Home
                     </label>
                     <label>
-                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
-                        inputmode="numeric" type="radio" name="mode" value="dinner"> Dinner
-                    </label>
-                    <label>
-                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)" placeholder="0.00"
-                        inputmode="numeric" type="radio" name="mode" value="disburse">
+                      <input type="radio" name="mode" value="disburse">
                       รายการเบิก
+                    </label>
+                    <label>
+                      <input type="radio" name="mode" value="dinner"> Dinner
+                    </label>
+                    <label>
+                      <input type="radio" name="mode" value="online"> Online
                     </label>
                   </div>
 

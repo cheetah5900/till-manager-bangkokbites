@@ -67,6 +67,8 @@ def Index(request):
             return redirect(reverse('dinner-input-quick', kwargs={'daily_report_id': daily_report.id}))
         if mode == 'disburse':
             return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report.id}))
+        if mode == 'online':
+            return redirect(reverse('online-order', kwargs={'daily_report_id': daily_report.id}))
 
     return render(request, 'keywordapp/index.html', context)
 
@@ -606,11 +608,13 @@ def DinnerReport(request, daily_report_id):
         if detail.real_bill_home_oa_count > 0:
             detail.show_oa_count = " + " + \
                 str(detail.real_bill_home_oa_count)+" OA"
-        else: detail.show_oa_count = ''
+        else:
+            detail.show_oa_count = ''
         if detail.real_bill_home_oa_amount > 0:
             detail.show_oa_amount = " + " + \
                 str(int(detail.real_bill_home_oa_amount))
-        else: detail.show_oa_amount = ''
+        else:
+            detail.show_oa_amount = ''
 
     # sum all without separating delivery man
     realBillHomePhoneCashCountDinner = sum(
@@ -638,10 +642,12 @@ def DinnerReport(request, daily_report_id):
     sumrealBillOnlineCount = realBillOnlineCashCountLunch + realBillOnlineCardCountLunch
     sumrealBillOnline = realBillOnlineCashLunch + realBillOnlineCardLunch
     # Row 2 Ta Phone Lunch
-    sumrealBillPhoneCount = realBillPhoneCashCountLunch + realBillPhoneCardCountLunch - realBillTaPhoneDividePayCountLunch
+    sumrealBillPhoneCount = realBillPhoneCashCountLunch + \
+        realBillPhoneCardCountLunch - realBillTaPhoneDividePayCountLunch
     realBillPhoneLunch = realBillPhoneCashLunch + realBillPhoneCardLunch
     # Row 3 Dine-in Lunch
-    sumrealBillInCount = realBillInCashCountLunch + realBillInCardCountLunch - realBillDineInDividePayCountLunch
+    sumrealBillInCount = realBillInCashCountLunch + \
+        realBillInCardCountLunch - realBillDineInDividePayCountLunch
     sumrealBillIn = realBillInCashLunch + realBillInCardLunch
     # Row 10
     sumTotal = realBillOnlineCashLunch + realBillOnlineCardLunch + realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + realBillInCardLunch + realBillHomePhoneCashDinner + realBillHomePhoneCardDinner + \
@@ -656,16 +662,19 @@ def DinnerReport(request, daily_report_id):
     # Row 5 Home Online
     sumrealBillHomeOnlineCountDinner = realBillHomeOnlineCashCountDinner + \
         realBillHomeOnlineCardCountDinner
-    sumrealBillHomeOnlineDinner = realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner
+    sumrealBillHomeOnlineDinner = realBillHomeOnlineCashDinner + \
+        realBillHomeOnlineCardDinner
     # Row 6 T/A Phone Dinner
-    sumrealBillPhoneCountDinner = realBillPhoneCashCountDinner + realBillPhoneCardCountDinner - realBillTaPhoneDividePayCountDinner
+    sumrealBillPhoneCountDinner = realBillPhoneCashCountDinner + \
+        realBillPhoneCardCountDinner - realBillTaPhoneDividePayCountDinner
     sumrealBillPhoneDinner = realBillPhoneCashDinner + realBillPhoneCardDinner
     # Row 7 T/A Online Dinner
     sumrealBillOnlineCountDinner = realBillOnlineCashCountDinner + \
         realBillOnlineCardCountDinner
     sumrealBillOnlineDinner = realBillOnlineCashDinner + realBillOnlineCardDinner
     # Row 8 Dine-in Dinner
-    sumrealBillInCountDinner = realBillInCashCountDinner + realBillInCardCountDinner - realBillDineInDividePayCountDinner
+    sumrealBillInCountDinner = realBillInCashCountDinner + \
+        realBillInCardCountDinner - realBillDineInDividePayCountDinner
     sumrealBillInDinner = realBillInCashDinner + realBillInCardDinner
     # Row 10 Column 4
     sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + \
@@ -699,7 +708,8 @@ def DinnerReport(request, daily_report_id):
     balanceAfterMinusExpense = sumCash - \
         totalSumCommissionAndOa - totalSumDisburse - sumTip
 
-    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlineCashLunch,realBillOnlineCardLunch,sumrealBillPhoneCount,realBillPhoneLunch,realBillPhoneCashLunch,realBillPhoneCardLunch,sumrealBillInCount,sumrealBillIn,realBillInCashLunch,realBillInCardLunch,realBillHomePhoneCashDinner,realBillHomePhoneCardDinner,sumrealBillHomePhoneCountDinner,sumrealBillHomePhoneDinner,realBillHomeOnlineCashDinner,realBillHomeOnlineCardDinner,sumrealBillHomeOnlineCountDinner,sumrealBillHomeOnlineDinner,sumrealBillPhoneCountDinner,sumrealBillPhoneDinner,realBillPhoneCashDinner,realBillPhoneCardDinner,sumrealBillOnlineCountDinner,sumrealBillOnlineDinner,realBillOnlineCashDinner,realBillOnlineCardDinner,sumrealBillInCountDinner,sumrealBillInDinner,realBillInCashDinner,realBillInCardDinner,sumTotal,sumCash,sumCard,totalBillLunch,totalBillDinner,tipLunch,tipDinner,related_delivery_details,sumrealBillHomeCountDinner,totalSumCommissionAndOa,totalOnlineCount,totalOnlineAmount,day,dateForImage,related_disburse_details,totalSumDisburse,balanceAfterMinusExpense,wrongCreditLunch,wrongCreditDinner)
+    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner,
+                                        realBillPhoneCashDinner, realBillPhoneCardDinner, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner)
 
     context = {
         'date': date,
@@ -923,8 +933,10 @@ def HomeInputDetail(request, daily_report_id, delivery_id):
     }
     return render(request, 'keywordapp/home-input-detail.html', context)
 
+# ************************************************************************************************ START : ONLINE ************************************************************************************************
 
-def GetOnlineOrderData(request, daily_report_id, shift='dinner'):
+
+def GetOnlineOrderData(request, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     input_date = daily_report.date
@@ -932,7 +944,7 @@ def GetOnlineOrderData(request, daily_report_id, shift='dinner'):
 
     options = webdriver.ChromeOptions()
     # Specify the path to your custom user data directory
-    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
+    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Profile 2'
     options.add_argument(f'--user-data-dir={custom_user_data_dir}')
 
     # options.add_argument("--headless")
@@ -990,15 +1002,10 @@ def GetOnlineOrderData(request, daily_report_id, shift='dinner'):
         table_rows = driver.find_elements(
             By.XPATH, "//tr[contains(@class, 'ng-star-inserted')]")
 
-        ScrapingOnlineData(table_rows, input_date, shift, daily_report_id)
+        ScrapingOnlineData(table_rows, input_date, daily_report_id)
     else:
         driver.quit()
-    if shift == 'lunch':
-        return redirect(reverse('lunch-input-detail', kwargs={'daily_report_id': daily_report_id}))
-    elif shift == 'dinner':
-        return redirect(reverse('dinner-input-detail', kwargs={'daily_report_id': daily_report_id}))
-    elif shift == 'home':
-        return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report_id}))
+    return redirect(reverse('index'))
 
 
 def WaitForElement(driver, element_locator, wait_time=10):
@@ -1010,22 +1017,24 @@ def WaitForElement(driver, element_locator, wait_time=10):
         return None
 
 
-def ScrapingOnlineData(table_rows, input_date, shift, daily_report_id):
+def ScrapingOnlineData(table_rows, input_date, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     bill_lunch_id = daily_report.bill_lunch_id
     bill_dinner_id = daily_report.bill_dinner_id
 
-    total_type_delivery = 0
-    total_type_pickup = 0
     delivery_cash_count = 0
     delivery_card_count = 0
-    pickup_cash_count = 0
-    pickup_card_count = 0
     delivery_cash_amount = 0
     delivery_card_amount = 0
-    pickup_cash_amount = 0
-    pickup_card_amount = 0
+    pickup_cash_count_lunch = 0
+    pickup_card_count_lunch = 0
+    pickup_cash_amount_lunch = 0
+    pickup_card_amount_lunch = 0
+    pickup_cash_count_dinner = 0
+    pickup_card_count_dinner = 0
+    pickup_cash_amount_dinner = 0
+    pickup_card_amount_dinner = 0
 
     for row in table_rows:
         # Get all child <td> elements within the row
@@ -1034,50 +1043,70 @@ def ScrapingOnlineData(table_rows, input_date, shift, daily_report_id):
             date = td_elements[1].text
             time = date.split('\n')[0]
             getShiftFromTime = GetShift(time)
-            lowerShift = getShiftFromTime.lower()
             date = date.split('\n')[1]
+            shift = getShiftFromTime.lower()
             if date == input_date:
-                # Find shift from selected
-                if shift == lowerShift:
-                    type = td_elements[2].text
-                    amount = td_elements[4].text
-                    amount_decimal_format = Decimal(amount[0:5])
-                    status = td_elements[5].text
-                    payment_method = td_elements[6].text
+                # Get Shift
+                type = td_elements[2].text
+                amount = td_elements[4].text
+                amount_decimal_format = Decimal(amount[0:5])
+                status = td_elements[5].text
+                payment_method = td_elements[6].text
 
-                    if status == "Accepted":
-                        if type == 'Delivery':
-                            total_type_delivery += 1
+                print("date : ", date)
+                print("status : ", status)
+                print("type : ", type)
+                print("shift : ", shift)
+                if status == "Accepted":
+                    print("In Accepted")
+                    if type == 'Delivery':
+                        print("In Delivery")
+                        if payment_method == "Cash":
+                            delivery_cash_count += 1
+                            delivery_cash_amount += amount_decimal_format
+                        elif payment_method == "Card":
+                            delivery_card_count += 1
+                            delivery_card_amount += amount_decimal_format
+                    elif type == 'Pickup':
+                        print("In Pickup")
+                        # Find shift from selected
+                        if shift == 'lunch':
                             if payment_method == "Cash":
-                                delivery_cash_count += 1
-                                delivery_cash_amount += amount_decimal_format
+                                pickup_cash_count_lunch += 1
+                                pickup_cash_amount_lunch += amount_decimal_format
                             elif payment_method == "Card":
-                                delivery_card_count += 1
-                                delivery_card_amount += amount_decimal_format
-                        elif type == 'Pickup':
-                            total_type_pickup += 1
+                                pickup_card_count_lunch += 1
+                                pickup_card_amount_lunch += amount_decimal_format
+                        elif shift == 'dinner':
                             if payment_method == "Cash":
-                                pickup_cash_count += 1
-                                pickup_cash_amount += amount_decimal_format
+                                pickup_cash_count_dinner += 1
+                                pickup_cash_amount_dinner += amount_decimal_format
                             elif payment_method == "Card":
-                                pickup_card_count += 1
-                                pickup_card_amount += amount_decimal_format
+                                pickup_card_count_dinner += 1
+                                pickup_card_amount_dinner += amount_decimal_format
+
+                print("pickup_cash_count_dinner : ", pickup_cash_count_dinner)
+                print("pickup_cash_amount_dinner : ",
+                      pickup_cash_amount_dinner)
+                print("pickup_card_count_dinner : ", pickup_card_count_dinner)
+                print("pickup_card_amount_dinner : ",
+                      pickup_card_amount_dinner)
+
         except:
             pass
 
-    if shift == "lunch":
         bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
-        bill_lunch.real_bill_online_cash_count = pickup_cash_count
-        bill_lunch.real_bill_online_card_count = pickup_card_count
-        bill_lunch.real_bill_online_cash = pickup_cash_amount
-        bill_lunch.real_bill_online_card = pickup_card_amount
+        bill_lunch.real_bill_online_cash_count = pickup_cash_count_lunch
+        bill_lunch.real_bill_online_card_count = pickup_card_count_lunch
+        bill_lunch.real_bill_online_cash = pickup_cash_amount_lunch
+        bill_lunch.real_bill_online_card = pickup_card_amount_lunch
         bill_lunch.save()
-    elif shift == "dinner" or shift == "home":
+
         bill_dinner = get_object_or_404(BillDinnerModel, id=bill_dinner_id)
-        bill_dinner.real_bill_online_cash_count = pickup_cash_count
-        bill_dinner.real_bill_online_card_count = pickup_card_count
-        bill_dinner.real_bill_online_cash = pickup_cash_amount
-        bill_dinner.real_bill_online_card = pickup_card_amount
+        bill_dinner.real_bill_online_cash_count = pickup_cash_count_dinner
+        bill_dinner.real_bill_online_card_count = pickup_card_count_dinner
+        bill_dinner.real_bill_online_cash = pickup_cash_amount_dinner
+        bill_dinner.real_bill_online_card = pickup_card_amount_dinner
         bill_dinner.delivery_cash_count_in_online_system = delivery_cash_count
         bill_dinner.delivery_cash_amount_in_online_system = delivery_cash_amount
         bill_dinner.delivery_card_count_in_online_system = delivery_card_count
@@ -1089,7 +1118,7 @@ def ScrapingOnlineData(table_rows, input_date, shift, daily_report_id):
 def GetShift(time_str):
     time_format = "%I:%M %p"
     lunch_start = datetime.datetime.strptime("11:00 AM", time_format).time()
-    lunch_end = datetime.datetime.strptime("4:00 PM", time_format).time()
+    lunch_end = datetime.datetime.strptime("4:15 PM", time_format).time()
     dinner_start = datetime.datetime.strptime("4:30 PM", time_format).time()
     dinner_end = datetime.datetime.strptime("10:00 PM", time_format).time()
 
@@ -1101,6 +1130,18 @@ def GetShift(time_str):
         return "Dinner"
     else:
         return "Other Shift"
+
+
+def OnlineOrder(request, daily_report_id):
+
+    context = {}
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+
+    context['date'] = date
+    context['daily_report_id'] = daily_report_id
+    return render(request, 'keywordapp/online-order-scraping.html', context)
+# ************************************************************************************************ END : ONLINE ************************************************************************************************
 
 
 def DeleteDeliveryDetail(request, delivery_detail_id, daily_report_id):
@@ -1115,7 +1156,8 @@ def DeleteDisburse(request, disburse_id, daily_report_id):
     disburse.delete()
     return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report_id}))
 
-def GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlineCashLunch,realBillOnlineCardLunch,sumrealBillPhoneCount,realBillPhoneLunch,realBillPhoneCashLunch,realBillPhoneCardLunch,sumrealBillInCount,sumrealBillIn,realBillInCashLunch,realBillInCardLunch,realBillHomePhoneCashDinner,realBillHomePhoneCardDinner,sumrealBillHomePhoneCountDinner,sumrealBillHomePhoneDinner,realBillHomeOnlineCashDinner,realBillHomeOnlineCardDinner,sumrealBillHomeOnlineCountDinner,sumrealBillHomeOnlineDinner,sumrealBillPhoneCountDinner,sumrealBillPhoneDinner,realBillPhoneCashDinner,realBillPhoneCardDinner,sumrealBillOnlineCountDinner,sumrealBillOnlineDinner,realBillOnlineCashDinner,realBillOnlineCardDinner,sumrealBillInCountDinner,sumrealBillInDinner,realBillInCashDinner,realBillInCardDinner,sumTotal,sumCash,sumCard,totalBillLunch,totalBillDinner,tipLunch,tipDinner,related_delivery_details,sumrealBillHomeCountDinner,totalSumCommissionAndOa,totalOnlineCount,totalOnlineAmount,day,dateForImage,related_disburse_details,totalSumDisburse,balanceAfterMinusExpense,wrongCreditLunch,wrongCreditDinner):
+
+def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner, realBillPhoneCashDinner, realBillPhoneCardDinner, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner):
 
     path = os.getcwd()
     locationTemplate = os.path.join(path, 'static', 'img', 'template.jpg')
@@ -1136,64 +1178,176 @@ def GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlin
 
     # * ================= END :  GET FONT COLOR =================
     # Row 1 Ta Online Lunch
-    imgObj.text((60, 50), str(sumrealBillOnlineCount), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((90, 50), str("TA Online"), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 50), str(sumrealBillOnline), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 50), str(realBillOnlineCashLunch), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 50), str(realBillOnlineCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillOnlineCount != 0:
+        imgObj.text((60, 50), str(sumrealBillOnlineCount),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((90, 50), str("TA Online"), font=fontThai,
+                    fill=FontColor)  # Total Count
+        imgObj.text((300, 50), str(sumrealBillOnline),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 50), str(realBillOnlineCashLunch),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 50), str(realBillOnlineCardLunch),
+                    font=fontThai, fill=FontColor)  # Card Amount
     # Row 2 Ta Phone Lunch
-    imgObj.text((60, 130), str(sumrealBillPhoneCount), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 140), str(realBillPhoneLunch), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 140), str(realBillPhoneCashLunch), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 140), str(realBillPhoneCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillPhoneCount != 0:
+        imgObj.text((60, 130), str(sumrealBillPhoneCount),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 140), str(realBillPhoneLunch),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 140), str(realBillPhoneCashLunch),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 140), str(realBillPhoneCardLunch),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 135), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 135), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 135), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 3 Dine-in Lunch
-    imgObj.text((60, 170), str(sumrealBillInCount), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 180), str(sumrealBillIn), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 180), str(realBillInCashLunch), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 180), str(realBillInCardLunch), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillInCount != 0:
+        imgObj.text((60, 170), str(sumrealBillInCount),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 180), str(sumrealBillIn),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 180), str(realBillInCashLunch),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 180), str(realBillInCardLunch),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 175), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 175), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 175), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 4 Home Phone
-    imgObj.text((60, 210), str(sumrealBillHomePhoneCountDinner), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 220), str(sumrealBillHomePhoneDinner), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 220), str(realBillHomePhoneCashDinner), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 220), str(realBillHomePhoneCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillHomePhoneCountDinner != 0:
+        imgObj.text((60, 210), str(sumrealBillHomePhoneCountDinner),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 220), str(sumrealBillHomePhoneDinner),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 220), str(realBillHomePhoneCashDinner),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 220), str(realBillHomePhoneCardDinner),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 215), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 215), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 215), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 5 Home Online
-    imgObj.text((60, 250), str(sumrealBillHomeOnlineCountDinner), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 260), str(sumrealBillHomeOnlineDinner), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 260), str(realBillHomeOnlineCashDinner), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 260), str(realBillHomeOnlineCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillHomeOnlineCountDinner != 0:
+        imgObj.text((60, 250), str(sumrealBillHomeOnlineCountDinner),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 260), str(sumrealBillHomeOnlineDinner),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 260), str(realBillHomeOnlineCashDinner),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 260), str(realBillHomeOnlineCardDinner),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 255), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 255), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 255), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 6 T/A Phone Dinner
-    imgObj.text((60, 290), str(sumrealBillPhoneCountDinner), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 300), str(sumrealBillPhoneDinner), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 300), str(realBillPhoneCashDinner), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 300), str(realBillPhoneCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillPhoneCountDinner != 0:
+        imgObj.text((60, 290), str(sumrealBillPhoneCountDinner),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 300), str(sumrealBillPhoneDinner),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 300), str(realBillPhoneCashDinner),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 300), str(realBillPhoneCardDinner),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 295), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 295), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 295), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 7 T/A Online Dinner
-    imgObj.text((60, 330), str(sumrealBillOnlineCountDinner), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 340), str(sumrealBillOnlineDinner), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 340), str(realBillOnlineCashDinner), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 340), str(realBillOnlineCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillOnlineCountDinner != 0:
+        imgObj.text((60, 330), str(sumrealBillOnlineCountDinner),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 340), str(sumrealBillOnlineDinner),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 340), str(realBillOnlineCashDinner),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 340), str(realBillOnlineCardDinner),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 335), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 335), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 335), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 8 Dine-in Dinner
-    imgObj.text((60, 380), str(sumrealBillInCountDinner), font=fontThai, fill=FontColor) # Total Count
-    imgObj.text((300, 380), str(sumrealBillInDinner), font=fontThai, fill=FontColor) # Total Amount
-    imgObj.text((430, 380), str(realBillInCashDinner), font=fontThai, fill=FontColor) # Cash Amount
-    imgObj.text((590, 380), str(realBillInCardDinner), font=fontThai, fill=FontColor) # Card Amount
+    if sumrealBillInCountDinner != 0:
+        imgObj.text((60, 380), str(sumrealBillInCountDinner),
+                    font=fontThai, fill=FontColor)  # Total Count
+        imgObj.text((300, 380), str(sumrealBillInDinner),
+                    font=fontThai, fill=FontColor)  # Total Amount
+        imgObj.text((430, 380), str(realBillInCashDinner),
+                    font=fontThai, fill=FontColor)  # Cash Amount
+        imgObj.text((590, 380), str(realBillInCardDinner),
+                    font=fontThai, fill=FontColor)  # Card Amount
+    else:
+        imgObj.text((320, 375), '-', font=fontThai,
+                    fill=FontColor)  # Total Amount
+        imgObj.text((450, 375), '-', font=fontThai,
+                    fill=FontColor)  # Cash Amount
+        imgObj.text((610, 375), '-', font=fontThai,
+                    fill=FontColor)  # Card Amount
     # Row 9 Total
-    imgObj.text((300, 420), str(sumTotal), font=fontThai, fill=FontColor) # Total Amount
-    addTransparentHighlight(img, str(sumTotal), (300, 420), fontTotalShift, 0.2,'orange')
-    imgObj.text((430, 420), str(sumCash), font=fontThai, fill=FontColor) # Cash Amount
-    addTransparentHighlight(img, str(sumCash), (430, 420), fontTotalShift, 0.2,'orange')
-    imgObj.text((590, 420), str(sumCard), font=fontThai, fill=FontColor) # Card Amount
-    addTransparentHighlight(img, str(sumCard), (590, 420), fontTotalShift, 0.2,'orange')
+    imgObj.text((300, 420), str(sumTotal), font=fontThai,
+                fill=FontColor)  # Total Amount
+    AddTransparentHighlight(img, str(sumTotal), (300, 420),
+                            fontTotalShift, 0.2, 'orange')
+    imgObj.text((430, 420), str(sumCash), font=fontThai,
+                fill=FontColor)  # Cash Amount
+    AddTransparentHighlight(img, str(sumCash), (430, 420),
+                            fontTotalShift, 0.2, 'orange')
+    imgObj.text((590, 420), str(sumCard), font=fontThai,
+                fill=FontColor)  # Card Amount
+    AddTransparentHighlight(img, str(sumCard), (590, 420),
+                            fontTotalShift, 0.2, 'orange')
     # Right Column
-    imgObj.text((760, 160), str(totalBillLunch), font=fontTotalShift, fill=FontColor) # Total Bill Lunch
-    addTransparentHighlight(img, str(totalBillLunch), (760, 160), fontTotalShift, 0.2,'orange')
+    if totalBillLunch != 0:
+        imgObj.text((760, 160), str(totalBillLunch),
+                    font=fontTotalShift, fill=FontColor)  # Total Bill Lunch
+        AddTransparentHighlight(img, str(totalBillLunch),
+                                (760, 160), fontTotalShift, 0.2, 'orange')
+    else:
+        imgObj.text((760, 160), '-', font=fontTotalShift,
+                    fill=FontColor)  # Total Amount
 
-    imgObj.text((710, 300), str(totalBillDinner), font=fontTotalShift, fill=FontColor) # Total Bill Dinner
-    addTransparentHighlight(img, str(totalBillDinner), (710, 300), fontTotalShift, 0.2,'orange')
+    imgObj.text((710, 300), str(totalBillDinner),
+                font=fontTotalShift, fill=FontColor)  # Total Bill Dinner
+    AddTransparentHighlight(img, str(totalBillDinner),
+                            (710, 300), fontTotalShift, 0.2, 'orange')
     # Tip
-    imgObj.text((590, 470), str('Tip Lunch '+str(tipLunch)), font=fontThai, fill=FontColor) # Tip Lunch
-    addTransparentHighlight(img, str('Tip Lunch '), (590, 470), fontTotalShift, 0.5,'pink')
-    imgObj.text((590, 500), str('Tip Dinner '+str(tipDinner)), font=fontThai, fill=FontColor) # Tip Dinner
-    addTransparentHighlight(img, str('Tip Dinner '), (590, 500), fontTotalShift, 0.5,'pink')
+
+    if tipLunch != 0:
+        imgObj.text((590, 470), str('Tip Lunch '+str(tipLunch)),
+                    font=fontThai, fill=FontColor)  # Tip Lunch
+        AddTransparentHighlight(img, str('Tip Lunch '),
+                                (590, 470), fontTotalShift, 0.5, 'pink')
+    if tipDinner != 0:
+        imgObj.text((590, 500), str('Tip Dinner '+str(tipDinner)),
+                    font=fontThai, fill=FontColor)  # Tip Dinner
+        AddTransparentHighlight(img, str('Tip Dinner '),
+                                (590, 500), fontTotalShift, 0.5, 'pink')
+
     # Home Delivery
     homePosXHomeCount = 100
     homePosYHomeCount = 545
@@ -1207,48 +1361,73 @@ def GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlin
     homePosYDeliveryName = 545
 
     for item in related_delivery_details:
-        imgObj.text((homePosXHomeCount, homePosYHomeCount), str(item.home_count), font=fontThai, fill=FontColor) # Home Count
-        imgObj.text((homePosXShowOaCount, homePosYShowOaCount), str(item.show_oa_count), font=fontThai, fill=FontColor) # Show OA Count
-        imgObj.text((homePosXSumCommission, homePosYSumCommission), str(item.sum_commission), font=fontThai, fill=FontColor) # Sum Commission
-        imgObj.text((homePosXShowOaAmount, homePosYShowOaAmount), str(item.show_oa_amount), font=fontThai, fill=FontColor) # Show OA Amount
-        imgObj.text((homePosXDeliveryName, homePosYDeliveryName), str(item.delivery_name), font=fontThai, fill=FontColor) # Show OA Amount
+        imgObj.text((homePosXHomeCount, homePosYHomeCount), str(
+            item.home_count), font=fontThai, fill=FontColor)  # Home Count
+        imgObj.text((homePosXShowOaCount, homePosYShowOaCount), str(
+            item.show_oa_count), font=fontThai, fill=FontColor)  # Show OA Count
+        imgObj.text((homePosXSumCommission, homePosYSumCommission), str(
+            item.sum_commission), font=fontThai, fill=FontColor)  # Sum Commission
+        imgObj.text((homePosXShowOaAmount, homePosYShowOaAmount), str(
+            item.show_oa_amount), font=fontThai, fill=FontColor)  # Show OA Amount
+        imgObj.text((homePosXDeliveryName, homePosYDeliveryName), str(
+            item.delivery_name), font=fontThai, fill=FontColor)  # Show OA Amount
         # Step position down
         homePosYHomeCount += 45
         homePosYShowOaCount += 45
         homePosYSumCommission += 45
         homePosYShowOaAmount += 45
         homePosYDeliveryName += 45
-    
-    imgObj.text((100, 670), str(sumrealBillHomeCountDinner)+'                      '+str(totalSumCommissionAndOa), font=fontThai, fill=FontColor) # Total Delivery
-    addTransparentHighlight(img, str(sumrealBillHomeCountDinner)+'                   ', (100, 670), fontTotalShift, 0.2,'pink')
+
+    if sumrealBillHomeCountDinner != 0:
+        imgObj.text((100, 670), str(sumrealBillHomeCountDinner)+'                      ' +
+                    str(totalSumCommissionAndOa), font=fontThai, fill=FontColor)  # Total Delivery
+        AddTransparentHighlight(img, str(sumrealBillHomeCountDinner) +
+                                '                   ', (100, 670), fontTotalShift, 0.2, 'pink')
 
     # Total Online
-    imgObj.text((690, 545), '('+str(totalOnlineCount)+') '+str(totalOnlineAmount), font=fontThai, fill=FontColor) # Total Online
-    addTransparentHighlight(img,'  '+str(totalOnlineAmount), (690, 545), fontTotalShift, 0.2,'orange')
+    imgObj.text((690, 545), '('+str(totalOnlineCount)+') ' +
+                str(totalOnlineAmount), font=fontThai, fill=FontColor)  # Total Online
+    AddTransparentHighlight(img, '  '+str(totalOnlineAmount),
+                            (690, 545), fontTotalShift, 0.2, 'orange')
 
     # Wrong Credit
-    imgObj.text((550, 700),'กดเครดิตขาด(เที่ยง) '+str(wrongCreditLunch), font=fontThai, fill=FontColor) # Wrong Credit Lunch
-    addTransparentHighlight(img,'                     ', (550, 700), fontTotalShift, 0.2,'orange')
-    imgObj.text((550, 730),'กดเครดิตขาด(เย็น) '+str(wrongCreditDinner), font=fontThai, fill=FontColor) # Wrong Credit Dinner
-    addTransparentHighlight(img,'                     ', (550, 730), fontTotalShift, 0.2,'orange')
+    if wrongCreditLunch != 0:
+        imgObj.text((550, 700), 'กดเครดิตขาด(เที่ยง) '+str(wrongCreditLunch),
+                    font=fontThai, fill=FontColor)  # Wrong Credit Lunch
+        AddTransparentHighlight(
+            img, '                     ', (550, 700), fontTotalShift, 0.2, 'orange')
+
+    if wrongCreditDinner != 0:
+        imgObj.text((550, 730), 'กดเครดิตขาด(เย็น) '+str(wrongCreditDinner),
+                    font=fontThai, fill=FontColor)  # Wrong Credit Dinner
+        AddTransparentHighlight(
+            img, '                     ', (550, 730), fontTotalShift, 0.2, 'orange')
+
     # Dairy Record
-    imgObj.text((1000, 90), str(day), font=fontThai, fill=FontColor) # Day
-    imgObj.text((1000, 130), str(dateForImage), font=fontThai, fill=FontColor) # Date
+    imgObj.text((1000, 90), str(day), font=fontThai, fill=FontColor)  # Day
+    imgObj.text((1000, 130), str(dateForImage),
+                font=fontThai, fill=FontColor)  # Date
 
     # Dairy Expense
     ExpensePosX = 950
     ExpensePosY = 380
     for item in related_disburse_details:
-        imgObj.text((ExpensePosX, ExpensePosY), str(str(item.name)+'  '+str(item.price)), font=fontThai, fill=FontColor) # Expense
+        imgObj.text((ExpensePosX, ExpensePosY), str(
+            str(item.name)+'  '+str(item.price)), font=fontThai, fill=FontColor)  # Expense
         # Step position down
         ExpensePosY += 40
-    
-    imgObj.text((980, 780), str(totalSumDisburse), font=fontTotalShift, fill=FontColor) # Total
-    addTransparentHighlight(img,str(totalSumDisburse), (980, 780), fontTotalShift, 0.5,'pink')
+
+    if totalSumDisburse != 0:
+        imgObj.text((980, 780), str(totalSumDisburse),
+                    font=fontTotalShift, fill=FontColor)  # Total
+        AddTransparentHighlight(
+            img, str(totalSumDisburse), (980, 780), fontTotalShift, 0.5, 'pink')
 
     # Balance
-    imgObj.text((350, 780), str(balanceAfterMinusExpense), font=fontTotalShift, fill=FontColor) # Balance
-    addTransparentHighlight(img,str(balanceAfterMinusExpense), (350, 780), fontTotalShift, 0.2,'orange')
+    imgObj.text((350, 780), str(balanceAfterMinusExpense),
+                font=fontTotalShift, fill=FontColor)  # Balance
+    AddTransparentHighlight(
+        img, str(balanceAfterMinusExpense), (350, 780), fontTotalShift, 0.2, 'orange')
 
     locationSaved = path+'/static/img/result.jpg'
     img.save(locationSaved)
@@ -1256,7 +1435,8 @@ def GenerateImageWIthText(sumrealBillOnlineCount,sumrealBillOnline,realBillOnlin
 
     return imgLocation
 
-def addTransparentHighlight(image, text, text_position, font, opacity,color='orange'):
+
+def AddTransparentHighlight(image, text, text_position, font, opacity, color='orange'):
     # Create a new transparent image with the same size as the original image
     rect_img = Image.new('RGBA', image.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(rect_img)
@@ -1269,16 +1449,18 @@ def addTransparentHighlight(image, text, text_position, font, opacity,color='ora
 
     # Define the coordinates of the rectangle that will surround the text
     rect_x1, rect_y1 = text_position
-    rect_x2, rect_y2 = text_position[0] + text_width, text_position[1] + text_height
+    rect_x2, rect_y2 = text_position[0] + \
+        text_width, text_position[1] + text_height
 
     # Calculate the fill color with the specified opacity
     if color == 'orange':
-        fill_color = (255,69,0, int(255 * opacity))
+        fill_color = (255, 69, 0, int(255 * opacity))
     elif color == 'pink':
-        fill_color = (255,105,180, int(255 * opacity))
+        fill_color = (255, 105, 180, int(255 * opacity))
 
     # Draw a filled and transparent rectangle around the text
-    draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2], outline=None, fill=fill_color)
+    draw.rectangle([rect_x1, rect_y1, rect_x2, rect_y2],
+                   outline=None, fill=fill_color)
 
     # Paste the transparent rectangle image over the original image
     image.paste(rect_img, (0, 0), rect_img)
