@@ -30,12 +30,17 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 # EMAIL
-import imaplib,ssl
+import imaplib
+import ssl
 import email
 import time
 from itertools import chain
 import email
 import imaplib
+
+# Excel
+import openpyxl
+
 
 def Index(request):
     context = {}
@@ -79,7 +84,7 @@ def Index(request):
 
     return render(request, 'keywordapp/index.html', context)
 
-#! DISBURSE
+# ************************************************************************************************ START : DISBURSE ************************************************************************************************
 
 
 def DisburseList(request, daily_report_id):
@@ -132,8 +137,8 @@ def DisburseInput(request, daily_report_id, disburse_id):
         'disburse_detail': disburse_detail,
     }
     return render(request, 'keywordapp/disburse-input.html', context)
-
-#! LUNCH
+# ************************************************************************************************ END : DISBURSE ************************************************************************************************
+# ************************************************************************************************ START : LUNCH ************************************************************************************************
 
 
 def LunchInputQuick(request, daily_report_id):
@@ -338,8 +343,8 @@ def LunchReport(request, daily_report_id):
         'edcInCredit': edcInCredit,
     }
     return render(request, 'keywordapp/lunch-report.html', context)
-
-#! DINNER
+# ************************************************************************************************ END : LUNCH ************************************************************************************************
+# ************************************************************************************************ START : DINNER ************************************************************************************************
 
 
 def DinnerInputQuick(request, daily_report_id):
@@ -794,6 +799,8 @@ def DinnerReport(request, daily_report_id):
 
     return render(request, 'keywordapp/report-image.html', context)
     # return render(request, 'keywordapp/dinner-report.html', context)
+# ************************************************************************************************ END : DINNER ************************************************************************************************
+# ************************************************************************************************ START : HOME ************************************************************************************************
 
 
 def HomeList(request, daily_report_id):
@@ -940,6 +947,14 @@ def HomeInputDetail(request, daily_report_id, delivery_id):
     }
     return render(request, 'keywordapp/home-input-detail.html', context)
 
+
+def DeleteDeliveryDetail(request, delivery_detail_id, daily_report_id):
+    delivery_detail = get_object_or_404(
+        DeliveryDetailModel, id=delivery_detail_id)
+    delivery_detail.delete()
+    return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report_id}))
+
+# ************************************************************************************************ END : HOME ************************************************************************************************
 # ************************************************************************************************ START : ONLINE ************************************************************************************************
 
 
@@ -951,7 +966,7 @@ def GetOnlineOrderData(request, daily_report_id):
 
     options = webdriver.ChromeOptions()
     # Specify the path to your custom user data directory
-    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Profile 2'
+    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
     options.add_argument(f'--user-data-dir={custom_user_data_dir}')
 
     # options.add_argument("--headless")
@@ -964,42 +979,45 @@ def GetOnlineOrderData(request, daily_report_id):
     driver = webdriver.Chrome(
         "/Users/chaperone/Documents/GitHub/chromedriver", options=options)
 
-    driver.get('https://gloriafood.com/')
+    # driver.get('https://gloriafood.com/')
 
-    # Wait for Login button
-    element_locator = (By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
-    element = WaitForElement(driver, element_locator)
-    if element:
-        login_button = driver.find_element(
-            By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
-        login_button.click()
-    else:
-        driver.quit()
+    driver.get(
+        "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459")
 
-    # Wait for username and password block
-    element_locator = (By.XPATH, '//*[@id="login-email"]')
-    element = WaitForElement(driver, element_locator)
-    if element:
-        time.sleep(1)
-        username = driver.find_element(By.XPATH, '//*[@id="login-email"]')
-        username.send_keys("chain_shane@yahoo.com")
-        password = driver.find_element(By.XPATH, '//*[@id="login-password"]')
-        password.send_keys("bitesme1234")
-        button_login = driver.find_element(
-            By.XPATH, '//*[@id="login-form"]/div[5]/button')
-        button_login.click()
-    else:
-        driver.quit()
+    # # Wait for Login button
+    # element_locator = (By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
+    # element = WaitForElement(driver, element_locator)
+    # if element:
+    #     login_button = driver.find_element(
+    #         By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
+    #     login_button.click()
+    # else:
+    #     driver.quit()
 
-    targetLinkText = "https://www.gloriafood.com/admin/?user_id=7961955&session_token=WEB_SESSION&acid=742458"
-    targetLinkText2 = "https://www.gloriafood.com/admin2/app/company/dashboard/restaurants/list?acid=742458"
+    # # Wait for username and password block
+    # element_locator = (By.XPATH, '//*[@id="login-email"]')
+    # element = WaitForElement(driver, element_locator)
+    # if element:
+    #     time.sleep(1)
+    #     username = driver.find_element(By.XPATH, '//*[@id="login-email"]')
+    #     username.send_keys("chain_shane@yahoo.com")
+    #     password = driver.find_element(By.XPATH, '//*[@id="login-password"]')
+    #     password.send_keys("bitesme1234")
+    #     button_login = driver.find_element(
+    #         By.XPATH, '//*[@id="login-form"]/div[5]/button')
+    #     button_login.click()
+    # else:
+    #     driver.quit()
 
-    while driver.current_url != targetLinkText or driver.current_url != targetLinkText2:
-        time.sleep(0.5)
-        if driver.current_url == targetLinkText or driver.current_url == targetLinkText2:
-            driver.get(
-                "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459")
-            break
+    # targetLinkText = "https://www.gloriafood.com/admin/?user_id=7961955&session_token=WEB_SESSION&acid=742458"
+    # targetLinkText2 = "https://www.gloriafood.com/admin2/app/company/dashboard/restaurants/list?acid=742458"
+
+    # while driver.current_url != targetLinkText or driver.current_url != targetLinkText2:
+    #     time.sleep(0.5)
+    #     if driver.current_url == targetLinkText or driver.current_url == targetLinkText2:
+    #         driver.get(
+    #             "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459")
+    #         break
 
     # Wait for data in table
     element_locator = (By.XPATH, "//tr[contains(@class, 'ng-star-inserted')]")
@@ -1151,17 +1169,12 @@ def OnlineOrder(request, daily_report_id):
 # ************************************************************************************************ END : ONLINE ************************************************************************************************
 
 
-def DeleteDeliveryDetail(request, delivery_detail_id, daily_report_id):
-    delivery_detail = get_object_or_404(
-        DeliveryDetailModel, id=delivery_detail_id)
-    delivery_detail.delete()
-    return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report_id}))
-
-
 def DeleteDisburse(request, disburse_id, daily_report_id):
     disburse = get_object_or_404(DisburseModel, id=disburse_id)
     disburse.delete()
     return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report_id}))
+
+# ************************************************************************************************ START : GENERATE TEXT ************************************************************************************************
 
 
 def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner, realBillPhoneCashDinner, realBillPhoneCardDinner, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner):
@@ -1471,13 +1484,12 @@ def AddTransparentHighlight(image, text, text_position, font, opacity, color='or
 
     # Paste the transparent rectangle image over the original image
     image.paste(rect_img, (0, 0), rect_img)
+# ************************************************************************************************ END : GENERATE TEXT ************************************************************************************************
+
+# ************************************************************************************************ START : EMAIL ************************************************************************************************
 
 
-
-
-
-
-def ConnectToEmail(request):
+def UpdatePosData(request, daily_report_id,):
 
     # Your Outlook email credentials
     username = 'cheetah6541@gmail.com'
@@ -1487,58 +1499,118 @@ def ConnectToEmail(request):
     imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
     imap_ssl_port = 993
     try:
-        server = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
+        mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
         # Log in to your email account
-        server.login(username, password)
+        mail.login(username, password)
 
         # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
-        # mailbox = 'INBOX'
-        # server.select(mailbox)
+        mailbox = 'INBOX'
+        mail.select(mailbox)
     except:
         print("ERROR")
 
-    # # Search for emails (optional)
-    # # Here, we search for all emails in the selected mailbox
-    # status, messages = server.search(None, 'ALL')
+# Search for emails (optional)
+# Here, we search for all emails in the selected mailbox
+    sender_email = 'cheetah5900@windowslive.com'
+    subject = 'Pos Dine in'
+    search_query = f'(FROM "{sender_email}" SUBJECT "{subject}")'
+    status, email_ids = mail.search(None, search_query)
 
-    # # Get the list of email IDs
-    # email_ids = messages[0].split()
+    # Get the latest email (you can specify the email ID if you want a specific one)
+    latest_email_id = email_ids[0].split()[-1]
 
-    # for email_id in email_ids:
-    #     # Fetch the email by its ID
-    #     status, msg_data = server.fetch(email_id, '(RFC822)')
+    # Fetch the email content
+    status, email_data = mail.fetch(latest_email_id, '(RFC822)')
+    raw_email = email_data[0][1]
 
+    # Parse the email content
+    msg = email.message_from_bytes(raw_email)
 
-    #     msg = email.message_from_bytes(msg_data[0][1])
+    # Check if the email has any attachments
+    if msg.get_content_maintype() == 'multipart':
+        for part in msg.walk():
+            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
+                continue
+            filename = part.get_filename()
+            if filename:
+                # Save the attachment to a specific folder
+                path = os.getcwd()
+                save_path = path+'/static/mail'
+                if not os.path.exists(save_path):
+                    os.makedirs(save_path)
+                file_path = os.path.join(save_path, filename)
+                with open(file_path, 'wb') as f:
+                    f.write(part.get_payload(decode=True))
+                print(f'Saved attachment: {filename}')
 
-    #     # Extract email details (e.g., subject, sender, date, body)
-    #     subject = msg['subject']
-    #     sender = msg['from']
-    #     date = msg['date']
-    #     body = ''
-    #     # If the email has multiple parts (e.g., text and HTML), combine them
-    #     if msg.is_multipart():
-    #                     for part in msg.walk():
-    #                         content_type = part.get_content_type()
-    #                         if "text/plain" in content_type or "text/html" in content_type:
-    #                             body += part.get_payload(decode=True).decode()
+    mail.logout()
 
-    #                 # If the email is in plain text, extract the body directly
-    #     else:
-    #         body = msg.get_payload(decode=True).decode()
+    file_path = path+'/static/mail/pos_dine_in.xlsx'
 
-    #     # Print or process the email details
-    #     print("Subject:", subject)
-    #     print("From:", sender)
-    #     print("Date:", date)
-    #     print("Body:")
-    #     print(body)
-    #     print("==============================")
-    # server.logout()
-    # time.sleep(1)
+    # Load the workbook
+    workbook = openpyxl.load_workbook(file_path)
 
+    # Select the specific worksheet (sheet) where your data is located
+    sheet = workbook["Sheet1"]  # Replace "Sheet1" with the actual sheet name
 
+    # Read data from cells A2, B2, and C2
+    realBillPhoneCashCount = sheet["A2"].value
+    realBillPhoneCash = sheet["B2"].value
+    realBillPhoneCardCount = sheet["C2"].value
+    realBillPhoneCard = sheet["A2"].value
+    realBillTaPhoneDividePayCount = sheet["B2"].value
+    realBillDineInDividePayCount = sheet["C2"].value
+    realBillInCashCount = sheet["A2"].value
+    realBillInCash = sheet["B2"].value
+    realBillInCardCount = sheet["C2"].value
+    realBillInCard = sheet["A2"].value
+    posTABillPhoneCash = sheet["B2"].value
+    posTABillPhoneCashCount = sheet["C2"].value
+    posTABillPhoneCard = sheet["A2"].value
+    posTABillPhoneCardCount = sheet["B2"].value
+    posInCash = sheet["C2"].value
+    posInCashCount = sheet["A2"].value
+    posInCard = sheet["B2"].value
+    posInCardCount = sheet["C2"].value
+    edcInCredit = sheet["A2"].value
 
+    # Close the workbook
+    workbook.close()
+
+    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_object.date
+    bill_lunch_id = daily_object.bill_lunch.id
+
+    bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+
+    # Real Bill TA Phone
+    bill_lunch.real_bill_phone_cash_count = realBillPhoneCashCount
+    bill_lunch.real_bill_phone_cash = realBillPhoneCash
+    bill_lunch.real_bill_phone_card_count = realBillPhoneCardCount
+    bill_lunch.real_bill_phone_card = realBillPhoneCard
+    bill_lunch.real_bill_taphone_dividepay_count = realBillTaPhoneDividePayCount
+    bill_lunch.real_bill_dinein_dividepay_count = realBillDineInDividePayCount
+    # Real Bill Dine in
+    bill_lunch.real_bill_in_cash_count = realBillInCashCount
+    bill_lunch.real_bill_in_cash = realBillInCash
+    bill_lunch.real_bill_in_card_count = realBillInCardCount
+    bill_lunch.real_bill_in_card = realBillInCard
+    # POS TA Phone
+    bill_lunch.pos_ta_bill_phone_cash = posTABillPhoneCash
+    bill_lunch.pos_ta_bill_phone_cash_count = posTABillPhoneCashCount
+    bill_lunch.pos_ta_bill_phone_card = posTABillPhoneCard
+    bill_lunch.pos_ta_bill_phone_card_count = posTABillPhoneCardCount
+    # POS Dine in
+    bill_lunch.pos_in_bill_cash = posInCash
+    bill_lunch.pos_in_bill_cash_count = posInCashCount
+    bill_lunch.pos_in_bill_card = posInCard
+    bill_lunch.pos_in_bill_card_count = posInCardCount
+    # EDC Dine in
+    bill_lunch.edc_in_credit = edcInCredit
+
+    # Save the updated object
+    bill_lunch.save()
 
     return render(request, 'keywordapp/plain.html')
 
+# ************************************************************************************************ END : EMAIL ************************************************************************************************
