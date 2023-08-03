@@ -38,8 +38,8 @@
                             <td class="text-center align-middle">{{sumHomeCommission}}</td>
                           </tr>
                           <tr>
-                            <td class="align-middle">ยอด OA ({{delivery_detail.real_bill_home_oa_count}}) </td>
-                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_oa_amount}}</td>
+                            <td class="align-middle">ยอด OA ({{delivery_detail.bill_home_oa_count}}) </td>
+                            <td class="text-center align-middle">{{delivery_detail.bill_home_oa_amount}}</td>
                           </tr>
                           <tr>
                             <td class="align-middle"><b>Total ค่าคอมมิชชั่น</b></td>
@@ -48,16 +48,18 @@
                           </tr>
                           <tr class="table-dark">
                             <td class="align-middle"><b>เทียบยอดบัตร กับยอด Home</b></td>
-                            <td class="text-center"><h3>{{resultCheckEqual}}</h3></td>
+                            <td class="text-center">
+                              <h3>{{resultCheckEqual}}</h3>
+                            </td>
                           </tr>
                           <tr>
                             <td class="align-middle">Online จ่ายบัตร</td>
-                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_online_card}}
+                            <td class="text-center align-middle">{{delivery_detail.bill_home_online_card}}
                             </td>
                           </tr>
                           <tr>
                             <td class="align-middle">Phone จ่ายบัตร</td>
-                            <td class="text-center align-middle">{{delivery_detail.real_bill_home_phone_card}}
+                            <td class="text-center align-middle">{{delivery_detail.bill_home_phone_card}}
                             </td>
                           </tr>
                           <tr class="table-info">
@@ -66,16 +68,19 @@
                             </td>
                           </tr>
                           <tr class="table-success">
-                            <td class="align-middle"><b>EDC Home + MOTO</b> ({{delivery_detail.edc_home_credit}} + {{delivery_detail.moto_credit}})</td>
-                            <td class="text-center align-middle">{{AddMotoToEdcCard}} 
+                            <td class="align-middle"><b>EDC Home + MOTO</b> ({{delivery_detail.edc_home_credit}} +
+                              {{delivery_detail.moto_credit}})</td>
+                            <td class="text-center align-middle">{{AddMotoToEdcCard}}
                             </td>
                           </tr>
                         </table>
                       </div>
                       <div class="row">
                         <div class="justify-content-center d-flex mt-3">
-                          <a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                          <a href="/home-list/{{daily_report_id}}" class="btn btn-primary btn-lg" type="submit">กลับหน้าแรก</a>
+                          <a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}/"
+                            class="btn btn-secondary btn-lg">ย้อนกลับ</a>
+                          <a href="/home-list/{{daily_report_id}}" class="btn btn-primary btn-lg"
+                            type="submit">กลับหน้าแรก</a>
                         </div>
                 </form>
               </div>

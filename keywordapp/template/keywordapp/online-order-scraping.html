@@ -6,7 +6,7 @@
   <div class="weekly-best-seller-area py-3">
     <div class="container">
       <div class="section-heading">
-        <h2>ดึงข้อมูล Online​ ({{date}})</h2>
+        <h2>ดึงข้อมูล ({{date}})</h2>
       </div>
       <div class="row g-3">
         <div class="col-12">
@@ -14,7 +14,9 @@
             <div class="card-body align-items-center">
               <div class="product-description" style="width:100%;max-width: 100%;">
                   <div class="d-flex justify-content-around">
-                    <a href="/get-online-data/{{daily_report_id}}" class="btn btn-danger">ดึงข้อมูล</a>
+                    <a href="/get-online-data/{{daily_report_id}}" class="btn btn-danger">ออนไลน์</a>
+                    <a href="/update-pos/{{daily_report_id}}/lunch" class="btn btn-success">POS Lunch</a>
+                    <a href="/update-pos/{{daily_report_id}}/dinner" class="btn btn-warning">POS DInner</a>
                   </div>
               </div>
             </div>

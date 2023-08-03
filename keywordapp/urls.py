@@ -39,10 +39,10 @@ urlpatterns = [
 
 
     # ? Scraping Data
-    path('online-order/<str:daily_report_id>/',
-         OnlineOrder, name='online-order'),
+    path('scraping/<str:daily_report_id>/',
+         ChooseScrapingData, name='scraping'),
     path('get-online-data/<str:daily_report_id>/', GetOnlineOrderData),
 
     # ? Email
-    path('email/<str:daily_report_id>/', UpdatePosData),
+    path('update-pos/<str:daily_report_id>/<str:shift>/', UpdatePosData),
 ]
