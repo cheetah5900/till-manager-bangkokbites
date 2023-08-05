@@ -40,6 +40,11 @@ import imaplib
 
 # Excel
 import openpyxl
+import pandas as pd
+import shutil
+import glob
+import re
+from bs4 import BeautifulSoup
 
 
 def Index(request):
@@ -204,7 +209,6 @@ def LunchInputDetail(request, daily_report_id):
         billOnlineCash = request.POST.get('bill_online_cash')
         billOnlineCardCount = request.POST.get('bill_online_card_count')
         billOnlineCard = request.POST.get('bill_online_card')
-
 
         bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
 
@@ -545,7 +549,6 @@ def DinnerReport(request, daily_report_id):
     resultCompareTotalDineInCount = (
         realBillInCashCountLunch + realBillInCardCountLunch) - posDineInTotalBillCount
 
-
     # * Dinner Data
     bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
     realBillPhoneCashDinner = bill_dinner.pos_ta_bill_phone_cash
@@ -571,7 +574,6 @@ def DinnerReport(request, daily_report_id):
     posDineInTotalBillCount = bill_dinner.pos_dine_in_total_bill_count
     resultCompareTotalDineInCountDinner = (
         realBillInCashCountDinner + realBillInCardCountDinner) - posDineInTotalBillCount
-
 
     # * Delivery Section
     # Access the related DeliveryDetailModel instances using the foreign key relationship
@@ -784,8 +786,10 @@ def HomeList(request, daily_report_id):
 
     # You can also access the related DeliveryDetailModel instances from a DailyReportModel instance
     related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
-    deliveryTotalCount = 0
-    deliveryTotalCommissionAndOa = 0
+    sumOnlineCashCount = 0
+    sumOnlineCardCount = 0
+    sumOnlineCash = 0
+    sumOnlineCard = 0
     for detail in related_delivery_details:
         detail.sum_commission = detail.wage_per_home * (detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count +
                                                         detail.bill_home_online_cash_count + detail.bill_home_online_card_count)
@@ -795,16 +799,20 @@ def HomeList(request, daily_report_id):
         detail.sum_commission_and_oa = (
             detail.bill_home_oa_count * detail.bill_home_oa_amount) + detail.sum_commission
 
-        deliveryTotalCount += detail.home_count
-        deliveryTotalCommissionAndOa += detail.sum_commission_and_oa
+        sumOnlineCashCount += detail.bill_home_online_cash_count
+        sumOnlineCardCount += detail.bill_home_online_card_count
+        sumOnlineCash += detail.bill_home_online_cash
+        sumOnlineCard += detail.bill_home_online_card
 
     context = {
         'date': date,
         'daily_report_id': daily_report_id,
         'bill_dinner': bill_dinner,
-        'deliveryTotalCount': deliveryTotalCount,
-        'deliveryTotalCommissionAndOa': deliveryTotalCommissionAndOa,
         'related_delivery_details': related_delivery_details,
+        'sumOnlineCashCount': sumOnlineCashCount,
+        'sumOnlineCardCount': sumOnlineCardCount,
+        'sumOnlineCash': sumOnlineCash,
+        'sumOnlineCard': sumOnlineCard,
     }
     return render(request, 'keywordapp/home-list.html', context)
 
@@ -1461,131 +1469,228 @@ def AddTransparentHighlight(image, text, text_position, font, opacity, color='or
 # ************************************************************************************************ START : EMAIL ************************************************************************************************
 
 
-def UpdatePosData(request, daily_report_id, shift):
-
-    # Your Outlook email credentials
-    username = 'cheetah6541@gmail.com'
-    password = 'bitjqffhoygdllid'
-
-    # Outlook IMAP server and port
-    imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
-    imap_ssl_port = 993
-    try:
-        mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
-        # Log in to your email account
-        mail.login(username, password)
-
-        # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
-        mailbox = 'INBOX'
-        mail.select(mailbox)
-    except:
-        print("ERROR")
-
-# Search for emails (optional)
-# Here, we search for all emails in the selected mailbox
-    sender_email = 'cheetah5900@windowslive.com'
-    subject = 'Pos Dine in'
-    search_query = f'(FROM "{sender_email}" SUBJECT "{subject}")'
-    status, email_ids = mail.search(None, search_query)
-
-    # Get the latest email (you can specify the email ID if you want a specific one)
-    latest_email_id = email_ids[0].split()[-1]
-
-    # Fetch the email content
-    status, email_data = mail.fetch(latest_email_id, '(RFC822)')
-    raw_email = email_data[0][1]
-
-    # Parse the email content
-    msg = email.message_from_bytes(raw_email)
-
-    # Check if the email has any attachments
-    if msg.get_content_maintype() == 'multipart':
-        for part in msg.walk():
-            if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                continue
-            filename = part.get_filename()
-            if filename:
-                # Save the attachment to a specific folder
-                path = os.getcwd()
-                save_path = path+'/static/mail'
-                if not os.path.exists(save_path):
-                    os.makedirs(save_path)
-                file_path = os.path.join(save_path, filename)
-                with open(file_path, 'wb') as f:
-                    f.write(part.get_payload(decode=True))
-                print(f'Saved attachment: {filename}')
-
-    mail.logout()
-
-    file_path = path+'/static/mail/pos_dine_in.xlsx'
-
-    # Load the workbook
-    workbook = openpyxl.load_workbook(file_path)
-
-    # Select the specific worksheet (sheet) where your data is located
-    sheet = workbook["Sheet1"]  # Replace "Sheet1" with the actual sheet name
-
-    #* Lunch
-    posTABillPhoneCashLunch = sheet["B2"].value
-    posTABillPhoneCashCountLunch = sheet["C2"].value
-    posTABillPhoneCardLunch = sheet["A2"].value
-    posTABillPhoneCardCountLunch = sheet["B2"].value
-    posInCashLunch = sheet["C2"].value
-    posInCashCountLunch = sheet["A2"].value
-    posInCardLunch = sheet["B2"].value
-    posInCardCountLunch = sheet["C2"].value
-    posTaPhoneTotalBillCountLunch = sheet["A2"].value
-    posDineInTotalBillCountLunch = sheet["B2"].value
-    #* Dinner
-    posTABillPhoneCashDinner = sheet["B2"].value
-    posTABillPhoneCashCountDinner = sheet["C2"].value
-    posTABillPhoneCardDinner = sheet["A2"].value
-    posTABillPhoneCardCountDinner = sheet["B2"].value
-    posInCashDinner = sheet["C2"].value
-    posInCashCountDinner = sheet["A2"].value
-    posInCardDinner = sheet["B2"].value
-    posInCardCountDinner = sheet["C2"].value
-    posTaPhoneTotalBillCountDinner = sheet["A2"].value
-    posDineInTotalBillCountDinner = sheet["B2"].value
-
-    # Close the workbook
-    workbook.close()
+def UpdatePosData(request, daily_report_id,):
 
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
-    if shift == 'lunch':
-        bill_lunch_id = daily_object.bill_lunch.id
-        bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
-        # POS TA Phone
-        bill_lunch.pos_ta_bill_phone_cash = posTABillPhoneCashLunch
-        bill_lunch.pos_ta_bill_phone_cash_count = posTABillPhoneCashCountLunch
-        bill_lunch.pos_ta_bill_phone_card = posTABillPhoneCardLunch
-        bill_lunch.pos_ta_bill_phone_card_count = posTABillPhoneCardCountLunch
-        bill_lunch.pos_ta_phone_total_bill_count = posTaPhoneTotalBillCountLunch
-        # POS Dine in
-        bill_lunch.pos_in_bill_cash = posInCashLunch
-        bill_lunch.pos_in_bill_cash_count = posInCashCountLunch
-        bill_lunch.pos_in_bill_card = posInCardLunch
-        bill_lunch.pos_in_bill_card_count = posInCardCountLunch
-        bill_lunch.pos_dine_in_total_bill_count = posDineInTotalBillCountLunch
+    # Your Outlook email credentials
+#     username = 'cheetah6541@gmail.com'
+#     password = 'bitjqffhoygdllid'
 
-        # Save the updated object
-        bill_lunch.save()
-    elif shift == 'dinner':
-        bill_dinner_id = daily_object.bill_dinner.id
-        bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
-        # POS TA Phone
-        bill_dinner.pos_ta_bill_phone_cash = posTABillPhoneCashDinner
-        bill_dinner.pos_ta_bill_phone_cash_count = posTABillPhoneCashCountDinner
-        bill_dinner.pos_ta_bill_phone_card = posTABillPhoneCardDinner
-        bill_dinner.pos_ta_bill_phone_card_count = posTABillPhoneCardCountDinner
-        bill_dinner.pos_ta_phone_total_bill_count = posTaPhoneTotalBillCountDinner
-        # POS Dine in
-        bill_dinner.pos_in_bill_cash = posInCashDinner
-        bill_dinner.pos_in_bill_cash_count = posInCashCountDinner
-        bill_dinner.pos_in_bill_card = posInCardDinner
-        bill_dinner.pos_in_bill_card_count = posInCardCountDinner
-        bill_dinner.pos_dine_in_total_bill_count = posDineInTotalBillCountDinner
+#     # Outlook IMAP server and port
+#     imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
+#     imap_ssl_port = 993
+#     try:
+#         mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
+#         # Log in to your email account
+#         mail.login(username, password)
+
+#         # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
+#         mailbox = 'INBOX'
+#         mail.select(mailbox)
+#     except:
+#         print("ERROR")
+
+# # Search for emails (optional)
+# # Here, we search for all emails in the selected mailbox
+#     sender_email = 'judy888123@gmail.com'
+#     subject = 'Z Reading Report'
+#     search_query = f'(FROM "{sender_email}" SUBJECT "{subject}")'
+#     status, email_ids = mail.search(None, search_query)
+
+#     # Get the latest email (you can specify the email ID if you want a specific one)
+#     latest_email_id = email_ids[0].split()[-1]
+
+#     # Fetch the email content
+#     status, email_data = mail.fetch(latest_email_id, '(RFC822)')
+#     raw_email = email_data[0][1]
+
+#     # Parse the email content
+#     msg = email.message_from_bytes(raw_email)
+
+#     # Check if the email has any attachments
+#     if msg.get_content_maintype() == 'multipart':
+#         for part in msg.walk():
+#             if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
+#                 continue
+#             filename = part.get_filename()
+#             if filename:
+#                 # new_filename = filename.replace(':', '-')
+#                 new_filename = "3.html"
+#                 # Save the attachment to a specific folder
+#                 path = os.getcwd()
+#                 save_path = path+'/static/mail'
+#                 if not os.path.exists(save_path):
+#                     os.makedirs(save_path)
+#                 file_path = os.path.join(save_path, new_filename)
+#                 with open(file_path, 'wb') as f:
+#                     f.write(part.get_payload(decode=True))
+#                 print(f'Saved attachment: {new_filename}')
+
+#     mail.logout()
+
+    path = os.getcwd()
+    save_path = path+'/static/mail'
+    new_filename = 'ta-lunch-normal-1.html'
+    file_path = os.path.join(save_path, new_filename)
+
+    # base_filename = os.path.splitext(new_filename)[0]
+    # new_filename_xlsx = f"{base_filename}.xlsx"
+    # output_file_path = path+'/static/mail/' + new_filename
+    tables = pd.read_html(file_path)
+    if tables:
+        table_df = tables[0]
+
+        # Check if the DataFrame is not empty and has rows and columns
+        if not table_df.empty:
+            # Get the number of rows and columns in the DataFrame
+            num_rows, num_cols = table_df.shape
+
+            # Iterate through the rows and columns to extract cell values
+            for row in range(num_rows):
+                for col in range(num_cols):
+                    cell_value = table_df.iat[row, col]  # Access cell value by index
+                    print(f"Cell ({row}, {col}):", cell_value)
+        else:
+            print("Table DataFrame is empty.")
+    else:
+        print("No tables found on the page.")
+
+    # * Lunch
+    # ? Identify POS type
+    # Get cell values from tax information table
+    getGstSales = table_df.iat[21, 0]
+    findGstSales = getGstSales.find("GST Sales")
+    if findGstSales != -1:
+        posType = "ta"
+        # ? Identify Format type
+        getToGoValue = table_df.iat[2, 0]
+        findTheWordToGo = getToGoValue.lower().find("to go")
+        # If found To Go index. it means there is the word "To Go" there.
+        # TA normal
+        if findTheWordToGo != -1:
+            countAllTa = GetNumberAfterDashSign(getToGoValue)
+            print("Count All to go", countAllTa)
+            # Cash Topic Cell
+            getCashCount = table_df.iat[24, 0]
+            print("getCashCount : ", getCashCount)
+            if getCashCount != "Cash":
+                cashCount = GetNumberAfterDashSign(getCashCount)
+                print("cashCount : ", cashCount)
+                cashAmount = table_df.iat[24, 1]
+                print("cashAmount : ", cashAmount)
+            # Card Topic Cell
+            getCardCount = table_df.iat[25, 0]
+            print("getCardCount : ", getCardCount)
+            if getCardCount != "Card":
+                cardCount = GetNumberAfterDashSign(getCardCount)
+                print("cardCount : ", cardCount)
+                cardAmount = table_df.iat[25, 1]
+                print("cardAmount : ", cardAmount)
+        else:
+            print("Can't find word To Go")
+        # If can't find To Go at that row. it means it is abnormal bill
+    else:
+        getGstSales = table_df.iat[25, 0]
+        findGstSales = getGstSales.find("GST Sales")
+        # TA abnormal
+        if findGstSales != -1:
+            posType = "ta"
+            # ? Identify Format type
+            getToGoValue = table_df.iat[4, 0]
+            getDeliveryValue = table_df.iat[5, 0]
+            findTheWordToGo = getToGoValue.lower().find("to go")
+            if findTheWordToGo != -1:
+                splitCountAllToGo = getToGoValue.split("-")
+                splitCountAllDelivery = getDeliveryValue.split("-")
+                countAllToGo = int(splitCountAllToGo[1].strip())
+                countAllDelivery = int(splitCountAllDelivery[1].strip())
+                print("Count All To Go", countAllToGo)
+                print("Count All Delivery", countAllDelivery)
+                countAllTa = countAllToGo + countAllDelivery
+                print("Count All TA", countAllTa)
+            else:
+                print("Can't find word To Go")
+        else:
+            posType = "in"
+
+    # ? Identify shift
+    getShiftName = table_df.iat[0, 1]
+    shiftNameIndex = getShiftName.find("Shift Name:")
+    if shiftNameIndex != -1:
+        # Get the word after "Shift Name:"
+        shiftName = getShiftName[shiftNameIndex +
+                                 len("Shift Name:"):70].strip().lower()
+        if shiftName == "dinni" or shiftName == "dinne":
+            shift = "dinner"
+        elif shiftName == "lunch":
+            shift = "lunch"
+        else:
+            print("Can't Identify POS type")
+    else:
+        print("No 'Shift Name:' found in the table.")
+
+    print("POS type : ", posType)
+    print("shift : ", shift)
+
+    #     bill_lunch_id = daily_object.bill_lunch.id
+    #     bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+
+    #     if getShift == 'lunch':
+    #         # POS TA Phone
+    #         bill_lunch.pos_ta_bill_phone_cash = cashAmount
+    #         bill_lunch.pos_ta_bill_phone_cash_count = cashCount
+    #         bill_lunch.pos_ta_bill_phone_card = cardCount
+    #         bill_lunch.pos_ta_bill_phone_card_count = cardAmount
+    #         bill_lunch.pos_ta_phone_total_bill_count = countAll
+    #     elif getShift == 'dinning':
+    #         # POS Dine in
+    #         bill_lunch.pos_in_bill_cash = cashAmount
+    #         bill_lunch.pos_in_bill_cash_count = cashCount
+    #         bill_lunch.pos_in_bill_card = cardCount
+    #         bill_lunch.pos_in_bill_card_count = cardAmount
+    #         bill_lunch.pos_dine_in_total_bill_count = countAll
+
+    #         # Save the updated object
+    #         bill_lunch.save()
+
+    # # * Dinner
+    # posTABillPhoneCashDinner = sheet["B2"].value
+    # posTABillPhoneCashCountDinner = sheet["C2"].value
+    # posTABillPhoneCardDinner = sheet["A2"].value
+    # posTABillPhoneCardCountDinner = sheet["B2"].value
+    # posInCashDinner = sheet["C2"].value
+    # posInCashCountDinner = sheet["A2"].value
+    # posInCardDinner = sheet["B2"].value
+    # posInCardCountDinner = sheet["C2"].value
+    # posTaPhoneTotalBillCountDinner = sheet["A2"].value
+    # posDineInTotalBillCountDinner = sheet["B2"].value
+
+    # # Close the workbook
+    # workbook.close()
+
+    # elif getShift == 'dinner':
+    #     bill_dinner_id = daily_object.bill_dinner.id
+    #     bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
+    #     # POS TA Phone
+    #     bill_dinner.pos_ta_bill_phone_cash = posTABillPhoneCashDinner
+    #     bill_dinner.pos_ta_bill_phone_cash_count = posTABillPhoneCashCountDinner
+    #     bill_dinner.pos_ta_bill_phone_card = posTABillPhoneCardDinner
+    #     bill_dinner.pos_ta_bill_phone_card_count = posTABillPhoneCardCountDinner
+    #     bill_dinner.pos_ta_phone_total_bill_count = posTaPhoneTotalBillCountDinner
+    #     # POS Dine in
+    #     bill_dinner.pos_in_bill_cash = posInCashDinner
+    #     bill_dinner.pos_in_bill_cash_count = posInCashCountDinner
+    #     bill_dinner.pos_in_bill_card = posInCardDinner
+    #     bill_dinner.pos_in_bill_card_count = posInCardCountDinner
+    #     bill_dinner.pos_dine_in_total_bill_count = posDineInTotalBillCountDinner
 
     return render(request, 'keywordapp/plain.html')
 
 # ************************************************************************************************ END : EMAIL ************************************************************************************************
+
+
+def GetNumberAfterDashSign(cellData):
+    splitCellData = cellData.split("-")
+    result = int(splitCellData[1].strip())
+
+    return result

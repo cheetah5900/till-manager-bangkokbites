@@ -43,6 +43,6 @@ urlpatterns = [
          ChooseScrapingData, name='scraping'),
     path('get-online-data/<str:daily_report_id>/', GetOnlineOrderData),
 
-    # ? Email
-    path('update-pos/<str:daily_report_id>/<str:shift>/', UpdatePosData),
+    # ? POS update
+    path('update-pos/<str:daily_report_id>/', UpdatePosData),
 ]

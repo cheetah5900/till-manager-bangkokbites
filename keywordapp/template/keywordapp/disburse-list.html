@@ -1,63 +1,50 @@
 {% extends 'keywordapp/layout.html' %}
 {% block activework %}active{% endblock activework %}
 {% block content %}
-<div class="page-content-wrapper">
-  <!-- Weekly Best Sellers-->
-  <div class="weekly-best-seller-area py-3">
-    <div class="container">
-      <div class="section-heading">
-        <h2>เบิกจ่าย ({{ date }})</h2>
-      </div>
-      <div class="row g-3">
-        <div class="col-12">
-          <div class="card weekly-product-card">
-            <div class="card-body align-items-center">
-              <div class="product-description" style="width: 100%; max-width: 100%;">
-                <form action="" method="post">
-                  {% csrf_token %}
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="row">
-                        <table class="table">
-                          <tr>
-                            <td>รายการ</td>
-                            <td>ราคา</td>
-                            <td>แก้ไข</td>
-                            <td>ลบ</td>
-                          </tr>
-                          {% for item in related_disburse_details %}
-                          <tr>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.price }}</td>
-                            <td><a href="/disburse-input/{{daily_report_id}}/{{item.id}}" class="btn btn-success">แก้ไข</a></td>
-                            <td>
-                              <a class="btn btn-danger"
-                                href="{% url 'delete-disburse' item.id daily_report_id %}"
-                                onclick="return confirm('Are you sure you want to delete?')">Delete</a>
-                            </td>
-                          </tr>
-                          {% endfor %}
-                          <tr>
-                            <th>ยอดรวม</th>
-                            <td>{{totalDisburse}}</td>
-                            <td></td>
-                            <td></td>
-                          </tr>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="justify-content-center d-flex mt-5 mb-3">
-                      <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                      <a href="/disburse-input/{{daily_report_id}}/0" class="btn btn-success btn-lg">เพิ่มรายการเบิก</a>
-                      <a href="/" class="btn btn-primary btn-lg">กลับหน้าแรก</a>
-                    </div>
-                </form>
-              </div>
-            </div>
-          </div>
+<div class="checkout app-pages app-section">
+  <div class="container">
+    <div class="pages-title">
+      <h3>Disburse Detail ({{ date }})</h3>
+    </div>
+    <div class="order">
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>Name</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Price</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Edit</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Delete</h6>
         </div>
       </div>
+      {% for item in related_disburse_details %}
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>{{item.name}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{item.price}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6><a href="/disburse-input/{{daily_report_id}}/{{item.id}}" class="button twitter">แก้ไข</a>
+          </h6>
+        </div>
+        <div class="col s3 text-right">
+          <a class="button google" href="{% url 'delete-disburse' item.id daily_report_id %}"
+            onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+        </div>
+      </div>
+      {% endfor %}
     </div>
+    <a href="/disburse-input/{{daily_report_id}}/0" class="button link-button">Add Disburse</a>
+    <br>
+    <a href="/" class="button facebook link-button">Main Page</a>
   </div>
 </div>
+
+
 {% endblock content %}

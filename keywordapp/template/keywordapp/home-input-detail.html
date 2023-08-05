@@ -1,94 +1,79 @@
 {% extends 'keywordapp/layout.html' %}
 {% block activework %}active{% endblock activework %}
 {% block content %}
-<div class="page-content-wrapper">
-  <!-- Weekly Best Sellers-->
-  <div class="weekly-best-seller-area py-3">
-    <div class="container">
-      <div class="section-heading">
-        <h2>กรอกข้อมูลปิดยอด Home ({{ date }})</h2>
-      </div>
-      <div class="row g-3">
-        <div class="col-12">
-          <div class="card weekly-product-card">
-            <div class="card-body align-items-center">
-              <div class="product-description" style="width: 100%; max-width: 100%;">
-                <form action="" method="post">
-                  {% csrf_token %}
-                  <div class="row">
-                    <hr>
-                    <div class="col-12">
-                      <div class="coupon-text-wrap d-flex align-items-center table-responsive">
-                        <table class="table table-bordered">
-                          <tr class="table-dark">
-                            <td class="align-middle"><b>คิดค่า Commission</b></td>
-                            <td></td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">จำนวนใบ Phone + Online ({{sumHomePhoneCount}} +
-                              {{sumHomeOnlineCount}})</td>
-                            <td class="text-center align-middle"> {{sumHomeCount}}</td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">ค่าคอมมิชชั่น/ใบ</td>
-                            <td class="text-center align-middle">{{delivery_detail.wage_per_home}}</td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">ค่า Commission ยังไม่รวม OA</td>
-                            <td class="text-center align-middle">{{sumHomeCommission}}</td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">ยอด OA ({{delivery_detail.bill_home_oa_count}}) </td>
-                            <td class="text-center align-middle">{{delivery_detail.bill_home_oa_amount}}</td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle"><b>Total ค่าคอมมิชชั่น</b></td>
-                            <td class="text-center align-middle">{{sumHomeCommissionAndOa}}
-                            </td>
-                          </tr>
-                          <tr class="table-dark">
-                            <td class="align-middle"><b>เทียบยอดบัตร กับยอด Home</b></td>
-                            <td class="text-center">
-                              <h3>{{resultCheckEqual}}</h3>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">Online จ่ายบัตร</td>
-                            <td class="text-center align-middle">{{delivery_detail.bill_home_online_card}}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td class="align-middle">Phone จ่ายบัตร</td>
-                            <td class="text-center align-middle">{{delivery_detail.bill_home_phone_card}}
-                            </td>
-                          </tr>
-                          <tr class="table-info">
-                            <td class="align-middle"><b>รวมยอดจ่ายบัตร</b></td>
-                            <td class="text-center align-middle">{{sumHomeCardAmount}}
-                            </td>
-                          </tr>
-                          <tr class="table-success">
-                            <td class="align-middle"><b>EDC Home + MOTO</b> ({{delivery_detail.edc_home_credit}} +
-                              {{delivery_detail.moto_credit}})</td>
-                            <td class="text-center align-middle">{{AddMotoToEdcCard}}
-                            </td>
-                          </tr>
-                        </table>
-                      </div>
-                      <div class="row">
-                        <div class="justify-content-center d-flex mt-3">
-                          <a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}/"
-                            class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                          <a href="/home-list/{{daily_report_id}}" class="btn btn-primary btn-lg"
-                            type="submit">กลับหน้าแรก</a>
-                        </div>
-                </form>
-              </div>
-            </div>
-          </div>
+<div class="checkout app-pages app-section">
+  <div class="container">
+    <div class="pages-title">
+      <h3>Home Detail Report ({{ date }})</h3>
+    </div>
+    <div class="order">
+      <h5 class="title">Commission Calculate</h5>
+      <div class="row">
+        <div class="col s8">
+          <h6>Home Count Phone + Online ({{sumHomePhoneCount}} +
+            {{sumHomeOnlineCount}})</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{sumHomeCount}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>Commission/Home</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{delivery_detail.wage_per_home}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>Commission (No OA)</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{sumHomeCommission}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>OA Amount ({{delivery_detail.bill_home_oa_count}})</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{delivery_detail.bill_home_oa_amount}}</h6>
+        </div>
+        <div class="col s8">
+          <h5>Total</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h5>{{sumHomeCommissionAndOa}}</h5>
         </div>
       </div>
-    </div>
+      <h5 class="title">Compare EDC and Home {{resultCheckEqual}}</h5>
+      <div class="row">
+        <div class="col s8">
+          <h6>Home Online Card</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{delivery_detail.bill_home_online_card}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>Home Phone Card</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{delivery_detail.bill_home_phone_card}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>Total Card</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{sumHomeCardAmount}}</h6>
+        </div>
+        <div class="col s8">
+          <h5>EDC Home + MOTO ({{delivery_detail.edc_home_credit}} +
+            {{delivery_detail.moto_credit}})</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{AddMotoToEdcCard}}</h6>
+        </div>
+      </div>
+    </div><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}/"
+      class="button instagram link-button">Back</a>
+    <a href="/home-list/{{daily_report_id}}" class="button facebook link-button" type="submit">Home Page</a>
+
   </div>
 </div>
+
 {% endblock content %}

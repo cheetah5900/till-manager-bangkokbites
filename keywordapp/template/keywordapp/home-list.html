@@ -1,131 +1,124 @@
 {% extends 'keywordapp/layout.html' %}
 {% block activework %}active{% endblock activework %}
 {% block content %}
-<div class="page-content-wrapper">
-  <!-- Weekly Best Sellers-->
-  <div class="weekly-best-seller-area py-3">
-    <div class="container">
-      <div class="section-heading">
-        <h2>รายละเอียดHome ({{ date }})</h2>
-      </div>
-      <div class="row g-3">
-        <div class="col-12">
-          <div class="card weekly-product-card">
-            <div class="card-body align-items-center">
-              <div class="product-description" style="width: 100%; max-width: 100%;">
-                <form action="" method="post">
-                  {% csrf_token %}
-                  <div class="row">
-                    <div class="col-12">
-                      <div class="row table-responsive">
-                        <h5>คนส่ง</h5>
-                        <table class="table">
-                          <tr>
-                            <td>ชื่อคนส่ง</td>
-                            <td>จำนวนใบที่ส่ง</td>
-                            <td>ค่าคอม/ใบ</td>
-                            <td>ค่าคอมยังไม่รวม OA</td>
-                            <td>จำนวน OA</td>
-                            <td>ยอด OA</td>
-                            <td><b>Total</b></td>
-                            <td>Edit</td>
-                            <td>Delete</td>
-                          </tr>
-                          {% for delivery_detail in related_delivery_details %}
-                          <tr>
-                            <td>{{ delivery_detail.delivery_name }}</td>
-                            <td>{{ delivery_detail.home_count }}</td>
-                            <td>{{ delivery_detail.wage_per_home }}</td>
-                            <td>{{ delivery_detail.sum_commission }}</td>
-                            <td>{{ delivery_detail.bill_home_oa_count }}</td>
-                            <td>{{ delivery_detail.bill_home_oa_amount }}</td>
-                            <td>{{ delivery_detail.sum_commission_and_oa }}</td>
-                            <td><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}"
-                                class="btn btn-success">แก้ไข</a></td>
-                            <td>
-                              <a class="btn btn-danger"
-                                href="{% url 'delete-delivery-detail' delivery_detail.id daily_report_id %}"
-                                onclick="return confirm('Are you sure you want to delete?')">Delete</a>
-                            </td>
-                          </tr>
-                          {% endfor %}
-                        </table>
-                      </div>
-                    </div>
-                    <div class="justify-content-center d-flex mt-5 mb-3">
-                      <a href="/" class="btn btn-secondary btn-lg">ย้อนกลับ</a>
-                      <a href="/home-input-quick/{{daily_report_id}}/0"
-                        class="btn btn-primary btn-lg">เพิ่มข้อมูลคนส่ง</a>
-                    </div>
-                </form>
-              </div>
-            </div>
-          </div>
+
+<div class="checkout app-pages app-section">
+  <div class="container">
+    <div class="pages-title">
+      <h3>Home Detail ({{ date }})</h3>
+    </div>
+    <div class="order">
+      {% for delivery_detail in related_delivery_details %}
+      <h5 class="title">{{delivery_detail.delivery_name}}</h5>
+      <div class="row">
+        <div class="col s2 text-right">
+          <h6>Name</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>Count</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>Total</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>Edit</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>Delete</h6>
         </div>
       </div>
-      <div class="row g-3">
-        <div class="col-12">
-          <div class="card weekly-product-card">
-            <div class="card-body align-items-center">
-              <div class="product-description" style="width: 100%; max-width: 100%;">
-
-                <div class="row">
-                  <div class="col-12 mt-3">
-                    <h3>เปรียบเทียบยอด Home Online</h3>
-
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col-12">
-                    <div class="table-responsive">
-                      <table class="table">
-                        <tr>
-                          <td>จำนวนใบเงินสด</td>
-                          <td>จำนวนเงินสด</td>
-                          <td>จำนวนใบบัตร</td>
-                          <td>จำนวนบัตร</td>
-                        </tr>
-                        <tr class="table-primary">
-                          <td colspan="3">ยอด Home Online จากระบบ</td>
-                          <td> <a href="/get-online-data/{{daily_report_id}}/home" class="btn btn-primary">ดึงข้อมูล</a>
-                          </td>
-                        </tr>
-
-                        <tr>
-                          <td>{{ bill_dinner.delivery_cash_count_in_online_system }}</td>
-                          <td>{{ bill_dinner.delivery_cash_amount_in_online_system }}</td>
-                          <td>{{ bill_dinner.delivery_card_count_in_online_system }}</td>
-                          <td>{{ bill_dinner.delivery_card_amount_in_online_system }}</td>
-                        </tr>
-                        <tr class="table-primary">
-                          <td colspan="4">ยอด Home Online จากการรวมรายการด้านบน</td>
-                        </tr>
-
-                        <tr>
-                          <td>{{ deliveryTotalCount }}</td>
-                          <td>{{ deliveryTotalCommissionAndOa }}</td>
-                          <td>{{ deliveryTotalCommissionAndOa }}</td>
-                          <td>{{ deliveryTotalCommissionAndOa }}</td>
-                        </tr>
-
-                      </table>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-12">
-
-
-                        </table>
-
-
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div class="row">
+        <div class="col s2 text-right">
+          <h6>{{delivery_detail.delivery_name}}</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>{{delivery_detail.home_count}}</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6>{{delivery_detail.sum_commission_and_oa}}</h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}" class="button twitter">Edit</a>
+          </h6>
+        </div>
+        <div class="col s2 text-right">
+          <h6><a class="button google" href="{% url 'delete-delivery-detail' delivery_detail.id daily_report_id %}"
+              onclick="return confirm('Are you sure you want to delete?')">Delete</a></h6>
         </div>
       </div>
-      {% endblock content %}
+      {% endfor %}
+      <a href="/home-input-quick/{{daily_report_id}}/0" class="button link-button">Add Delivery Man</a>
+    </div>
+  </div>
+</div>
+<div class="checkout app-pages app-section">
+  <div class="container">
+    <div class="pages-title">
+      <h3>Comepare Home Online</h3>
+    </div>
+    <div class="order">
+      <h5 class="title">Home Online From System</h5>
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>Cash Count</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Cash</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Card Count</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Card</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>{{bill_dinner.delivery_cash_count_in_online_system}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{bill_dinner.delivery_cash_amount_in_online_system}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{bill_dinner.delivery_card_count_in_online_system}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{bill_dinner.delivery_card_amount_in_online_system}}</h6>
+        </div>
+      </div>
+      <h5 class="title">Home Online From Summarize Data</h5>
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>Cash Count</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Cash</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Card Count</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>Card</h6>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s3 text-right">
+          <h6>{{sumOnlineCashCount}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{sumOnlineCash}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{sumOnlineCardCount}}</h6>
+        </div>
+        <div class="col s3 text-right">
+          <h6>{{sumOnlineCard}}</h6>
+        </div>
+      </div>
+    </div>
+
+    <a href="/lunch-input-detail/{{daily_report_id}}" class="button instagram link-button">Back</a>
+    <a href="/" class="button facebook link-button">Main Page</a>
+  </div>
+</div>
+{% endblock content %}

@@ -4,7 +4,7 @@
   <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Kids - Multipurpose Mobile Template</title>
+    <title>Bangkok Bite</title>
     <meta name="viewport" content="width=device-width, initial-scale=1  maximum-scale=1 user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="HandheldFriendly" content="True">
@@ -22,10 +22,7 @@
     <link rel="stylesheet" href="/static/css/style.css">	
   </head>
 <body>
-  <div class="spinner-grow text-secondary" role="status">
-    <div class="sr-only">Loading...</div>
-  </div>
-  </div>
+
   <!-- Header Area-->
   <div class="header-area" id="headerArea">
     <div class="container h-100 d-flex align-items-center justify-content-between">
@@ -34,22 +31,54 @@
     </div>
   </div>
 
+
+	<!-- navbar -->
+	<div class="navbar">
+		<div class="container">
+			<div class="site-title">
+				<a href="index.html"><h1>Bangkok Bite</h1></a>
+			</div>
+		</div>
+	</div>
+	<!-- end navbar -->
+
   <main>{%block content%} {%endblock content%}</main>
 
 
-  <!-- All JavaScript Files-->
-  <script src="/static/js/bootstrap.bundle.min.js"></script>
-  <script src="/static/js/jquery.min.js"></script>
-  <script src="/static/js/waypoints.min.js"></script>
-  <script src="/static/js/jquery.easing.min.js"></script>
-  <script src="/static/js/owl.carousel.min.js"></script>
-  <script src="/static/js/jquery.counterup.min.js"></script>
-  <script src="/static/js/jquery.countdown.min.js"></script>
-  <script src="/static/js/default/jquery.passwordstrength.js"></script>
-  <script src="/static/js/default/dark-mode-switch.js"></script>
-  <script src="/static/js/default/no-internet.js"></script>
-  <script src="/static/js/default/active.js"></script>
-  <script src="/static/js/pwa.js"></script>
+	<!-- footer -->
+	<footer>
+		<div class="container">
+			<h6>Find & follow us</h6>
+			<ul class="icon-social">
+				<li class="facebook"><a href=""><i class="fa fa-facebook"></i></a></li>
+				<li class="twitter"><a href=""><i class="fa fa-twitter"></i></a></li>
+				<li class="google"><a href=""><i class="fa fa-google"></i></a></li>
+				<li class="instagram"><a href=""><i class="fa fa-instagram"></i></a></li>
+				<li class="rss"><a href=""><i class="fa fa-rss"></i></a></li>
+			</ul>
+			<div class="tel-fax-mail">
+				<ul>
+					<li><span>Tel:</span> 900000002</li>
+					<li><span>Fax:</span> 0400000098</li>
+					<li><span>Email:</span> info@youremail.com</li>
+				</ul>
+			</div>
+			<div class="ft-bottom">
+				<span>Copyright © 2016 All Rights Reserved </span>
+			</div>
+		</div>
+	</footer>
+	<!-- end footer -->
+	
+  
+	<!-- script -->
+	<script src="/static/js/jquery.min.js"></script>
+	<script src="/static/js/materialize.min.js"></script>
+	<script src="/static/js/slick.min.js"></script>
+	<script src="/static/js/owl.carousel.min.js"></script>
+	<script src="/static/js/lightbox.min.js"></script>
+	<script src="/static/js/custom.js"></script>
+  
   <script>
     function clearInputValue(input) {
       if (parseFloat(input.value) === 0) {
