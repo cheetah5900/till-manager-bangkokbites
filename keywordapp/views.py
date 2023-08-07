@@ -78,14 +78,16 @@ def Index(request):
 
         if mode == 'lunch':
             return redirect(reverse('lunch-input-quick', kwargs={'daily_report_id': daily_report.id}))
-        if mode == 'home':
+        elif mode == 'home':
             return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report.id}))
-        if mode == 'dinner':
+        elif mode == 'dinner':
             return redirect(reverse('dinner-input-quick', kwargs={'daily_report_id': daily_report.id}))
-        if mode == 'disburse':
+        elif mode == 'disburse':
             return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report.id}))
-        if mode == 'scraping':
+        elif mode == 'scraping':
             return redirect(reverse('scraping', kwargs={'daily_report_id': daily_report.id}))
+        elif mode == 'result':
+            return redirect(reverse('dinner-report', kwargs={'daily_report_id': daily_report.id}))
 
     return render(request, 'keywordapp/index.html', context)
 
@@ -1025,8 +1027,8 @@ def WaitForElement(driver, element_locator, wait_time=10):
 def ScrapingOnlineData(table_rows, input_date, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
-    bill_lunch_id = daily_report.bill_lunch_id
-    bill_dinner_id = daily_report.bill_dinner_id
+    bill_lunch_id = daily_report.bill_lunch.id
+    bill_dinner_id = daily_report.bill_dinner.id
 
     delivery_cash_count = 0
     delivery_card_count = 0
@@ -1101,17 +1103,17 @@ def ScrapingOnlineData(table_rows, input_date, daily_report_id):
             pass
 
         bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
-        bill_lunch.real_bill_online_cash_count = pickup_cash_count_lunch
-        bill_lunch.real_bill_online_card_count = pickup_card_count_lunch
-        bill_lunch.real_bill_online_cash = pickup_cash_amount_lunch
-        bill_lunch.real_bill_online_card = pickup_card_amount_lunch
+        bill_lunch.bill_online_cash_count = pickup_cash_count_lunch
+        bill_lunch.bill_online_card_count = pickup_card_count_lunch
+        bill_lunch.bill_online_cash = pickup_cash_amount_lunch
+        bill_lunch.bill_online_card = pickup_card_amount_lunch
         bill_lunch.save()
 
         bill_dinner = get_object_or_404(BillDinnerModel, id=bill_dinner_id)
-        bill_dinner.real_bill_online_cash_count = pickup_cash_count_dinner
-        bill_dinner.real_bill_online_card_count = pickup_card_count_dinner
-        bill_dinner.real_bill_online_cash = pickup_cash_amount_dinner
-        bill_dinner.real_bill_online_card = pickup_card_amount_dinner
+        bill_dinner.bill_online_cash_count = pickup_cash_count_dinner
+        bill_dinner.bill_online_card_count = pickup_card_count_dinner
+        bill_dinner.bill_online_cash = pickup_cash_amount_dinner
+        bill_dinner.bill_online_card = pickup_card_amount_dinner
         bill_dinner.delivery_cash_count_in_online_system = delivery_cash_count
         bill_dinner.delivery_cash_amount_in_online_system = delivery_cash_amount
         bill_dinner.delivery_card_count_in_online_system = delivery_card_count
@@ -1385,10 +1387,11 @@ def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnl
                                 '                   ', (100, 670), fontTotalShift, 0.2, 'pink')
 
     # Total Online
-    imgObj.text((690, 545), '('+str(totalOnlineCount)+') ' +
-                str(totalOnlineAmount), font=fontThai, fill=FontColor)  # Total Online
-    AddTransparentHighlight(img, '  '+str(totalOnlineAmount),
-                            (690, 545), fontTotalShift, 0.2, 'orange')
+    if totalOnlineCount != 0:
+        imgObj.text((690, 545), '('+str(totalOnlineCount)+') ' +
+                    str(totalOnlineAmount), font=fontThai, fill=FontColor)  # Total Online
+        AddTransparentHighlight(img, '  '+str(totalOnlineAmount),
+                                (690, 545), fontTotalShift, 0.2, 'orange')
 
     # Wrong Credit
     if wrongCreditLunch != 0:
@@ -1472,219 +1475,265 @@ def AddTransparentHighlight(image, text, text_position, font, opacity, color='or
 def UpdatePosData(request, daily_report_id,):
 
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
+    selectedDate = daily_object.date
     # Your Outlook email credentials
-#     username = 'cheetah6541@gmail.com'
-#     password = 'bitjqffhoygdllid'
+    username = 'cheetah6541@gmail.com'
+    password = 'bitjqffhoygdllid'
 
-#     # Outlook IMAP server and port
-#     imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
-#     imap_ssl_port = 993
-#     try:
-#         mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
-#         # Log in to your email account
-#         mail.login(username, password)
+    # Outlook IMAP server and port
+    imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
+    imap_ssl_port = 993
+    try:
+        mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
+        # Log in to your email account
+        mail.login(username, password)
 
-#         # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
-#         mailbox = 'INBOX'
-#         mail.select(mailbox)
-#     except:
-#         print("ERROR")
+        # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
+        mailbox = 'INBOX'
+        mail.select(mailbox)
+    except:
+        print("ERROR")
 
-# # Search for emails (optional)
-# # Here, we search for all emails in the selected mailbox
-#     sender_email = 'judy888123@gmail.com'
-#     subject = 'Z Reading Report'
-#     search_query = f'(FROM "{sender_email}" SUBJECT "{subject}")'
-#     status, email_ids = mail.search(None, search_query)
+# Search for emails (optional)
+# Here, we search for all emails in the selected mailbox
+    sender_email = 'judy888123@gmail.com'
+    # sender_email = 'cheetah5900@windowslive.com'
+    # subject = 'Z Reading Report'
+    search_query = f'(FROM "{sender_email}" SUBJECT "{selectedDate}")'
+    status, email_ids = mail.search(None, search_query)
 
-#     # Get the latest email (you can specify the email ID if you want a specific one)
-#     latest_email_id = email_ids[0].split()[-1]
+    # Loop through all email IDs
+    for email_id in email_ids[0].split():
+        # Fetch the email content
+        status, email_data = mail.fetch(email_id, '(RFC822)')
+        raw_email = email_data[0][1]
 
-#     # Fetch the email content
-#     status, email_data = mail.fetch(latest_email_id, '(RFC822)')
-#     raw_email = email_data[0][1]
+        # Parse the email content
+        msg = email.message_from_bytes(raw_email)
 
-#     # Parse the email content
-#     msg = email.message_from_bytes(raw_email)
-
-#     # Check if the email has any attachments
-#     if msg.get_content_maintype() == 'multipart':
-#         for part in msg.walk():
-#             if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-#                 continue
-#             filename = part.get_filename()
-#             if filename:
-#                 # new_filename = filename.replace(':', '-')
-#                 new_filename = "3.html"
-#                 # Save the attachment to a specific folder
-#                 path = os.getcwd()
-#                 save_path = path+'/static/mail'
-#                 if not os.path.exists(save_path):
-#                     os.makedirs(save_path)
-#                 file_path = os.path.join(save_path, new_filename)
-#                 with open(file_path, 'wb') as f:
-#                     f.write(part.get_payload(decode=True))
-#                 print(f'Saved attachment: {new_filename}')
+        # Check if the email has any attachments
+        if msg.get_content_maintype() == 'multipart':
+            for part in msg.walk():
+                if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
+                    continue
+                filename = part.get_filename()
+                if filename:
+                    new_filename = filename.replace(':', '-')
+                    base_filename = os.path.splitext(new_filename)[0]
+                    # Define the regular expression pattern
+                    pattern = r'(\d{4}-\d{2}-\d{2})'
+                    # Search for the pattern in the text
+                    match = re.search(pattern, base_filename)
+                    # Extract the matched date from the first capturing group
+                    if match:
+                        date = match.group(1)
+                    else:
+                        print("Date not found.")
+                    # If date name in mail == selected date do this
+                    if str(selectedDate) == date:
+                        new_filename_html = f"{date}.html"
+                        # Save the attachment to a specific folder
+                        path = os.getcwd()
+                        save_path = path + '/static/mail'
+                        if not os.path.exists(save_path):
+                            os.makedirs(save_path)
+                        file_path = os.path.join(save_path, new_filename_html)
+                        file_path = get_unique_file_name(file_path)
+                        with open(file_path, 'wb') as f:
+                            f.write(part.get_payload(decode=True))
+                        print(f'Saved attachment: {new_filename_html}')
 
 #     mail.logout()
-
+    # Loop to do every file in folder
+    # TODO FOR TESTING
     path = os.getcwd()
-    save_path = path+'/static/mail'
-    new_filename = 'ta-lunch-normal-1.html'
-    file_path = os.path.join(save_path, new_filename)
+    save_path = path + '/static/mail'
 
-    # base_filename = os.path.splitext(new_filename)[0]
-    # new_filename_xlsx = f"{base_filename}.xlsx"
-    # output_file_path = path+'/static/mail/' + new_filename
-    tables = pd.read_html(file_path)
-    if tables:
-        table_df = tables[0]
+    files_in_folder = os.listdir(save_path)
+    files_with_selected_date = [
+        file for file in files_in_folder if str(selectedDate) in file]
+    file_count = len(files_with_selected_date)
 
-        # Check if the DataFrame is not empty and has rows and columns
-        if not table_df.empty:
-            # Get the number of rows and columns in the DataFrame
-            num_rows, num_cols = table_df.shape
+    for i in range(file_count):
+        file_name = files_with_selected_date[i]
+        file_path = os.path.join(save_path, file_name)
+        try:
+            tables = pd.read_html(file_path)
+        except:
+            return redirect('index')
+        if tables:
+            table_df = tables[0]
 
-            # Iterate through the rows and columns to extract cell values
-            for row in range(num_rows):
-                for col in range(num_cols):
-                    cell_value = table_df.iat[row, col]  # Access cell value by index
-                    print(f"Cell ({row}, {col}):", cell_value)
+            # Check if the DataFrame is not empty and has rows and columns
+            # if not table_df.empty:
+            #     # Get the number of rows and columns in the DataFrame
+            #     num_rows, num_cols = table_df.shape
+
+            #     # Iterate through the rows and columns to extract cell values
+            #     for row in range(num_rows):
+            #         for col in range(num_cols):
+            #             cell_value = table_df.iat[row, col]  # Access cell value by index
+            #             print(f"Cell ({row}, {col}):", cell_value)
+            # else:
+            #     print("Table DataFrame is empty.")
         else:
-            print("Table DataFrame is empty.")
-    else:
-        print("No tables found on the page.")
-
-    # * Lunch
-    # ? Identify POS type
-    # Get cell values from tax information table
-    getGstSales = table_df.iat[21, 0]
-    findGstSales = getGstSales.find("GST Sales")
-    if findGstSales != -1:
-        posType = "ta"
-        # ? Identify Format type
-        getToGoValue = table_df.iat[2, 0]
-        findTheWordToGo = getToGoValue.lower().find("to go")
-        # If found To Go index. it means there is the word "To Go" there.
-        # TA normal
-        if findTheWordToGo != -1:
-            countAllTa = GetNumberAfterDashSign(getToGoValue)
-            print("Count All to go", countAllTa)
-            # Cash Topic Cell
-            getCashCount = table_df.iat[24, 0]
-            print("getCashCount : ", getCashCount)
-            if getCashCount != "Cash":
-                cashCount = GetNumberAfterDashSign(getCashCount)
-                print("cashCount : ", cashCount)
-                cashAmount = table_df.iat[24, 1]
-                print("cashAmount : ", cashAmount)
-            # Card Topic Cell
-            getCardCount = table_df.iat[25, 0]
-            print("getCardCount : ", getCardCount)
-            if getCardCount != "Card":
-                cardCount = GetNumberAfterDashSign(getCardCount)
-                print("cardCount : ", cardCount)
-                cardAmount = table_df.iat[25, 1]
-                print("cardAmount : ", cardAmount)
-        else:
-            print("Can't find word To Go")
-        # If can't find To Go at that row. it means it is abnormal bill
-    else:
-        getGstSales = table_df.iat[25, 0]
-        findGstSales = getGstSales.find("GST Sales")
-        # TA abnormal
-        if findGstSales != -1:
+            print("No tables found on the page.")
+        #! ================================================================= START : GET COUNT AND AMOUNT =================================================================
+        # ? Identify POS type
+        # Get cell values from tax information table
+        getGstSales1 = table_df.iat[21, 0]
+        findGstSales1 = getGstSales1.find("GST Sales")
+        try:
+            getGstSales2 = table_df.iat[25, 0]
+            findGstSales2 = getGstSales2.find("GST Sales")
+        except:
+            findGstSales2 = -1
+        if findGstSales1 != -1:
+            posType = "ta"
+            # ? Identify Format type
+            getToGoValue = table_df.iat[2, 0]
+            findTheWordToGo = getToGoValue.lower().find("to go")
+            # If found To Go index. it means there is the word "To Go" there.
+            # TA normal
+            if findTheWordToGo != -1:
+                countAll = GetNumberAfterDashSign(getToGoValue)
+                print("Count All to go", countAll)
+                print("file_name", file_name)
+                cashCount, cashAmount, cardCount, cardAmount = getCashAndCardData(
+                    table_df, 24)
+            else:
+                print("Can't find word To Go")
+            # If can't find To Go at that row. it means it is abnormal bill
+        elif findGstSales2 != -1:
+            # TA abnormal
             posType = "ta"
             # ? Identify Format type
             getToGoValue = table_df.iat[4, 0]
             getDeliveryValue = table_df.iat[5, 0]
             findTheWordToGo = getToGoValue.lower().find("to go")
             if findTheWordToGo != -1:
-                splitCountAllToGo = getToGoValue.split("-")
-                splitCountAllDelivery = getDeliveryValue.split("-")
-                countAllToGo = int(splitCountAllToGo[1].strip())
-                countAllDelivery = int(splitCountAllDelivery[1].strip())
+                countAllToGo = GetNumberAfterDashSign(getToGoValue)
+                countAllDelivery = GetNumberAfterDashSign(getDeliveryValue)
                 print("Count All To Go", countAllToGo)
                 print("Count All Delivery", countAllDelivery)
-                countAllTa = countAllToGo + countAllDelivery
-                print("Count All TA", countAllTa)
+                countAll = int(countAllToGo) + int(countAllDelivery)
+                print("Count All TA", countAll)
+                cashCount, cashAmount, cardCount, cardAmount = getCashAndCardData(
+                    table_df, 28)
             else:
                 print("Can't find word To Go")
         else:
             posType = "in"
+            # ? Reformat dine in format
+            indent_html_file(file_path, file_path)
+            # ? read file again
+            tables = pd.read_html(file_path)
+            if tables:
+                table_df = tables[0]
+            # ? Identify Format type
+            getDineInValue = table_df.iat[0, 1]
+            findTheWordDineIn = getDineInValue.lower().find("dine in")
+            # Dine in normal
+            if findTheWordDineIn != -1:
+                # Check last row of  Sales Report table 2 position
+                getSalesTaxRounding1 = table_df.iat[22, 0]
+                getSalesTaxRounding2 = table_df.iat[26, 0]
+                findTheWordSalesTaxRounding1 = getSalesTaxRounding1.lower().find(
+                    "sales + tax + rounding")
+                findTheWordSalesTaxRounding2 = getSalesTaxRounding2.lower().find(
+                    "sales + tax + rounding")
+                # If it can find the text this will be normal dine in report
+                if findTheWordSalesTaxRounding1 != -1:
+                    countAll = getDineInValue[findTheWordDineIn +
+                                              10:findTheWordDineIn + 10 + 3].strip()
+                    print("countAll : ", countAll)
+                    rowForCheckingMoney = 24
+                elif findTheWordSalesTaxRounding2 != -1:
+                    findTheWordTogo = getDineInValue.lower().find("to go")
+                    countDineIn = getDineInValue[findTheWordDineIn +
+                                                 10:findTheWordDineIn + 10 + 3].strip()
+                    countToGo = getDineInValue[findTheWordTogo +
+                                               8:findTheWordTogo + 8 + 3].strip()
+                    print("countDineIn : ", countDineIn)
+                    print("countToGo : ", countToGo)
+                    countAll = int(countDineIn) + int(countToGo)
+                    print("countAll : ", countAll)
+                    rowForCheckingMoney = 28
+                else:
+                    print("Can't find sales + tax + rounding")
 
-    # ? Identify shift
-    getShiftName = table_df.iat[0, 1]
-    shiftNameIndex = getShiftName.find("Shift Name:")
-    if shiftNameIndex != -1:
-        # Get the word after "Shift Name:"
-        shiftName = getShiftName[shiftNameIndex +
-                                 len("Shift Name:"):70].strip().lower()
-        if shiftName == "dinni" or shiftName == "dinne":
-            shift = "dinner"
-        elif shiftName == "lunch":
-            shift = "lunch"
+                cashCount, cashAmount, cardCount, cardAmount = getCashAndCardData(
+                    table_df, rowForCheckingMoney)
+            else:
+                print("Can't find word dine in")
+        #! ================================================================= END : GET COUNT AND AMOUNT =================================================================
+
+        #! ================================================================= START : GET SHIFT =================================================================
+        # ? Identify shift
+        getShiftName = table_df.iat[0, 1]
+        print("getShiftName: ", getShiftName)
+        shiftNameIndex = getShiftName.find("Shift Name:")
+        if shiftNameIndex != -1:
+            # Get the word after "Shift Name:"
+            shiftName = getShiftName[shiftNameIndex +
+                                     11:shiftNameIndex + 11 + 6].strip().lower()
+            print("shiftName: ", shiftName)
+            if 'din' in shiftName:
+                shift = "dinner"
+            elif shiftName == "lunch":
+                shift = "lunch"
+            else:
+                print("Can't Identify shift")
         else:
-            print("Can't Identify POS type")
-    else:
-        print("No 'Shift Name:' found in the table.")
+            print("No 'Shift Name:' found in the table.")
 
-    print("POS type : ", posType)
-    print("shift : ", shift)
+        #! ================================================================= START : ADD DATA TO DB =================================================================
+        if posType == "ta":
+            if shift == "lunch":
+                bill_lunch_id = daily_object.bill_lunch.id
+                bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+                # POS TA Phone
+                bill_lunch.pos_ta_bill_phone_cash = cashAmount
+                bill_lunch.pos_ta_bill_phone_cash_count = cashCount
+                bill_lunch.pos_ta_bill_phone_card = cardAmount
+                bill_lunch.pos_ta_bill_phone_card_count = cardCount
+                bill_lunch.pos_ta_phone_total_bill_count = countAll
+                # Save the updated object
+                bill_lunch.save()
+            elif shift == "dinner":
+                bill_dinner_id = daily_object.bill_dinner.id
+                bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
+                # POS Dine in
+                bill_dinner.pos_ta_bill_phone_cash = cashAmount
+                bill_dinner.pos_ta_bill_phone_cash_count = cashCount
+                bill_dinner.pos_ta_bill_phone_card = cardAmount
+                bill_dinner.pos_ta_bill_phone_card_count = cardCount
+                bill_dinner.pos_ta_phone_total_bill_count = countAll
+                bill_dinner.save()
+        if posType == "in":
+            if shift == "lunch":
+                bill_lunch_id = daily_object.bill_lunch.id
+                bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+                # POS TA Phone
+                bill_lunch.pos_in_bill_cash = cashAmount
+                bill_lunch.pos_in_bill_cash_count = cashCount
+                bill_lunch.pos_in_bill_card = cardAmount
+                bill_lunch.pos_in_bill_card_count = cardCount
+                bill_lunch.pos_dine_in_total_bill_count = countAll
+                # Save the updated object
+                bill_lunch.save()
+            elif shift == "dinner":
+                bill_dinner_id = daily_object.bill_dinner.id
+                bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
+                # POS Dine in
+                bill_dinner.pos_in_bill_cash = cashAmount
+                bill_dinner.pos_in_bill_cash_count = cashCount
+                bill_dinner.pos_in_bill_card = cardAmount
+                bill_dinner.pos_in_bill_card_count = cardCount
+                bill_dinner.pos_dine_in_total_bill_count = countAll
+                bill_dinner.save()
 
-    #     bill_lunch_id = daily_object.bill_lunch.id
-    #     bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
-
-    #     if getShift == 'lunch':
-    #         # POS TA Phone
-    #         bill_lunch.pos_ta_bill_phone_cash = cashAmount
-    #         bill_lunch.pos_ta_bill_phone_cash_count = cashCount
-    #         bill_lunch.pos_ta_bill_phone_card = cardCount
-    #         bill_lunch.pos_ta_bill_phone_card_count = cardAmount
-    #         bill_lunch.pos_ta_phone_total_bill_count = countAll
-    #     elif getShift == 'dinning':
-    #         # POS Dine in
-    #         bill_lunch.pos_in_bill_cash = cashAmount
-    #         bill_lunch.pos_in_bill_cash_count = cashCount
-    #         bill_lunch.pos_in_bill_card = cardCount
-    #         bill_lunch.pos_in_bill_card_count = cardAmount
-    #         bill_lunch.pos_dine_in_total_bill_count = countAll
-
-    #         # Save the updated object
-    #         bill_lunch.save()
-
-    # # * Dinner
-    # posTABillPhoneCashDinner = sheet["B2"].value
-    # posTABillPhoneCashCountDinner = sheet["C2"].value
-    # posTABillPhoneCardDinner = sheet["A2"].value
-    # posTABillPhoneCardCountDinner = sheet["B2"].value
-    # posInCashDinner = sheet["C2"].value
-    # posInCashCountDinner = sheet["A2"].value
-    # posInCardDinner = sheet["B2"].value
-    # posInCardCountDinner = sheet["C2"].value
-    # posTaPhoneTotalBillCountDinner = sheet["A2"].value
-    # posDineInTotalBillCountDinner = sheet["B2"].value
-
-    # # Close the workbook
-    # workbook.close()
-
-    # elif getShift == 'dinner':
-    #     bill_dinner_id = daily_object.bill_dinner.id
-    #     bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
-    #     # POS TA Phone
-    #     bill_dinner.pos_ta_bill_phone_cash = posTABillPhoneCashDinner
-    #     bill_dinner.pos_ta_bill_phone_cash_count = posTABillPhoneCashCountDinner
-    #     bill_dinner.pos_ta_bill_phone_card = posTABillPhoneCardDinner
-    #     bill_dinner.pos_ta_bill_phone_card_count = posTABillPhoneCardCountDinner
-    #     bill_dinner.pos_ta_phone_total_bill_count = posTaPhoneTotalBillCountDinner
-    #     # POS Dine in
-    #     bill_dinner.pos_in_bill_cash = posInCashDinner
-    #     bill_dinner.pos_in_bill_cash_count = posInCashCountDinner
-    #     bill_dinner.pos_in_bill_card = posInCardDinner
-    #     bill_dinner.pos_in_bill_card_count = posInCardCountDinner
-    #     bill_dinner.pos_dine_in_total_bill_count = posDineInTotalBillCountDinner
-
-    return render(request, 'keywordapp/plain.html')
+    return render(request, 'keywordapp/after-pos-scraping.html',context={'daily_report_id': daily_report_id})
 
 # ************************************************************************************************ END : EMAIL ************************************************************************************************
 
@@ -1694,3 +1743,50 @@ def GetNumberAfterDashSign(cellData):
     result = int(splitCellData[1].strip())
 
     return result
+
+
+def getCashAndCardData(table_df, rowCash):
+    cashCount = 0
+    cashAmount = 0
+    cardCount = 0
+    cardAmount = 0
+    # Cash Topic Cell
+    getCashCount = table_df.iat[rowCash, 0]
+    print("getCashCount : ", getCashCount)
+    if getCashCount != "Cash":
+        cashCount = GetNumberAfterDashSign(getCashCount)
+        print("cashCount : ", cashCount)
+        cashAmount = table_df.iat[rowCash, 1]
+        print("cashAmount : ", cashAmount)
+    # Card Topic Cell
+    getCardCount = table_df.iat[rowCash+1, 0]
+    print("getCardCount : ", getCardCount)
+    if getCardCount != "Credit card":
+        cardCount = GetNumberAfterDashSign(getCardCount)
+        print("cardCount : ", cardCount)
+        cardAmount = table_df.iat[rowCash+1, 1]
+        print("cardAmount : ", cardAmount)
+    return cashCount, cashAmount, cardCount, cardAmount
+
+
+def indent_html_file(input_file_path, output_file_path):
+    with open(input_file_path, 'r', encoding='utf-8') as file:
+        # Parse the HTML content using BeautifulSoup
+        soup = BeautifulSoup(file, 'html.parser')
+
+    # Use prettify() method to add indentation
+    indented_html = soup.prettify()
+
+    # Write the indented HTML to the output file
+    with open(output_file_path, 'w', encoding='utf-8') as outfile:
+        outfile.write(indented_html)
+
+
+# Define a function to handle duplicated file names
+def get_unique_file_name(file_path):
+    count = 1
+    base_name, ext = os.path.splitext(file_path)
+    while os.path.exists(file_path):
+        file_path = f"{base_name}_{count}{ext}"
+        count += 1
+    return file_path

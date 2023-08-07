@@ -2,6 +2,16 @@
 {% load humanize %}
 {%block activework%}active{%endblock activework%}
 {%block content%}
-<img src="{{imgLocation}}" class="result-hua-img" alt="">
-<a href="/" class="btn btn-primary btn-lg">กลับหน้าแรก</a>
+<div class="app-pages app-section text-center">
+ <div class="pages-title">
+   <h2>{{ date }}</h2>
+ </div>
+</div>
+<div class="text-center">
+ <img src="{{imgLocation}}" class="result-hua-img" style="margin: 0 auto; display:block">
+</div>
+<div class="mt-5">
+ <a href="/dinner-input-detail/{{daily_report_id}}" class="button twitter link-button">Back</a>
+ <a href="/" class="button facebook link-button">Main Page</a>
+</div>
 {%endblock content%}
