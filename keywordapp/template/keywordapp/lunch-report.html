@@ -6,104 +6,64 @@
   <div class="container">
     <div class="pages-title">
       <h3>Report Lunch ({{ date }})</h3>
+      <img src="{{imgLocation}}" alt="" class="w-100">
     </div>
-    <div class="order">
-      <h5 class="title">TA Online</h5>
-      <div class="row">
-        <div class="col s8">
-          <h6>All Count</h6>
+
+    <!-- checkout -->
+    <div class="checkout app-pages app-section">
+      <div class="container">
+        <div class="pages-title">
+          <h3>Credit Detail Lunch ({{ date }})</h3>
         </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillOnlineCount}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Total</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillOnline}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Cash</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillOnlineCash}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Card</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillOnlineCard}}</h6>
-        </div>
-      </div>
-      <h5 class="title">TA Lunch</h5>
-      <div class="row">
-        <div class="col s8">
-          <h6>All Count</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillPhoneCount}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Total</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillPhone}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Cash</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillPhoneCash}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Card</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillPhoneCard}}</h6>
-        </div>
-      </div>
-      <h5 class="title">EAT-IN Lunch</h5>
-      <div class="row">
-        <div class="col s8">
-          <h6>All Count</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillInCount}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Total</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{sumrealBillIn}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Cash</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillInCash}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>Card</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillInCard}}</h6>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col s8">
-          <h5>TOTAL LUNCH</h5>
-        </div>
-        <div class="col s4 text-right">
-          <h5>{{totalBillLunch}}</h5>
+        <div class="order">
+          <h5 class="title">Chraged by EDC Dine-in {{ resultCheckEqual }}</h5>
+          <div class="row">
+            <div class="col s8">
+              <h6>1. POS TA</h6>
+            </div>
+            <div class="col s4 text-right">
+              <h6>{{bill_lunch.pos_ta_bill_phone_card}}</h6>
+            </div>
+            <div class="col s8">
+              <h6>2. POS Dine-in</h6>
+            </div>
+            <div class="col s4 text-right">
+              <h6>{{bill_lunch.pos_in_bill_card}}</h6>
+            </div>
+            <div class="col s8">
+              <h6>3. TA Online</h6>
+            </div>
+            <div class="col s4 text-right">
+              <h6>{{bill_lunch.bill_online_card}}</h6>
+            </div>
+            <div class="col s8">
+              <h6>4. Tip</h6>
+            </div>
+            <div class="col s4 text-right">
+              <h6>{{bill_lunch.tip_credit}}</h6>
+            </div>
+            <div class="col s8">
+              <h5>Total - Lack Credit ({{addTipToSum}} - {{bill_lunch.wrong_credit}})</h5>
+            </div>
+            <div class="col s4 text-right">
+              <h5>{{minusWrongCreditFromSumBillCard}}</h5>
+            </div>
+            <div class="col s8">
+              <h5>EDC Dine-in</h5>
+            </div>
+            <div class="col s4 text-right">
+              <h5>{{edcInCredit}}</h5>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-				<h5>Report Printing</h5>
-				<p>1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Lunch"</p>
-        <p>2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Lunch"</p>
-        <p>3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Lunch"</p>
-        <a href="/lunch-input-detail/{{daily_report_id}}" class="button instagram link-button">Back</a>
-        <a href="/" class="button facebook link-button">Main Page</a>
+    <h5>Report Printing</h5>
+    <p>1. เครื่อง POS Dine-in เขียนหัวกระดาษว่า "Dine-in Lunch"</p>
+    <p>2. เครื่อง POS TA เขียนหัวกระดาษว่า "TA Lunch"</p>
+    <p>3. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Lunch"</p>
+    <a href="/lunch-input-quick/{{daily_report_id}}" class="button instagram link-button">Back</a>
+    <a href="/" class="button facebook link-button">Main Page</a>
   </div>
 </div>
 {%endblock content%}

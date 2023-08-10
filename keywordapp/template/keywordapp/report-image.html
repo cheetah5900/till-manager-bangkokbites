@@ -3,15 +3,103 @@
 {%block activework%}active{%endblock activework%}
 {%block content%}
 <div class="app-pages app-section text-center">
- <div class="pages-title">
-   <h2>{{ date }}</h2>
- </div>
+  <div class="pages-title">
+    <h2>Report ({{ date }})</h2>
+  </div>
 </div>
 <div class="text-center">
- <img src="{{imgLocation}}" class="result-hua-img" style="margin: 0 auto; display:block">
+  <img src="{{imgLocation}}" class="result-hua-img" style="margin: 0 auto; display:block">
 </div>
-<div class="mt-5">
- <a href="/dinner-input-detail/{{daily_report_id}}" class="button twitter link-button">Back</a>
- <a href="/" class="button facebook link-button">Main Page</a>
+<div class="checkout app-pages app-section">
+  <div class="container">
+    <div class="pages-title">
+      <h3>Credit Detail Dinner ({{ date }})</h3>
+    </div>
+    <div class="order">
+      <h5 class="title">Chraged by EDC Dine-in {{ resultCheckEqual1 }}</h5>
+      <div class="row">
+        <div class="col s8">
+          <h6>1. POS TA - Home Phone ({{bill_dinner.pos_ta_bill_phone_card}} - {{realBillHomePhoneCard}})</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6> {{minusHomePhoneOutFromPosTa}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>2. POS Dine-in</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{bill_dinner.pos_in_bill_card}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>3. TA Online</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{bill_dinner.bill_online_card}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>4. Tip</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{bill_dinner.tip_credit}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>5. MOTO</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{edcInMotoCredit}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>6. EDC Lunch</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{edcInCreditLunch}}</h6>
+        </div>
+        <div class="col s8">
+          <h5>Total - Lack Credit ({{sumBillCardForCompareWithEdcDineIn}} - {{bill_dinner.wrong_credit}})</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h5>{{minusWrongCreditFromSumBillCard}}</h5>
+        </div>
+        <div class="col s8">
+          <h5>EDC Dine-in Credit</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h5>{{edcInCredit}}</h5>
+        </div>
+      </div>
+      <h5 class="title">Chraged by EDC Home {{ resultCheckEqual2 }}</h5>
+      <div class="row">
+        <div class="col s8">
+          <h6>1. Home Phone</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6> {{realBillHomePhoneCard}}</h6>
+        </div>
+        <div class="col s8">
+          <h6>2. Home Online</h6>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{realBillHomeOnlineCard}}</h6>
+        </div>
+        <div class="col s8">
+          <h5>Total - MOTO
+            ({{sumBillHomeCard}} - {{edcInMotoCredit}})</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h6>{{minusMotoCreditFromSumBillHomeCard}}</h6>
+        </div>
+        <div class="col s8">
+          <h5>EDC Home Credit</h5>
+        </div>
+        <div class="col s4 text-right">
+          <h5>{{sumEdcHomeCard}}</h5>
+        </div>
+      </div>
+    </div>
+    <div class="mt-5">
+      <a href="/dinner-input-quick/{{daily_report_id}}" class="button twitter link-button">Back</a>
+      <a href="/" class="button facebook link-button">Main Page</a>
+    </div>
+  </div>
 </div>
 {%endblock content%}
