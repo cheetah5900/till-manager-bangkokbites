@@ -227,8 +227,8 @@ def LunchReport(request, daily_report_id):
     # summary
     sumBillPhoneCard = realBillPhoneCard + realBillInCard + realBillOnlineCard
     addTipToSum = sumBillPhoneCard + tipCredit
-    minusWrongCreditFromSumBillCard = addTipToSum - wrongCredit
-    resultCheckEqual = "✅" if edcInCredit == minusWrongCreditFromSumBillCard else "❌"
+    addWrongCreditToEdcLunch =  edcInCredit + wrongCredit
+    resultCheckEqual = "✅" if addTipToSum == addWrongCreditToEdcLunch else "❌"
 
     # Summary
     # Row 1 TA Online
@@ -279,7 +279,7 @@ def LunchReport(request, daily_report_id):
         'edcInCredit': edcInCredit,
         'resultCheckEqual': resultCheckEqual,
         'addTipToSum': addTipToSum,
-        'minusWrongCreditFromSumBillCard': minusWrongCreditFromSumBillCard,
+        'addWrongCreditToEdcLunch': addWrongCreditToEdcLunch,
         'imgLocation': imgLocation,
     }
     return render(request, 'keywordapp/lunch-report.html', context)
@@ -542,13 +542,16 @@ def DinnerReport(request, daily_report_id):
     edcInMotoCredit = sum(
         detail.moto_credit for detail in related_delivery_details)
     minusHomePhoneOutFromPosTa = bill_dinner.pos_ta_bill_phone_card - realBillHomePhoneCard
-    sumBillCardForCompareWithEdcDineIn = minusHomePhoneOutFromPosTa + bill_dinner.pos_in_bill_card + \
+    totalBillCardForCompareWithEdcDineIn = minusHomePhoneOutFromPosTa + bill_dinner.pos_in_bill_card + \
         bill_dinner.bill_online_card + bill_dinner.tip_credit + edcInMotoCredit + bill_lunch.edc_in_credit
-    minusWrongCreditFromSumBillCard = sumBillCardForCompareWithEdcDineIn - wrongCreditDinner #! The reason use only dinner because it is different shift from lunch shift.
+    
+    #! The reason use only dinner because it is different shift from lunch shift.
+    addWrongCreditToEdcDineIn = bill_dinner.edc_in_credit + wrongCreditDinner
+
     sumBillHomeCard = realBillHomePhoneCard + realBillHomeOnlineCard
     minusMotoCreditFromSumBillHomeCard = sumBillHomeCard - edcInMotoCredit
 
-    resultCheckEqual1 = "✅" if minusWrongCreditFromSumBillCard == bill_dinner.edc_in_credit else "❌"
+    resultCheckEqual1 = "✅" if totalBillCardForCompareWithEdcDineIn == addWrongCreditToEdcDineIn else "❌"
     resultCheckEqual2 = "✅" if minusMotoCreditFromSumBillHomeCard == sumEdcHomeCard else "❌"
 
     context = {
@@ -627,14 +630,14 @@ def DinnerReport(request, daily_report_id):
 
         #! Comparation
         'bill_dinner': bill_dinner,
-        'sumBillCardForCompareWithEdcDineIn': sumBillCardForCompareWithEdcDineIn,
+        'totalBillCardForCompareWithEdcDineIn': totalBillCardForCompareWithEdcDineIn,
         'minusHomePhoneOutFromPosTa': minusHomePhoneOutFromPosTa,
-        'minusWrongCreditFromSumBillCard': minusWrongCreditFromSumBillCard,
         'resultCheckEqual1': resultCheckEqual1,
         'resultCheckEqual2': resultCheckEqual2,
         'edcInCredit': bill_dinner.edc_in_credit,
         'edcInCreditLunch': bill_lunch.edc_in_credit,
         'edcInMotoCredit': edcInMotoCredit,
+        'addWrongCreditToEdcDineIn': addWrongCreditToEdcDineIn,
         # Home
         'realBillHomePhoneCard': realBillHomePhoneCard,
         'realBillHomeOnlineCard': realBillHomeOnlineCard,

@@ -55,16 +55,16 @@
           <h6>{{edcInCreditLunch}}</h6>
         </div>
         <div class="col s8">
-          <h5>Total - Lack Credit ({{sumBillCardForCompareWithEdcDineIn}} - {{bill_dinner.wrong_credit}})</h5>
+          <h5>Total</h5>
         </div>
         <div class="col s4 text-right">
-          <h5>{{minusWrongCreditFromSumBillCard}}</h5>
+          <h5>{{totalBillCardForCompareWithEdcDineIn}}</h5>
         </div>
         <div class="col s8">
-          <h5>EDC Dine-in Credit</h5>
+          <h5>EDC Dine-in Credit + Lack Credit ({{edcInCredit}} + {{bill_dinner.wrong_credit}})</h5>
         </div>
         <div class="col s4 text-right">
-          <h5>{{edcInCredit}}</h5>
+          <h5>{{addWrongCreditToEdcDineIn}}</h5>
         </div>
       </div>
       <h5 class="title">Chraged by EDC Home {{ resultCheckEqual2 }}</h5>
