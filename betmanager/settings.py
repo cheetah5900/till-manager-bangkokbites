@@ -27,6 +27,8 @@ STATICFILES_DIRS = [
 ]
 
 
+PC_OR_MAC = "PC"
+
 # ? Prod
 # DEBUG = False
 # STATIC_ROOT = BASE_DIR / "static"

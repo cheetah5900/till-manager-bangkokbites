@@ -6,6 +6,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
 import time
 import datetime
 
@@ -822,19 +823,22 @@ def GetOnlineOrderData(request, daily_report_id):
     input_date = input_date.strftime('%b %d, %Y')
 
     options = webdriver.ChromeOptions()
-    # Specify the path to your custom user data directory
-    custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
-    options.add_argument(f'--user-data-dir={custom_user_data_dir}')
 
     # options.add_argument("--headless")
-    #! PC
-    # driver = webdriver.Chrome(options=options)
-    #! MAC
     options.add_argument("start-maximized")
-    # Replace with the actual path to the Chrome binary
-    options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-    driver = webdriver.Chrome(
-        "/Users/chaperone/Documents/GitHub/chromedriver", options=options)
+
+    if settings.PC_OR_MAC == "PC":
+        custom_user_data_dir = 'C:\Users\cheet\AppData\Local\Google\Chrome\User Data\Default'
+        options.add_argument(f'--user-data-dir={custom_user_data_dir}')
+        driver = webdriver.Chrome(options=options)
+    elif settings.PC_OR_MAC == "MAC":
+        # Specify the path to your custom user data directory
+        custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
+        options.add_argument(f'--user-data-dir={custom_user_data_dir}')
+        # Replace with the actual path to the Chrome binary
+        options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+        driver = webdriver.Chrome(
+            "/Users/chaperone/Documents/GitHub/chromedriver", options=options)
 
     # driver.get('https://gloriafood.com/')
 
@@ -1390,7 +1394,10 @@ def UpdatePosData(request, daily_report_id,):
 
     # * Delete old file
     path = os.getcwd()
-    save_path = path + '/static/mail'
+    if settings.PC_OR_MAC == "PC":
+        save_path = path + r'\static\mail'
+    elif settings.PC_OR_MAC == "MAC":
+        save_path = path + '/static/mail'
     files = os.listdir(save_path)
     # Iterate through the files and delete them
     for file in files:
@@ -1436,7 +1443,10 @@ def UpdatePosData(request, daily_report_id,):
                         new_filename_html = f"{date}.html"
                         # Save the attachment to a specific folder
                         path = os.getcwd()
-                        save_path = path + '/static/mail'
+                        if settings.PC_OR_MAC == "PC":
+                            save_path = path + r'\static\mail'
+                        elif settings.PC_OR_MAC == "MAC":
+                            save_path = path + '/static/mail'
                         if not os.path.exists(save_path):
                             os.makedirs(save_path)
 
@@ -1450,7 +1460,10 @@ def UpdatePosData(request, daily_report_id,):
     # Loop to do every file in folder
     # TODO FOR TESTING
     path = os.getcwd()
-    save_path = path + '/static/mail'
+    if settings.PC_OR_MAC == "PC":
+        save_path = path + r'\static\mail'
+    elif settings.PC_OR_MAC == "MAC":
+        save_path = path + '/static/mail'
 
     files_in_folder = os.listdir(save_path)
     files_with_selected_date = [
