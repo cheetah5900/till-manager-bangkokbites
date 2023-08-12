@@ -27,7 +27,7 @@ STATICFILES_DIRS = [
 ]
 
 
-PC_OR_MAC = "PC"
+PC_OR_MAC = "MAC"
 
 # ? Prod
 # DEBUG = False

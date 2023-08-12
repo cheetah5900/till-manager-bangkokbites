@@ -828,7 +828,7 @@ def GetOnlineOrderData(request, daily_report_id):
     options.add_argument("start-maximized")
 
     if settings.PC_OR_MAC == "PC":
-        custom_user_data_dir = 'C:\Users\cheet\AppData\Local\Google\Chrome\User Data\Default'
+        custom_user_data_dir = r'C:\Users\cheet\AppData\Local\Google\Chrome\User Data\Default'
         options.add_argument(f'--user-data-dir={custom_user_data_dir}')
         driver = webdriver.Chrome(options=options)
     elif settings.PC_OR_MAC == "MAC":
@@ -1246,7 +1246,7 @@ def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnl
     homePosXSumCommission = 330
     homePosYSumCommission = 545
     homePosXShowOaAmount = 360
-    homePosYShowOaAmount = 360
+    homePosYShowOaAmount = 545
     homePosXDeliveryName = 420
     homePosYDeliveryName = 545
     if related_delivery_details != 0:
@@ -1389,6 +1389,7 @@ def UpdatePosData(request, daily_report_id,):
     sender_email = 'judy888123@gmail.com'
     # sender_email = 'cheetah5900@windowslive.com'
     # subject = 'Z Reading Report'
+    print("selectedDate : ",selectedDate)
     search_query = f'(FROM "{sender_email}" SUBJECT "{selectedDate}")'
     status, email_ids = mail.search(None, search_query)
 
@@ -1416,7 +1417,6 @@ def UpdatePosData(request, daily_report_id,):
         # Fetch the email content
         status, email_data = mail.fetch(email_id, '(RFC822)')
         raw_email = email_data[0][1]
-
         # Parse the email content
         msg = email.message_from_bytes(raw_email)
 
@@ -1427,36 +1427,23 @@ def UpdatePosData(request, daily_report_id,):
                     continue
                 filename = part.get_filename()
                 if filename:
-                    new_filename = filename.replace(':', '-')
-                    base_filename = os.path.splitext(new_filename)[0]
-                    # Define the regular expression pattern
-                    pattern = r'(\d{4}-\d{2}-\d{2})'
-                    # Search for the pattern in the text
-                    match = re.search(pattern, base_filename)
-                    # Extract the matched date from the first capturing group
-                    if match:
-                        date = match.group(1)
-                    else:
-                        print("Date not found.")
-                    # If date name in mail == selected date do this
-                    if str(selectedDate) == date:
-                        new_filename_html = f"{date}.html"
-                        # Save the attachment to a specific folder
-                        path = os.getcwd()
-                        if settings.PC_OR_MAC == "PC":
-                            save_path = path + r'\static\mail'
-                        elif settings.PC_OR_MAC == "MAC":
-                            save_path = path + '/static/mail'
-                        if not os.path.exists(save_path):
-                            os.makedirs(save_path)
+                    new_filename_html = f"{selectedDate}.html"
+                    # Save the attachment to a specific folder
+                    path = os.getcwd()
+                    if settings.PC_OR_MAC == "PC":
+                        save_path = path + r'\static\mail'
+                    elif settings.PC_OR_MAC == "MAC":
+                        save_path = path + '/static/mail'
+                    if not os.path.exists(save_path):
+                        os.makedirs(save_path)
 
-                        file_path = os.path.join(save_path, new_filename_html)
-                        file_path = get_unique_file_name(file_path)
-                        with open(file_path, 'wb') as f:
-                            f.write(part.get_payload(decode=True))
-                        print(f'Saved attachment: {new_filename_html}')
+                    file_path = os.path.join(save_path, new_filename_html)
+                    file_path = get_unique_file_name(file_path)
+                    with open(file_path, 'wb') as f:
+                        f.write(part.get_payload(decode=True))
+                    print(f'Saved attachment: {new_filename_html}')
 
-#     mail.logout()
+    mail.logout()
     # Loop to do every file in folder
     # TODO FOR TESTING
     path = os.getcwd()
