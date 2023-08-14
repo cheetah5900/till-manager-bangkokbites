@@ -182,7 +182,7 @@ def LunchInputQuick(request, daily_report_id):
 
         return redirect(reverse('lunch-report', kwargs={'daily_report_id': daily_report_id}))
 
-    return render(request, 'keywordapp/lunch-input-quick.html', context={'date': date, 'bill_lunch': bill_lunch})
+    return render(request, 'keywordapp/lunch-input-quick.html', context={'date': date, 'bill_lunch': bill_lunch,'daily_report_id':daily_report_id})
 
 
 def LunchReport(request, daily_report_id):
@@ -326,7 +326,7 @@ def DinnerInputQuick(request, daily_report_id):
 
         return redirect(reverse('dinner-report', kwargs={'daily_report_id': daily_report_id}))
 
-    return render(request, 'keywordapp/dinner-input-quick.html', context={'date': date, 'bill_dinner': bill_dinner})
+    return render(request, 'keywordapp/dinner-input-quick.html', context={'date': date, 'bill_dinner': bill_dinner,'daily_report_id':daily_report_id})
 
 
 def DinnerReport(request, daily_report_id):
@@ -644,11 +644,11 @@ def DinnerReport(request, daily_report_id):
         'minusMotoCreditFromSumBillHomeCard': minusMotoCreditFromSumBillHomeCard,
         'sumEdcHomeCard': sumEdcHomeCard,
         'sumEdcMotoCard': sumEdcMotoCard,
+        'sumEdcMotoCard': sumEdcMotoCard,
 
     }
 
     return render(request, 'keywordapp/report-image.html', context)
-    # return render(request, 'keywordapp/dinner-report.html', context)
 # ************************************************************************************************ END : DINNER ************************************************************************************************
 # ************************************************************************************************ START : HOME ************************************************************************************************
 
@@ -1533,9 +1533,6 @@ def UpdatePosData(request, daily_report_id,):
             getDineInValue = table_df.iat[0, 1]
             findTheWordDineIn = getDineInValue.lower().find("dine in")
             # Dine in normal
-            print("file_path in Dine in :", file_path)
-            print("getDineInValue :", getDineInValue)
-            print("findTheWordDineIn :", findTheWordDineIn)
             if findTheWordDineIn != -1:
                 # Check last row of  Sales Report table 2 position
                 getSalesTaxRounding1 = table_df.iat[22, 0]
