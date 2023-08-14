@@ -1367,85 +1367,84 @@ def UpdatePosData(request, daily_report_id,):
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
     selectedDate = daily_object.date
     # Your Outlook email credentials
-    username = 'cheetah6541@gmail.com'
-    password = 'bitjqffhoygdllid'
+#     username = 'cheetah6541@gmail.com'
+#     password = 'bitjqffhoygdllid'
 
-    # Outlook IMAP server and port
-    imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
-    imap_ssl_port = 993
-    try:
-        mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
-        # Log in to your email account
-        mail.login(username, password)
+#     # Outlook IMAP server and port
+#     imap_ssl_host = 'imap.gmail.com'  # imap.mail.yahoo.com
+#     imap_ssl_port = 993
+#     try:
+#         mail = imaplib.IMAP4_SSL(imap_ssl_host, imap_ssl_port)
+#         # Log in to your email account
+#         mail.login(username, password)
 
-        # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
-        mailbox = 'INBOX'
-        mail.select(mailbox)
-    except:
-        print("ERROR")
+#         # Select the mailbox (folder) you want to read emails from (e.g., INBOX)
+#         mailbox = 'INBOX'
+#         mail.select(mailbox)
+#     except:
+#         print("ERROR")
 
-# Search for emails (optional)
-# Here, we search for all emails in the selected mailbox
-    sender_email = 'judy888123@gmail.com'
-    # sender_email = 'cheetah5900@windowslive.com'
-    # subject = 'Z Reading Report'
-    print("selectedDate : ",selectedDate)
-    search_query = f'(FROM "{sender_email}" SUBJECT "{selectedDate}")'
-    status, email_ids = mail.search(None, search_query)
+# # Search for emails (optional)
+# # Here, we search for all emails in the selected mailbox
+#     sender_email = 'judy888123@gmail.com'
+#     # sender_email = 'cheetah5900@windowslive.com'
+#     # subject = 'Z Reading Report'
+#     print("selectedDate : ",selectedDate)
+#     search_query = f'(FROM "{sender_email}" SUBJECT "{selectedDate}")'
+#     status, email_ids = mail.search(None, search_query)
 
-    # * Delete old file
-    path = os.getcwd()
-    if settings.PC_OR_MAC == "PC":
-        save_path = path + r'\static\mail'
-    elif settings.PC_OR_MAC == "MAC":
-        save_path = path + '/static/mail'
-    files = os.listdir(save_path)
-    # Iterate through the files and delete them
-    for file in files:
-        file_path_for_delete = os.path.join(save_path, file)
-        try:
-            if os.path.isfile(file_path_for_delete):
-                os.remove(file_path_for_delete)
-                print(f"Deleted: {file_path_for_delete}")
-            else:
-                print(f"Skipped (not a file): {file_path_for_delete}")
-        except Exception as e:
-            print(f"Error deleting {file_path_for_delete}: {e}")
+#     # * Delete old file
+#     path = os.getcwd()
+#     if settings.PC_OR_MAC == "PC":
+#         save_path = path + r'\static\mail'
+#     elif settings.PC_OR_MAC == "MAC":
+#         save_path = path + '/static/mail'
+#     files = os.listdir(save_path)
+#     # Iterate through the files and delete them
+#     for file in files:
+#         file_path_for_delete = os.path.join(save_path, file)
+#         try:
+#             if os.path.isfile(file_path_for_delete):
+#                 os.remove(file_path_for_delete)
+#                 print(f"Deleted: {file_path_for_delete}")
+#             else:
+#                 print(f"Skipped (not a file): {file_path_for_delete}")
+#         except Exception as e:
+#             print(f"Error deleting {file_path_for_delete}: {e}")
 
-    # Loop through all email IDs
-    for email_id in email_ids[0].split():
-        # Fetch the email content
-        status, email_data = mail.fetch(email_id, '(RFC822)')
-        raw_email = email_data[0][1]
-        # Parse the email content
-        msg = email.message_from_bytes(raw_email)
+#     # Loop through all email IDs
+#     for email_id in email_ids[0].split():
+#         # Fetch the email content
+#         status, email_data = mail.fetch(email_id, '(RFC822)')
+#         raw_email = email_data[0][1]
+#         # Parse the email content
+#         msg = email.message_from_bytes(raw_email)
 
-        # Check if the email has any attachments
-        if msg.get_content_maintype() == 'multipart':
-            for part in msg.walk():
-                if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
-                    continue
-                filename = part.get_filename()
-                if filename:
-                    new_filename_html = f"{selectedDate}.html"
-                    # Save the attachment to a specific folder
-                    path = os.getcwd()
-                    if settings.PC_OR_MAC == "PC":
-                        save_path = path + r'\static\mail'
-                    elif settings.PC_OR_MAC == "MAC":
-                        save_path = path + '/static/mail'
-                    if not os.path.exists(save_path):
-                        os.makedirs(save_path)
+#         # Check if the email has any attachments
+#         if msg.get_content_maintype() == 'multipart':
+#             for part in msg.walk():
+#                 if part.get_content_maintype() == 'multipart' or part.get('Content-Disposition') is None:
+#                     continue
+#                 filename = part.get_filename()
+#                 if filename:
+#                     new_filename_html = f"{selectedDate}.html"
+#                     # Save the attachment to a specific folder
+#                     path = os.getcwd()
+#                     if settings.PC_OR_MAC == "PC":
+#                         save_path = path + r'\static\mail'
+#                     elif settings.PC_OR_MAC == "MAC":
+#                         save_path = path + '/static/mail'
+#                     if not os.path.exists(save_path):
+#                         os.makedirs(save_path)
 
-                    file_path = os.path.join(save_path, new_filename_html)
-                    file_path = get_unique_file_name(file_path)
-                    with open(file_path, 'wb') as f:
-                        f.write(part.get_payload(decode=True))
-                    print(f'Saved attachment: {new_filename_html}')
+#                     file_path = os.path.join(save_path, new_filename_html)
+#                     file_path = get_unique_file_name(file_path)
+#                     with open(file_path, 'wb') as f:
+#                         f.write(part.get_payload(decode=True))
+#                     print(f'Saved attachment: {new_filename_html}')
 
-    mail.logout()
+#     mail.logout()
     # Loop to do every file in folder
-    # TODO FOR TESTING
     path = os.getcwd()
     if settings.PC_OR_MAC == "PC":
         save_path = path + r'\static\mail'
@@ -1468,25 +1467,28 @@ def UpdatePosData(request, daily_report_id,):
             table_df = tables[0]
 
             # Check if the DataFrame is not empty and has rows and columns
-            # if not table_df.empty:
-            #     # Get the number of rows and columns in the DataFrame
-            #     num_rows, num_cols = table_df.shape
+            if not table_df.empty:
+                # Get the number of rows and columns in the DataFrame
+                num_rows, num_cols = table_df.shape
 
-            #     # Iterate through the rows and columns to extract cell values
-            #     for row in range(num_rows):
-            #         for col in range(num_cols):
-            #             cell_value = table_df.iat[row, col]  # Access cell value by index
-            #             print(f"Cell ({row}, {col}):", cell_value)
-            # else:
-            #     print("Table DataFrame is empty.")
+                # Iterate through the rows and columns to extract cell values
+                for row in range(num_rows):
+                    for col in range(num_cols):
+                        cell_value = table_df.iat[row, col]  # Access cell value by index
+                        print(f"Cell ({row}, {col}):", cell_value)
+            else:
+                print("Table DataFrame is empty.")
         else:
             print("No tables found on the page.")
         #! ================================================================= START : GET COUNT AND AMOUNT =================================================================
         # ? Identify POS type
         # Get cell values from tax information table
+        # If it can find the text this will be normal ta report
+        #todo ================= NORMAL TA REPORT ========================
         getGstSales1 = table_df.iat[21, 0]
         findGstSales1 = getGstSales1.find("GST Sales")
         try:
+        #todo ================= ABNORMAL TA REPORT ========================
             getGstSales2 = table_df.iat[25, 0]
             findGstSales2 = getGstSales2.find("GST Sales")
         except:
@@ -1500,8 +1502,6 @@ def UpdatePosData(request, daily_report_id,):
             # TA normal
             if findTheWordToGo != -1:
                 countAll = GetNumberAfterDashSign(getToGoValue)
-                print("Count All to go", countAll)
-                print("file_name", file_name)
                 cashCount, cashAmount, cardCount, cardAmount = getCashAndCardData(
                     table_df, 24)
             else:
@@ -1517,10 +1517,7 @@ def UpdatePosData(request, daily_report_id,):
             if findTheWordToGo != -1:
                 countAllToGo = GetNumberAfterDashSign(getToGoValue)
                 countAllDelivery = GetNumberAfterDashSign(getDeliveryValue)
-                print("Count All To Go", countAllToGo)
-                print("Count All Delivery", countAllDelivery)
-                countAll = int(countAllToGo) + int(countAllDelivery)
-                print("Count All TA", countAll)
+                countAll = int(countAllToGo) + int(countAllDelivery)    
                 cashCount, cashAmount, cardCount, cardAmount = getCashAndCardData(
                     table_df, 28)
             else:
@@ -1537,21 +1534,38 @@ def UpdatePosData(request, daily_report_id,):
             getDineInValue = table_df.iat[0, 1]
             findTheWordDineIn = getDineInValue.lower().find("dine in")
             # Dine in normal
+            print("file_path in Dine in :",file_path)
+            print("getDineInValue :",getDineInValue)
+            print("findTheWordDineIn :",findTheWordDineIn)
             if findTheWordDineIn != -1:
                 # Check last row of  Sales Report table 2 position
                 getSalesTaxRounding1 = table_df.iat[22, 0]
-                getSalesTaxRounding2 = table_df.iat[26, 0]
+                getSalesTaxRounding2 = table_df.iat[23, 0]
+                getSalesTaxRounding3 = table_df.iat[26, 0]
+                getSalesTaxRounding4 = table_df.iat[27, 0]
+                # If it can find the text this will be normal dine in report
+                #todo ================= NORMAL DINE IN REPORT ========================
                 findTheWordSalesTaxRounding1 = getSalesTaxRounding1.lower().find(
                     "sales + tax + rounding")
+                # If it can find the text this will be normal dine in report but there is Unpaid order.
+                #todo ================= NORMAL DINE IN REPORT WITH UNPAID ORDER ========================
                 findTheWordSalesTaxRounding2 = getSalesTaxRounding2.lower().find(
                     "sales + tax + rounding")
-                # If it can find the text this will be normal dine in report
+                #todo ================= ABNORMAL DINE IN REPORT ========================
+                findTheWordSalesTaxRounding3 = getSalesTaxRounding3.lower().find(
+                    "sales + tax + rounding")
+                findTheWordSalesTaxRounding4 = getSalesTaxRounding4.lower().find(
+                    "sales + tax + rounding")
+                
                 if findTheWordSalesTaxRounding1 != -1:
-                    countAll = getDineInValue[findTheWordDineIn +
-                                              10:findTheWordDineIn + 10 + 3].strip()
-                    print("countAll : ", countAll)
+                    getCountAll = table_df.iat[3, 0]
+                    countAll = GetNumberAfterDashSign(getCountAll)
                     rowForCheckingMoney = 24
                 elif findTheWordSalesTaxRounding2 != -1:
+                    getCountAll = table_df.iat[4, 0]
+                    countAll = GetNumberAfterDashSign(getCountAll)
+                    rowForCheckingMoney = 25
+                elif findTheWordSalesTaxRounding3 != -1:
                     findTheWordTogo = getDineInValue.lower().find("to go")
                     countDineIn = getDineInValue[findTheWordDineIn +
                                                  10:findTheWordDineIn + 10 + 3].strip()
@@ -1562,6 +1576,17 @@ def UpdatePosData(request, daily_report_id,):
                     countAll = int(countDineIn) + int(countToGo)
                     print("countAll : ", countAll)
                     rowForCheckingMoney = 28
+                elif findTheWordSalesTaxRounding4 != -1:
+                    findTheWordTogo = getDineInValue.lower().find("to go")
+                    countDineIn = getDineInValue[findTheWordDineIn +
+                                                 10:findTheWordDineIn + 10 + 3].strip()
+                    countToGo = getDineInValue[findTheWordTogo +
+                                               8:findTheWordTogo + 8 + 3].strip()
+                    print("countDineIn : ", countDineIn)
+                    print("countToGo : ", countToGo)
+                    countAll = int(countDineIn) + int(countToGo)
+                    print("countAll : ", countAll)
+                    rowForCheckingMoney = 29
                 else:
                     print("Can't find sales + tax + rounding")
 
@@ -1574,7 +1599,6 @@ def UpdatePosData(request, daily_report_id,):
         #! ================================================================= START : GET SHIFT =================================================================
         # ? Identify shift
         getShiftName = table_df.iat[0, 1]
-        print("getShiftName: ", getShiftName)
         shiftNameIndex = getShiftName.find("Shift Name:")
         if shiftNameIndex != -1:
             # Get the word after "Shift Name:"
@@ -1604,8 +1628,6 @@ def UpdatePosData(request, daily_report_id,):
                 # Save the updated object
                 bill_lunch.save()
             elif shift == "dinner":
-                print("In TA dinner")
-                print("file name")
                 bill_dinner_id = daily_object.bill_dinner.id
                 bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
                 # POS Dine in
@@ -1659,7 +1681,7 @@ def getCashAndCardData(table_df, rowCash):
     getCashCount = table_df.iat[rowCash, 0]
     print("getCashCount : ", getCashCount)
     if getCashCount != "Cash":
-        cashCount = GetNumberAfterDashSign(getCashCount)
+        cashCount = GetNumberAfterDashSign(getCashCount)    
         print("cashCount : ", cashCount)
         cashAmount = table_df.iat[rowCash, 1]
         print("cashAmount : ", cashAmount)
