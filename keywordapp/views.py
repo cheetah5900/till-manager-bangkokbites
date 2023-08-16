@@ -182,7 +182,7 @@ def LunchInputQuick(request, daily_report_id):
 
         return redirect(reverse('lunch-report', kwargs={'daily_report_id': daily_report_id}))
 
-    return render(request, 'keywordapp/lunch-input-quick.html', context={'date': date, 'bill_lunch': bill_lunch,'daily_report_id':daily_report_id})
+    return render(request, 'keywordapp/lunch-input-quick.html', context={'date': date, 'bill_lunch': bill_lunch, 'daily_report_id': daily_report_id})
 
 
 def LunchReport(request, daily_report_id):
@@ -326,7 +326,7 @@ def DinnerInputQuick(request, daily_report_id):
 
         return redirect(reverse('dinner-report', kwargs={'daily_report_id': daily_report_id}))
 
-    return render(request, 'keywordapp/dinner-input-quick.html', context={'date': date, 'bill_dinner': bill_dinner,'daily_report_id':daily_report_id})
+    return render(request, 'keywordapp/dinner-input-quick.html', context={'date': date, 'bill_dinner': bill_dinner, 'daily_report_id': daily_report_id})
 
 
 def DinnerReport(request, daily_report_id):
@@ -405,7 +405,7 @@ def DinnerReport(request, daily_report_id):
             detail.bill_home_online_cash_count + \
             detail.bill_home_online_card_count
         detail.sum_commission_and_oa = int(
-            (detail.bill_home_oa_count * detail.bill_home_oa_amount) + detail.sum_commission)
+            detail.bill_home_oa_amount + detail.sum_commission)
         if detail.bill_home_oa_count > 0:
             detail.show_oa_count = " + " + \
                 str(detail.bill_home_oa_count)+" OA"
@@ -672,8 +672,7 @@ def HomeList(request, daily_report_id):
         detail.home_count = detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count + \
             detail.bill_home_online_cash_count + \
             detail.bill_home_online_card_count
-        detail.sum_commission_and_oa = (
-            detail.bill_home_oa_count * detail.bill_home_oa_amount) + detail.sum_commission
+        detail.sum_commission_and_oa = detail.bill_home_oa_amount + detail.sum_commission
 
         sumOnlineCashCount += detail.bill_home_online_cash_count
         sumOnlineCardCount += detail.bill_home_online_card_count
@@ -1258,14 +1257,14 @@ def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnl
             imgObj.text((homePosXShowOaAmount, homePosYShowOaAmount), str(
                 item.show_oa_amount), font=fontThai, fill=FontColor)  # Show OA Amount
             imgObj.text((homePosXDeliveryName, homePosYDeliveryName), str(
-                item.delivery_name), font=fontThai, fill=FontColor)  # Show OA Amount
+                item.delivery_name), font=fontThai, fill=FontColor)  # Show Delivery name
             # Step position down
             homePosYHomeCount += 45
             homePosYShowOaCount += 45
             homePosYSumCommission += 45
             homePosYShowOaAmount += 45
             homePosYDeliveryName += 45
-
+    print("totalSumCommissionAndOa :", totalSumCommissionAndOa)
     if sumrealBillHomeCountDinner != 0:
         imgObj.text((100, 670), str(sumrealBillHomeCountDinner)+'                      ' +
                     str(totalSumCommissionAndOa), font=fontThai, fill=FontColor)  # Total Delivery
