@@ -1,195 +1,285 @@
-{%extends 'keywordapp/layout.html'%}
 {% load humanize %}
-{%block activework%}active{%endblock activework%}
-{%block content%}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+<style>
+  .table-container {
+    white-space: nowrap;
+    /* Prevent line breaks */
+  }
+
+  .table-inline-block {
+    display: inline-block;
+  }
+
+  .table {
+    width: auto;
+  }
+
+  .red-text {
+    color: #960439 !important;
+  }
+</style>
 <div class="page-content-wrapper">
   <!-- Weekly Best Sellers-->
   <div class="weekly-best-seller-area py-3">
     <div class="">
-      <div class="section-heading">
-        <h2>รายงานผลการปิดยอด Dinner ({{ date }})</h2>
-      </div>
       <div class="row">
         <div class="col-12">
           <div class="card weekly-product-card">
             <div class="card-body align-items-center">
               <div class="product-description" style="width:100%;max-width: 100%;">
-                <div class="product-title d-block">ตารางรายงานผล</div>
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
-                  <table class="table table-bordered">
-                    <tr>
-                      <th>จำนวนใบ</th>
-                      <th>ประเภท</th>
-                      <th>TOTAL</th>
-                      <th>CASH</th>
-                      <th>CREDIT</th>
-                      <th rowspan="4" class="align-middle text-center">
-                        <h3>{{totalBillLunch|intcomma}}</h3>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillOnlineCount}}</td>
-                      <td>T/A Online Lunch</td>
-                      <td>{{sumrealBillOnline}}</td>
-                      <td>{{realBillOnlineCashLunch|intcomma}}</td>
-                      <td>{{realBillOnlineCardLunch|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillPhoneCount}}</td>
-                      <td>T/A Lunch</td>
-                      <td>{{sumrealBillPhone}}</td>
-                      <td>{{realBillPhoneCashLunch|intcomma}}</td>
-                      <td>{{realBillPhoneCardLunch|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillInCount}}</td>
-                      <td>EAT-IN Lunch</td>
-                      <td>{{sumrealBillIn}}</td>
-                      <td>{{realBillInCashLunch|intcomma}}</td>
-                      <td>{{realBillInCardLunch|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillHomePhoneCountDinner}}</td>
-                      <td>Home Phone</td>
-                      <td>{{sumrealBillHomePhoneDinner}}</td>
-                      <td>{{realBillHomePhoneCashDinner|intcomma}}</td>
-                      <td>{{realBillHomePhoneCardDinner|intcomma}}</td>
-                      <th rowspan="6" class="align-middle text-center">
-                        <h3>{{totalBillDinner}}</h3>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillHomeOnlineCountDinner}}</td>
-                      <td>Home Online</td>
-                      <td>{{sumrealBillHomeOnlineDinner}}</td>
-                      <td>{{realBillHomeOnlineCashDinner|intcomma}}</td>
-                      <td>{{realBillHomeOnlineCardDinner|intcomma}}</td>
-                      <td></td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillPhoneCountDinner}}</td>
-                      <td>T/A Phone Dinner</td>
-                      <td>{{sumrealBillPhoneDinner}}</td>
-                      <td>{{realBillPhoneCashDinner|intcomma}}</td>
-                      <td>{{realBillPhoneCardDinner|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillOnlineCountDinner}}</td>
-                      <td>T/A Online Dinner</td>
-                      <td>{{sumrealBillOnlineDinner}}</td>
-                      <td>{{realBillOnlineCashDinner|intcomma}}</td>
-                      <td>{{realBillOnlineCardDinner|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td>{{sumrealBillInCountDinner}}</td>
-                      <td>Dinner</td>
-                      <td>{{sumrealBillInDinner}}</td>
-                      <td>{{realBillInCashDinner|intcomma}}</td>
-                      <td>{{realBillInCardDinner|intcomma}}</td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>Total</td>
-                      <td>{{sumTotal|intcomma}}</td>
-                      <td>{{sumCash|intcomma}}</td>
-                      <td>{{sumCard|intcomma}}</td>
-                    </tr>
-                  </table>
-                </div>
-                <div class="product-title d-block">รายละเอียด Delivery</div>
-                <div class="card-body">
-                  <div class="coupon-text-wrap d-flex align-items-center">
-                    <table class="table">
-                      {% for item in related_delivery_details %}
+                  <div class="table-container">
+                    <table class="table table-inline-block table-bordered">
                       <tr>
-                        <td>H{{forloop.counter}}</td>
-                        <td>{{item.home_count}}{{item.show_oa_count}}</td>
-                        <td>{{item.sum_commission}}{{item.show_oa_amount}}</td>
-                        <td>{{item.delivery_name}}</td>
+                        <th width="60px" class="red-text">จำนวน</th>
+                        <th width="160px" class="red-text">ประเภท</th>
+                        <th width="140px" class="red-text">TOTAL</th>
+                        <th width="120px" class="red-text">CASH</th>
+                        <th width="140px" class="red-text">CREDIT</th>
+                        <th></th>
                       </tr>
-                      {%endfor%}
-                      <tr class="table-primary">
-                        <td>Total</td>
+                      <tr>
+                        <td class="text-center">{{sumrealBillOnlineCount}}</td>
+                        <td class="red-text">T/A Online Lunch</td>
+                        <td>{{sumrealBillOnline|intcomma}}</td>
+                        <td>{{realBillOnlineCashLunch|intcomma}}</td>
+                        <td>{{realBillOnlineCardLunch|intcomma}}</td>
+                        <td rowspan="3" class="align-middle text-center">
+                          <h3>{{totalBillLunch|intcomma}}</h3>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillPhoneCount}}</td>
+                        <td class="red-text">T/A Lunch</td>
+                        <td>{{sumrealBillPhone|intcomma}}</td>
+                        <td>{{realBillPhoneCashLunch|intcomma}}</td>
+                        <td>{{realBillPhoneCardLunch|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillInCount}}</td>
+                        <td class="red-text">EAT-IN Lunch</td>
+                        <td>{{sumrealBillIn|intcomma}}</td>
+                        <td>{{realBillInCashLunch|intcomma}}</td>
+                        <td>{{realBillInCardLunch|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillHomePhoneCountDinner}}</td>
+                        <td class="red-text">Home Phone</td>
+                        <td>{{sumrealBillHomePhoneDinner|intcomma}}</td>
+                        <td>{{realBillHomePhoneCashDinner|intcomma}}</td>
+                        <td>{{realBillHomePhoneCardDinner|intcomma}}</td>
+                        <td rowspan="6" class="align-middle text-center">
+                          <h3>{{totalBillDinner}}</h3>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillHomeOnlineCountDinner}}</td>
+                        <td class="red-text">Home Online</td>
+                        <td>{{sumrealBillHomeOnlineDinner|intcomma}}</td>
+                        <td>{{realBillHomeOnlineCashDinner|intcomma}}</td>
+                        <td>{{realBillHomeOnlineCardDinner|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillPhoneCountDinner}}</td>
+                        <td class="red-text">T/A Phone Dinner</td>
+                        <td>{{sumrealBillPhoneDinner|intcomma}}</td>
+                        <td>{{realBillPhoneCashDinner|intcomma}}</td>
+                        <td>{{realBillPhoneCardDinner|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillOnlineCountDinner}}</td>
+                        <td class="red-text">T/A Online Dinner</td>
+                        <td>{{sumrealBillOnlineDinner|intcomma}}</td>
+                        <td>{{realBillOnlineCashDinner|intcomma}}</td>
+                        <td>{{realBillOnlineCardDinner|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="text-center">{{sumrealBillInCountDinner}}</td>
+                        <td class="red-text">Dinner</td>
+                        <td>{{sumrealBillInDinner|intcomma}}</td>
+                        <td>{{realBillInCashDinner|intcomma}}</td>
+                        <td>{{realBillInCardDinner|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td class="red-text">Total</td>
+                        <td>{{sumTotal|intcomma}}</td>
+                        <td>{{sumCash|intcomma}}</td>
+                        <td>{{sumCard|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td colspan="2">{{sumTipShow | safe}}</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td colspan="2">{{sumWrongCreditShow | safe}}</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td><b class="red-text">HOME DELIVERY</b></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+
+                      <tr>
+                        <td class="red-text">H1</td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div>{{home_counts_1}} {{show_oa_counts_1}}</div>
+                            <div class="red-text">unit</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div><span class="red-text">$</span> {{sum_commissions_1}}{{show_oa_amounts_1}}</div>
+                            <div></div>
+                          </div>
+                        </td>
+                        <td>{{delivery_names_1}}</td>
+                        <td><b class="red-text">TOTAL ONLINE</b></td>
+                        <td>({{totalOnlineCount}}) {{totalOnlineAmount|intcomma}}</td>
+                      </tr>
+                      <tr>
+                        <td class="red-text">H2</td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div>{{home_counts_2}} {{show_oa_counts_2}}</div>
+                            <div class="red-text">unit</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div><span class="red-text">$</span> {{sum_commissions_2}}{{show_oa_amounts_2}}</div>
+                            <div></div>
+                          </div>
+                        </td>
+                        <td>{{delivery_names_2}}</td>
+                        <td class="red-text">HANG</td>
+                        <td class="red-text">SOUP</td>
+                      </tr>
+                      <tr>
+                        <td class="red-text">H3</td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div>{{home_counts_3}} {{show_oa_counts_3}}</div>
+                            <div class="red-text">unit</div>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex justify-content-between">
+                            <div><span class="red-text">$</span> {{sum_commissions_3}}{{show_oa_amounts_3}}</div>
+                            <div></div>
+                          </div>
+                        </td>
+                        <td>{{delivery_names_3}}</td>
+                        <td></td>
+                        <td class="red-text">KAO SOI</td>
+                      </tr>
+                      <tr>
+                        <td class="red-text">Total</td>
                         <td>{{sumrealBillHomeCountDinner}}</td>
                         <td>{{totalSumCommissionAndOa}}</td>
                         <td></td>
                       </tr>
                     </table>
-                  </div>
-                </div>
-                <div class="product-title d-block">รายการเบิก</div>
-                <div class="card-body">
-                  <div class="coupon-text-wrap d-flex align-items-center">
-                    <table class="table">
+                    <table class="table table-inline-block mx-4">
                       <tr>
-                        <td><b>รายการ</b></td>
-                        <td><b>ราคา</b></td>
+                        <td colspan="2" width="200px"><b class="red-text">DAIRY RECORD</b></td>
                       </tr>
-                      {% for item in related_disburse_details %}
                       <tr>
-                        <td>{{item.name}}</td>
-                        <td>{{item.price}}</td>
+                        <td class="red-text">DAY</td>
+                        <td>{{day}}</td>
                       </tr>
-                      {% endfor %}
+                      <tr>
+                        <td class="red-text">DATE</td>
+                        <td>{{date}}</td>
+                      </tr>
+                      <tr>
+                        <td class="red-text">NAME</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" class="red-text">
+                          <h3>CRONULLA</h3>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2"></td>
+                      </tr>
+                      <tr>
+                        <td><b class="red-text">รายการเบิก</b></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_1}}</td>
+                        <td>{{disburse_prices_1}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_2}}</td>
+                        <td>{{disburse_prices_2}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_3}}</td>
+                        <td>{{disburse_prices_3}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_4}}</td>
+                        <td>{{disburse_prices_4}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_5}}</td>
+                        <td>{{disburse_prices_5}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_6}}</td>
+                        <td>{{disburse_prices_6}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_7}}</td>
+                        <td>{{disburse_prices_7}}</td>
+                      </tr>
+                      <tr>
+                        <td>{{disburse_name_8}}</td>
+                        <td>{{disburse_prices_8}}</td>
+                      </tr>
                       <tr class="table-primary">
-                        <th>ยอดรวม</th>
-                        <td>{{totalSumDisburse}}</td>
+                        <th class="red-text">TOTAL $ </th>
+                        <td>{{totalSumDisburse|intcomma}}</td>
                       </tr>
                     </table>
                   </div>
                 </div>
-                <div class="product-title d-block">อื่นๆ</div>
                 <div class="card-body">
                   <div class="coupon-text-wrap d-flex align-items-center">
                     <table class="table">
                       <tr>
-                        <td>Tip Lunch</td>
-                        <td>{{tipLunch}}</td>
-                        <td>Tip Dinner</td>
-                        <td>{{tipDinner}}</td>
-                        <td>รวม Tip</td>
-                        <td>{{sumTip}}</td>
-                      </tr>
-                      <tr>
-                        <td>กดเครดิตขาด</td>
-                        <td>{{sumWrongCredit}}</td>
-                        <td>Total Online</td>
-                        <td>({{totalOnlineCount}}) {{totalOnlineAmount}}</td>
-                        <td>Balance</td>
-                        <td>{{balanceAfterMinusExpense}}</td>
+                        <td>
+                          <h2 class="red-text">Balance $</h2>
+                        </td>
+                        <td>
+                          <h2>&nbsp;&nbsp;&nbsp; {{balanceAfterMinusExpense}}</h2>
+                        </td>
                       </tr>
                     </table>
                   </div>
-                </div>
-                <div class="product-title d-block">ปริ้นท์ Report</div>
-                <div class="card-body">
-                  <div class="coupon-text-wrap d-flex align-items-center">
-                    <table class="table table-stripped">
-                      <tr>
-                        <td>1. เครื่อง POS Dine-in ของ<b>ช่วงเย็น</b> เขียนหัวกระดาษว่า "Dine-in Dinner"</td>
-                      </tr>
-                      <tr>
-                        <td>2. เครื่อง POS Dine-in ของ<b>ทั้งวัน</b> เขียนหัวกระดาษว่า "Dine-in All Day"</td>
-                      </tr>
-                      <tr>
-                        <td>3. เครื่อง POS TA ของ<b>ช่วงเย็น</b> เขียนหัวกระดาษว่า "TA/HOME Dinner"</td>
-                      </tr>
-                      <tr>
-                        <td>4. เครื่อง POS TA ของ<b>ทั้งวัน</b> เขียนหัวกระดาษว่า "TA/HOME All Day"</td>
-                      </tr>
-                      <tr>
-                        <td>5. เครื่อง EDC หน้าร้าน เขียนหัวกระดาษว่า "Dinner"</td>
-                      </tr>
-                      <tr>
-                        <td>6. เครื่อง EDC Home ของแต่ละคนเขียนหัวกระดาษตามชื่อคนส่ง "P' Peter"</td>
-                      </tr>
-                    </table>
-                  </div>
-                </div>
-                <div class="justify-content-center d-flex">
-                  <a href="/dinner-input-detail/{{daily_report_id}}" class="btn btn-secondary btn-lg"
-                    type="submit">ย้อนกลับ</a>
-                  <a href="/" class="btn btn-primary btn-lg" type="submit">กลับหน้าแรก</a>
                 </div>
               </div>
             </div>
@@ -199,4 +289,3 @@
     </div>
   </div>
 </div>
-{%endblock content%}

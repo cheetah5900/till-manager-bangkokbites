@@ -357,6 +357,7 @@ def DinnerReport(request, daily_report_id):
     realBillInCardLunch = bill_lunch.pos_in_bill_card
     realBillInCardCountLunch = bill_lunch.pos_in_bill_card_count
     tipLunch = bill_lunch.tip_credit
+    
     edcInCreditLunch = bill_lunch.edc_in_credit
     wrongCreditLunch = bill_lunch.wrong_credit
 
@@ -383,6 +384,7 @@ def DinnerReport(request, daily_report_id):
     realBillInCardCountDinner = bill_dinner.pos_in_bill_card_count
     tipDinner = bill_dinner.tip_credit
     wrongCreditDinner = bill_dinner.wrong_credit
+    
 
     posTaPhoneTotalBillCount = bill_dinner.pos_ta_phone_total_bill_count
 
@@ -451,6 +453,7 @@ def DinnerReport(request, daily_report_id):
     # Row 1 Ta Online Lunch
     totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + \
         realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
+    
     sumrealBillOnlineCount = realBillOnlineCashCountLunch + realBillOnlineCardCountLunch
     sumrealBillOnline = realBillOnlineCashLunch + realBillOnlineCardLunch
     # Row 2 Ta Phone Lunch
@@ -501,6 +504,19 @@ def DinnerReport(request, daily_report_id):
 
     # * Delivery section
     # Sum all count both phone and online and
+    home_counts = {1:'',2:'',3:''}
+    show_oa_counts = {1:'',2:'',3:''}
+    sum_commissions = {1:'',2:'',3:''}
+    show_oa_amounts = {1:'',2:'',3:''}
+    delivery_names = {1:'',2:'',3:''}
+
+    for idx, item in enumerate(related_delivery_details, start=1):
+        home_counts[idx] = item.home_count
+        show_oa_counts[idx] = item.show_oa_count
+        sum_commissions[idx] = item.sum_commission
+        show_oa_amounts[idx] = item.show_oa_amount
+        delivery_names[idx] = item.delivery_name
+    
     sumrealBillHomeCountDinner = sumrealBillHomePhoneCountDinner + \
         sumrealBillHomeOnlineCountDinner
     totalSumCommissionAndOa = sum(
@@ -508,6 +524,7 @@ def DinnerReport(request, daily_report_id):
 
     # * Other section
     sumTip = tipLunch + tipDinner
+    sumTipShow = f"Tip &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {sumTip}" if sumTip != 0 else ""
     totalOnlineCount = realBillOnlineCardCountLunch + realBillOnlineCashCountLunch + realBillOnlineCashCountDinner + \
         realBillOnlineCardCountDinner + realBillHomeOnlineCashCountDinner + \
         realBillHomeOnlineCardCountDinner
@@ -515,18 +532,23 @@ def DinnerReport(request, daily_report_id):
         realBillOnlineCardDinner + realBillHomeOnlineCashDinner + realBillHomeOnlineCardDinner
 
     # * Disburse Section
+
+    disburse_names = {1:'$',2:'$',3:'$',4:'$',5:'$',6:'$',7:'$',8:'$'}
+    disburse_prices = {1:'',2:'',3:'',4:'',5:'',6:'',7:'',8:''}
+
+    for idx, item in enumerate(related_disburse_details, start=1):
+        disburse_names[idx] = '$ '+item.name
+        disburse_prices[idx] = item.price
+        
     totalSumDisburse = sum(detail.price for detail in related_disburse_details)
-    balanceAfterMinusExpense = sumCash - \
-        totalSumCommissionAndOa - totalSumDisburse - sumTip
+    balanceAfterMinusExpense = sumCash - totalSumCommissionAndOa - totalSumDisburse - sumTip
     imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner,
                                         realBillPhoneCashDinnerMinusHomePhone, realBillPhoneCardDinnerMinusHomePhone, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner)
 
     # * Summary for Comparation section
 
-    # Access the related DeliveryDetailModel instances using the foreign key relationship
-    related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
-
-    # Calculate the sum of the bill_home_oa_amount attribute for all DeliveryDetailModel instances
+    sumWrongCredit = wrongCreditLunch + wrongCreditDinner
+    sumWrongCreditShow = f"กดเครดิตขาด   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {sumWrongCredit}" if sumWrongCredit != 0 else ""    # Calculate the sum of the bill_home_oa_amount attribute for all DeliveryDetailModel instances
     realBillHomePhoneCard = sum(
         detail.bill_home_phone_card for detail in related_delivery_details)
     realBillHomeOnlineCard = sum(
@@ -553,7 +575,42 @@ def DinnerReport(request, daily_report_id):
     resultCheckEqual1 = "✅" if totalBillCardForCompareWithEdcDineIn == addWrongCreditToEdcDineIn else "❌"
     resultCheckEqual2 = "✅" if minusMotoCreditFromSumBillHomeCard == sumEdcHomeCard else "❌"
 
+
+    #* For choosing to display in number or -
+    sumrealBillOnline = sumrealBillOnline if sumrealBillOnline != 0 else "-"
+    realBillOnlineCashLunch = realBillOnlineCashLunch if realBillOnlineCashLunch != 0 else "-"
+    realBillOnlineCardLunch = realBillOnlineCardLunch if realBillOnlineCardLunch != 0 else "-"
+    realBillPhoneLunch = realBillPhoneLunch if realBillPhoneLunch != 0 else "-"
+    realBillPhoneCashLunch = realBillPhoneCashLunch if realBillPhoneCashLunch != 0 else "-"
+    realBillPhoneCardLunch = realBillPhoneCardLunch if realBillPhoneCardLunch != 0 else "-"
+    sumrealBillIn = sumrealBillIn if sumrealBillIn != 0 else "-"
+    realBillInCashLunch = realBillInCashLunch if realBillInCashLunch != 0 else "-"
+    realBillInCardLunch = realBillInCardLunch if realBillInCardLunch != 0 else "-"
+    totalBillLunch = totalBillLunch if totalBillLunch != 0 else "-"
+    sumrealBillHomePhoneDinner = sumrealBillHomePhoneDinner if sumrealBillHomePhoneDinner != 0 else "-"
+    realBillHomePhoneCashDinner = realBillHomePhoneCashDinner if realBillHomePhoneCashDinner != 0 else "-"
+    realBillHomePhoneCardDinner = realBillHomePhoneCardDinner if realBillHomePhoneCardDinner != 0 else "-"
+    totalBillDinner = totalBillDinner if totalBillDinner != 0 else "-"
+    sumrealBillHomeOnlineDinner = sumrealBillHomeOnlineDinner if sumrealBillHomeOnlineDinner != 0 else "-"
+    realBillHomeOnlineCashDinner = realBillHomeOnlineCashDinner if realBillHomeOnlineCashDinner != 0 else "-"
+    realBillHomeOnlineCardDinner = realBillHomeOnlineCardDinner if realBillHomeOnlineCardDinner != 0 else "-"
+    sumrealBillPhoneDinner = sumrealBillPhoneDinner if sumrealBillPhoneDinner != 0 else "-"
+    realBillPhoneCashDinner = realBillPhoneCashDinner if realBillPhoneCashDinner != 0 else "-"
+    realBillPhoneCardDinner = realBillPhoneCardDinner if realBillPhoneCardDinner != 0 else "-"
+    sumrealBillOnlineDinner = sumrealBillOnlineDinner if sumrealBillOnlineDinner != 0 else "-"
+    realBillOnlineCashDinner = realBillOnlineCashDinner if realBillOnlineCashDinner != 0 else "-"
+    realBillOnlineCardDinner = realBillOnlineCardDinner if realBillOnlineCardDinner != 0 else "-"
+    sumrealBillInDinner = sumrealBillInDinner if sumrealBillInDinner != 0 else "-"
+    realBillInCashDinner = realBillInCashDinner if realBillInCashDinner != 0 else "-"
+    realBillInCardDinner = realBillInCardDinner if realBillInCardDinner != 0 else "-"
+    sumCash = sumCash if sumCash != 0 else "-"
+    sumCard = sumCard if sumCard != 0 else "-"
+    
+
+
+
     context = {
+        'day': day,
         'date': date,
         'daily_report_id': daily_report_id,
         #! Lunch
@@ -614,6 +671,8 @@ def DinnerReport(request, daily_report_id):
         'totalOnlineAmount': totalOnlineAmount,
         'totalOnlineCount': totalOnlineCount,
         'totalSumDisburse': totalSumDisburse,
+        'sumWrongCreditShow': sumWrongCreditShow,
+        'sumTipShow': sumTipShow,
 
         #! Home section
         'related_delivery_details': related_delivery_details,
@@ -623,9 +682,42 @@ def DinnerReport(request, daily_report_id):
         #! Disburse Section
         'related_disburse_details': related_disburse_details,
         'balanceAfterMinusExpense': balanceAfterMinusExpense,
+        'disburse_name_1': disburse_names[1],
+        'disburse_prices_1': disburse_prices[1],
+        'disburse_name_2': disburse_names[2],
+        'disburse_prices_2': disburse_prices[2],
+        'disburse_name_3': disburse_names[3],
+        'disburse_prices_3': disburse_prices[3],
+        'disburse_name_4': disburse_names[4],
+        'disburse_prices_4': disburse_prices[4],
+        'disburse_name_5': disburse_names[5],
+        'disburse_prices_5': disburse_prices[5],
+        'disburse_name_6': disburse_names[6],
+        'disburse_prices_6': disburse_prices[6],
+        'disburse_name_7': disburse_names[7],
+        'disburse_prices_7': disburse_prices[7],
+        'disburse_name_8': disburse_names[8],
+        'disburse_prices_8': disburse_prices[8],
 
         # Image
         'imgLocation': imgLocation,
+
+        #! Delivery Section
+        'home_counts_1':home_counts[1],
+        'show_oa_counts_1':show_oa_counts[1],
+        'sum_commissions_1':sum_commissions[1],
+        'show_oa_amounts_1':show_oa_amounts[1],
+        'delivery_names_1':delivery_names[1],
+        'home_counts_2':home_counts[2],
+        'show_oa_counts_2':show_oa_counts[2],
+        'sum_commissions_2':sum_commissions[2],
+        'show_oa_amounts_2':show_oa_amounts[2],
+        'delivery_names_2':delivery_names[2],
+        'home_counts_3':home_counts[3],
+        'show_oa_counts_3':show_oa_counts[3],
+        'sum_commissions_3':sum_commissions[3],
+        'show_oa_amounts_3':show_oa_amounts[3],
+        'delivery_names_3':delivery_names[3],
 
         #! Comparation
         'bill_dinner': bill_dinner,
@@ -648,7 +740,8 @@ def DinnerReport(request, daily_report_id):
 
     }
 
-    return render(request, 'keywordapp/report-image.html', context)
+    # return render(request, 'keywordapp/report-image.html', context)
+    return render(request, 'keywordapp/dinner-report.html', context)
 # ************************************************************************************************ END : DINNER ************************************************************************************************
 # ************************************************************************************************ START : HOME ************************************************************************************************
 
