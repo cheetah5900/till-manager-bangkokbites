@@ -7,6 +7,11 @@
     /* Prevent line breaks */
   }
 
+  td,
+  th {
+    background-color: rgb(198, 198, 198);
+  }
+
   .table-inline-block {
     display: inline-block;
   }
@@ -17,6 +22,38 @@
 
   .red-text {
     color: #960439 !important;
+  }
+
+  .table>:not(caption)>*>* {
+    border-bottom-width: 0px
+  }
+
+  .custom-table td {
+    position: relative;
+    padding: 10px;
+  }
+
+  .red-underline {
+    border-bottom: 2px solid #960439;
+    border-bottom-width: 2px !important;
+  }
+
+  .red-border-full {
+    border: 2px solid #960439;
+    border-bottom-width: 2px !important;
+  }
+
+  td.red-underline-td::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 40%;
+    transform: translateX(-50%);
+    width: 70%;
+    height: 100%;
+    border-bottom: 2px solid #960439;
+    /* Adjust the border properties as needed */
+    z-index: 1;
   }
 </style>
 <div class="page-content-wrapper">
@@ -30,7 +67,7 @@
               <div class="product-description" style="width:100%;max-width: 100%;">
                 <div class="coupon-text-wrap d-flex align-items-center table-responsive">
                   <div class="table-container">
-                    <table class="table table-inline-block table-bordered">
+                    <table class="table custom-table table-inline-block">
                       <tr>
                         <th width="60px" class="red-text">จำนวน</th>
                         <th width="160px" class="red-text">ประเภท</th>
@@ -42,71 +79,71 @@
                       <tr>
                         <td class="text-center">{{sumrealBillOnlineCount}}</td>
                         <td class="red-text">T/A Online Lunch</td>
-                        <td>{{sumrealBillOnline|intcomma}}</td>
-                        <td>{{realBillOnlineCashLunch|intcomma}}</td>
-                        <td>{{realBillOnlineCardLunch|intcomma}}</td>
-                        <td rowspan="3" class="align-middle text-center">
+                        <td class="red-underline-td">{{sumrealBillOnline|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillOnlineCashLunch|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillOnlineCardLunch|intcomma}}</td>
+                        <td rowspan="3" class="align-middle text-center red-border-full">
                           <h3>{{totalBillLunch|intcomma}}</h3>
                         </td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillPhoneCount}}</td>
                         <td class="red-text">T/A Lunch</td>
-                        <td>{{sumrealBillPhone|intcomma}}</td>
-                        <td>{{realBillPhoneCashLunch|intcomma}}</td>
-                        <td>{{realBillPhoneCardLunch|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillPhone|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillPhoneCashLunch|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillPhoneCardLunch|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillInCount}}</td>
                         <td class="red-text">EAT-IN Lunch</td>
-                        <td>{{sumrealBillIn|intcomma}}</td>
-                        <td>{{realBillInCashLunch|intcomma}}</td>
-                        <td>{{realBillInCardLunch|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillIn|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillInCashLunch|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillInCardLunch|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillHomePhoneCountDinner}}</td>
                         <td class="red-text">Home Phone</td>
-                        <td>{{sumrealBillHomePhoneDinner|intcomma}}</td>
-                        <td>{{realBillHomePhoneCashDinner|intcomma}}</td>
-                        <td>{{realBillHomePhoneCardDinner|intcomma}}</td>
-                        <td rowspan="6" class="align-middle text-center">
+                        <td class="red-underline-td">{{sumrealBillHomePhoneDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillHomePhoneCashDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillHomePhoneCardDinner|intcomma}}</td>
+                        <td rowspan="6" class="align-middle text-center red-border-full">
                           <h3>{{totalBillDinner}}</h3>
                         </td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillHomeOnlineCountDinner}}</td>
                         <td class="red-text">Home Online</td>
-                        <td>{{sumrealBillHomeOnlineDinner|intcomma}}</td>
-                        <td>{{realBillHomeOnlineCashDinner|intcomma}}</td>
-                        <td>{{realBillHomeOnlineCardDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillHomeOnlineDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillHomeOnlineCashDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillHomeOnlineCardDinner|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillPhoneCountDinner}}</td>
                         <td class="red-text">T/A Phone Dinner</td>
-                        <td>{{sumrealBillPhoneDinner|intcomma}}</td>
-                        <td>{{realBillPhoneCashDinner|intcomma}}</td>
-                        <td>{{realBillPhoneCardDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillPhoneDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillPhoneCashDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillPhoneCardDinner|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillOnlineCountDinner}}</td>
                         <td class="red-text">T/A Online Dinner</td>
-                        <td>{{sumrealBillOnlineDinner|intcomma}}</td>
-                        <td>{{realBillOnlineCashDinner|intcomma}}</td>
-                        <td>{{realBillOnlineCardDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillOnlineDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillOnlineCashDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillOnlineCardDinner|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="text-center">{{sumrealBillInCountDinner}}</td>
                         <td class="red-text">Dinner</td>
-                        <td>{{sumrealBillInDinner|intcomma}}</td>
-                        <td>{{realBillInCashDinner|intcomma}}</td>
-                        <td>{{realBillInCardDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{sumrealBillInDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillInCashDinner|intcomma}}</td>
+                        <td class="red-underline-td">{{realBillInCardDinner|intcomma}}</td>
                       </tr>
                       <tr>
                         <td></td>
                         <td class="red-text">Total</td>
-                        <td>{{sumTotal|intcomma}}</td>
-                        <td>{{sumCash|intcomma}}</td>
-                        <td>{{sumCard|intcomma}}</td>
+                        <td class="table-success red-underline">{{sumTotal|intcomma}}</td>
+                        <td class="red-underline-td">{{sumCash|intcomma}}</td>
+                        <td class="red-underline-td">{{sumCard|intcomma}}</td>
                       </tr>
                       <tr>
                         <td></td>
@@ -120,14 +157,14 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td colspan="2">{{sumTipShow | safe}}</td>
+                        <td colspan="2" class="table-danger">{{sumTipShow | safe}}</td>
                         <td></td>
                       </tr>
                       <tr>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td colspan="2">{{sumWrongCreditShow | safe}}</td>
+                        <td colspan="2" class="table-danger">{{sumWrongCreditShow | safe}}</td>
                         <td></td>
                       </tr>
                       <tr>
@@ -143,31 +180,33 @@
                         <td class="red-text">H1</td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div>{{home_counts_1}} {{show_oa_counts_1}}</div>
+                            <div class="red-underline w-100">{{home_counts_1}} {{show_oa_counts_1}}</div>
                             <div class="red-text">unit</div>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div><span class="red-text">$</span> {{sum_commissions_1}}{{show_oa_amounts_1}}</div>
+                            <div class="red-underline w-100"><span class="red-text">$</span> <span
+                                class="red-underline w-100">{{sum_commissions_1}}{{show_oa_amounts_1}}</span></div>
                             <div></div>
                           </div>
                         </td>
                         <td>{{delivery_names_1}}</td>
-                        <td><b class="red-text">TOTAL ONLINE</b></td>
-                        <td>({{totalOnlineCount}}) {{totalOnlineAmount|intcomma}}</td>
+                        <td><b class="red-text" style="font-size:16px;">TOTAL ONLINE</b></td>
+                        <td class="table-success">({{totalOnlineCount}}) {{totalOnlineAmount|intcomma}}</td>
                       </tr>
                       <tr>
                         <td class="red-text">H2</td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div>{{home_counts_2}} {{show_oa_counts_2}}</div>
+                            <div class="red-underline w-100">{{home_counts_2}} {{show_oa_counts_2}}</div>
                             <div class="red-text">unit</div>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div><span class="red-text">$</span> {{sum_commissions_2}}{{show_oa_amounts_2}}</div>
+                            <div class="red-underline w-100"><span class="red-text">$</span>
+                              {{sum_commissions_2}}{{show_oa_amounts_2}}</div>
                             <div></div>
                           </div>
                         </td>
@@ -179,13 +218,14 @@
                         <td class="red-text">H3</td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div>{{home_counts_3}} {{show_oa_counts_3}}</div>
+                            <div class="red-underline w-100">{{home_counts_3}} {{show_oa_counts_3}}</div>
                             <div class="red-text">unit</div>
                           </div>
                         </td>
                         <td>
                           <div class="d-flex justify-content-between">
-                            <div><span class="red-text">$</span> {{sum_commissions_3}}{{show_oa_amounts_3}}</div>
+                            <div class="red-underline w-100"><span class="red-text">$</span>
+                              {{sum_commissions_3}}{{show_oa_amounts_3}}</div>
                             <div></div>
                           </div>
                         </td>
@@ -195,73 +235,78 @@
                       </tr>
                       <tr>
                         <td class="red-text">Total</td>
-                        <td>{{sumrealBillHomeCountDinner}}</td>
-                        <td>{{totalSumCommissionAndOa}}</td>
+                        <td class="table-danger">{{sumrealBillHomeCountDinner}}</td>
+                        <td class="table-danger">{{totalSumCommissionAndOa}}</td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                       </tr>
                     </table>
-                    <table class="table table-inline-block mx-4">
+                    <table class="table custom-table table-inline-block mx-4">
                       <tr>
-                        <td colspan="2" width="200px"><b class="red-text">DAIRY RECORD</b></td>
-                      </tr>
-                      <tr>
-                        <td class="red-text">DAY</td>
-                        <td>{{day}}</td>
-                      </tr>
-                      <tr>
-                        <td class="red-text">DATE</td>
-                        <td>{{date}}</td>
-                      </tr>
-                      <tr>
-                        <td class="red-text">NAME</td>
+                        <td colspan="2"><b class="red-text">DAIRY RECORD</b></td>
                         <td></td>
                       </tr>
                       <tr>
-                        <td colspan="2" class="red-text">
-                          <h3>CRONULLA</h3>
+                        <td colspan="2" class="red-text">DAY</td>
+                        <td class="red-underline-td w-100">{{day}}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" class="red-text">DATE</td>
+                        <td class="red-underline-td w-100">{{date}}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" class="red-text">NAME</td>
+                        <td class="red-underline-td w-100"></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3"></td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" class="red-text">
+                          <h3 class="text-center align-middle" style="margin:0;">CRONULLA</h3>
                         </td>
                       </tr>
                       <tr>
-                        <td colspan="2"></td>
+                        <td colspan="3"></td>
                       </tr>
                       <tr>
-                        <td><b class="red-text">รายการเบิก</b></td>
-                        <td></td>
+                        <td colspan="3" class="px-4"><b class="red-text">รายการเบิก</b></td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_1}}</td>
-                        <td>{{disburse_prices_1}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_1}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_1}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_2}}</td>
-                        <td>{{disburse_prices_2}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_2}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_2}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_3}}</td>
-                        <td>{{disburse_prices_3}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_3}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_3}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_4}}</td>
-                        <td>{{disburse_prices_4}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_4}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_4}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_5}}</td>
-                        <td>{{disburse_prices_5}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_5}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_5}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_6}}</td>
-                        <td>{{disburse_prices_6}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_6}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_6}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_7}}</td>
-                        <td>{{disburse_prices_7}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_7}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_7}}</td>
                       </tr>
                       <tr>
-                        <td>{{disburse_name_8}}</td>
-                        <td>{{disburse_prices_8}}</td>
+                        <td colspan="2" class="red-underline">{{disburse_name_8}}</td>
+                        <td class="red-underline-td w-100">{{disburse_prices_8}}</td>
                       </tr>
-                      <tr class="table-primary">
-                        <th class="red-text">TOTAL $ </th>
+                      <tr class="table-danger">
+                        <th colspan="2" class="red-text">TOTAL $ </th>
                         <td>{{totalSumDisburse|intcomma}}</td>
                       </tr>
                     </table>
@@ -274,7 +319,7 @@
                         <td>
                           <h2 class="red-text">Balance $</h2>
                         </td>
-                        <td>
+                        <td class="table-success">
                           <h2>&nbsp;&nbsp;&nbsp; {{balanceAfterMinusExpense}}</h2>
                         </td>
                       </tr>
