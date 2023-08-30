@@ -19,9 +19,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 from django.contrib.humanize.templatetags.humanize import intcomma
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 
-# require login to enter function
-# import model
 from keywordapp.models import *
 
 # IMAGE
@@ -50,14 +50,13 @@ from bs4 import BeautifulSoup
 
 def Index(request):
     context = {}
-    current_date = timezone.now().date()
-
+    current_date = timezone.now().strftime('%Y-%m-%d')
     context['current_date'] = current_date
 
     if request.method == 'POST':
         data = request.POST.copy()
         choose_date = data.get('choose_date')
-        mode = data.get('mode')
+        branch = data.get('branch')
 
         try:
             daily_report = DailyReportModel.objects.get(date=choose_date)
@@ -77,20 +76,82 @@ def Index(request):
                 bill_dinner_id=bill_dinner_id,
             )
 
-        if mode == 'lunch':
-            return redirect(reverse('lunch-input-quick', kwargs={'daily_report_id': daily_report.id}))
-        elif mode == 'home':
-            return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report.id}))
-        elif mode == 'dinner':
-            return redirect(reverse('dinner-input-quick', kwargs={'daily_report_id': daily_report.id}))
-        elif mode == 'disburse':
-            return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report.id}))
-        elif mode == 'scraping':
-            return redirect(reverse('scraping', kwargs={'daily_report_id': daily_report.id}))
-        elif mode == 'result':
-            return redirect(reverse('dinner-report', kwargs={'daily_report_id': daily_report.id}))
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
 
     return render(request, 'keywordapp/index.html', context)
+
+
+@csrf_exempt
+def ChooseMode(request, branch, daily_report_id):
+    context = {}
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+
+    current_date = date.strftime('%Y-%m-%d')
+    readable_date = date.strftime('%d/%m/%Y')
+    branch_image_name = 'button-bondi-beach.png' if branch == 'bkk' else 'button-cronulla.png'
+    branch_image_name = 'button-st-ives.png' if branch == 'st' else 'button-cronulla.png'
+    branch_image_name = 'button-martin-place.png' if branch == 'mt' else 'button-cronulla.png'
+    branch_image_name = 'button-newtown.png' if branch == 'nt' else 'button-cronulla.png'
+    branch_image_name = 'button-cronulla.png' if branch == 'cr' else 'button-cronulla.png'
+    context['current_date'] = current_date
+    context['readable_date'] = readable_date
+    context['branch_image_name'] = branch_image_name
+    context['daily_report_id'] = daily_report_id
+
+    if request.method == 'POST':
+        mode = request.POST.get('mode')
+        modePos = request.POST.get('mode_pos')
+        modeOnline = request.POST.get('mode_online')
+        if mode == 'lunch':
+            if modePos == 'self':
+                bill_lunch_id = daily_report.bill_lunch.id
+                bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+                billOnlineCashCount = request.POST.get('bill_online_cash_count')
+                billOnlineCash = request.POST.get('bill_online_cash')
+                billOnlineCardCount = request.POST.get('bill_online_card_count')
+                billOnlineCard = request.POST.get('bill_online_card')
+                posInCashCount = request.POST.get('pos_in_bill_cash_count')
+                posInCash = request.POST.get('pos_in_bill_cash')
+                posInCardCount = request.POST.get('pos_in_bill_card_count')
+                posInCard = request.POST.get('pos_in_bill_card')
+                posTaCashCount = request.POST.get('pos_ta_bill_phone_cash_count')
+                posTaCash = request.POST.get('pos_ta_bill_phone_cash')
+                posTaCardCount = request.POST.get('pos_ta_bill_phone_card_count')
+                posTaCard = request.POST.get('pos_ta_bill_phone_card')
+
+                edcInCredit = request.POST.get('edc_in_credit')
+                tipCredit = request.POST.get('tip_credit')
+                wrongCredit = request.POST.get('wrong_credit')
+
+                bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
+                # POS Dine-in
+                bill_lunch.pos_in_bill_cash_count = posInCashCount
+                bill_lunch.pos_in_bill_cash = posInCash
+                bill_lunch.pos_in_bill_card_count = posInCardCount
+                bill_lunch.pos_in_bill_card = posInCard
+                # POS TA
+                bill_lunch.pos_ta_bill_phone_cash_count = posTaCashCount
+                bill_lunch.pos_ta_bill_phone_cash = posTaCash
+                bill_lunch.pos_ta_bill_phone_card_count = posTaCardCount
+                bill_lunch.pos_ta_bill_phone_card = posTaCard
+                # Online
+                bill_lunch.bill_online_cash_count = billOnlineCashCount
+                bill_lunch.bill_online_cash = billOnlineCash
+                bill_lunch.bill_online_card_count = billOnlineCardCount
+                bill_lunch.bill_online_card = billOnlineCard
+                # Other
+                bill_lunch.edc_in_credit = edcInCredit
+                bill_lunch.tip_credit = tipCredit
+                bill_lunch.wrong_credit = wrongCredit
+
+                # Save the updated object
+                bill_lunch.save()
+            elif modePos == 'scraping':
+                return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
+
+
+    return render(request, 'keywordapp/choose-mode.html', context)
 
 # ************************************************************************************************ START : DISBURSE ************************************************************************************************
 
@@ -147,42 +208,6 @@ def DisburseInput(request, daily_report_id, disburse_id):
     return render(request, 'keywordapp/disburse-input.html', context)
 # ************************************************************************************************ END : DISBURSE ************************************************************************************************
 # ************************************************************************************************ START : LUNCH ************************************************************************************************
-
-
-def LunchInputQuick(request, daily_report_id):
-
-    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
-    date = daily_report.date
-    bill_lunch_id = daily_report.bill_lunch.id
-
-    bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
-
-    if request.method == 'POST':
-        edcInCredit = request.POST.get('edc_in_credit')
-        tipCredit = request.POST.get('tip_credit')
-        wrongCredit = request.POST.get('wrong_credit')
-
-        billOnlineCashCount = request.POST.get('bill_online_cash_count')
-        billOnlineCash = request.POST.get('bill_online_cash')
-        billOnlineCardCount = request.POST.get('bill_online_card_count')
-        billOnlineCard = request.POST.get('bill_online_card')
-
-        # Online
-        bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
-        bill_lunch.edc_in_credit = edcInCredit
-        bill_lunch.tip_credit = tipCredit
-        bill_lunch.wrong_credit = wrongCredit
-        bill_lunch.bill_online_cash_count = billOnlineCashCount
-        bill_lunch.bill_online_cash = billOnlineCash
-        bill_lunch.bill_online_card_count = billOnlineCardCount
-        bill_lunch.bill_online_card = billOnlineCard
-
-        # Save the updated object
-        bill_lunch.save()
-
-        return redirect(reverse('lunch-report', kwargs={'daily_report_id': daily_report_id}))
-
-    return render(request, 'keywordapp/lunch-input-quick.html', context={'date': date, 'bill_lunch': bill_lunch, 'daily_report_id': daily_report_id})
 
 
 def LunchReport(request, daily_report_id):
@@ -357,7 +382,7 @@ def DinnerReport(request, daily_report_id):
     realBillInCardLunch = bill_lunch.pos_in_bill_card
     realBillInCardCountLunch = bill_lunch.pos_in_bill_card_count
     tipLunch = bill_lunch.tip_credit
-    
+
     edcInCreditLunch = bill_lunch.edc_in_credit
     wrongCreditLunch = bill_lunch.wrong_credit
 
@@ -384,7 +409,6 @@ def DinnerReport(request, daily_report_id):
     realBillInCardCountDinner = bill_dinner.pos_in_bill_card_count
     tipDinner = bill_dinner.tip_credit
     wrongCreditDinner = bill_dinner.wrong_credit
-    
 
     posTaPhoneTotalBillCount = bill_dinner.pos_ta_phone_total_bill_count
 
@@ -453,7 +477,7 @@ def DinnerReport(request, daily_report_id):
     # Row 1 Ta Online Lunch
     totalBillLunch = realBillPhoneCashLunch + realBillPhoneCardLunch + realBillInCashLunch + \
         realBillInCardLunch + realBillOnlineCashLunch + realBillOnlineCardLunch
-    
+
     sumrealBillOnlineCount = realBillOnlineCashCountLunch + realBillOnlineCardCountLunch
     sumrealBillOnline = realBillOnlineCashLunch + realBillOnlineCardLunch
     # Row 2 Ta Phone Lunch
@@ -504,11 +528,11 @@ def DinnerReport(request, daily_report_id):
 
     # * Delivery section
     # Sum all count both phone and online and
-    home_counts = {1:'',2:'',3:''}
-    show_oa_counts = {1:'',2:'',3:''}
-    sum_commissions = {1:'',2:'',3:''}
-    show_oa_amounts = {1:'',2:'',3:''}
-    delivery_names = {1:'',2:'',3:''}
+    home_counts = {1: '', 2: '', 3: ''}
+    show_oa_counts = {1: '', 2: '', 3: ''}
+    sum_commissions = {1: '', 2: '', 3: ''}
+    show_oa_amounts = {1: '', 2: '', 3: ''}
+    delivery_names = {1: '', 2: '', 3: ''}
 
     for idx, item in enumerate(related_delivery_details, start=1):
         home_counts[idx] = item.home_count
@@ -516,7 +540,7 @@ def DinnerReport(request, daily_report_id):
         sum_commissions[idx] = item.sum_commission
         show_oa_amounts[idx] = item.show_oa_amount
         delivery_names[idx] = item.delivery_name
-    
+
     sumrealBillHomeCountDinner = sumrealBillHomePhoneCountDinner + \
         sumrealBillHomeOnlineCountDinner
     totalSumCommissionAndOa = sum(
@@ -533,22 +557,25 @@ def DinnerReport(request, daily_report_id):
 
     # * Disburse Section
 
-    disburse_names = {1:'$',2:'$',3:'$',4:'$',5:'$',6:'$',7:'$',8:'$'}
-    disburse_prices = {1:'',2:'',3:'',4:'',5:'',6:'',7:'',8:''}
+    disburse_names = {1: '$', 2: '$', 3: '$',
+                      4: '$', 5: '$', 6: '$', 7: '$', 8: '$'}
+    disburse_prices = {1: '', 2: '', 3: '', 4: '', 5: '', 6: '', 7: '', 8: ''}
 
     for idx, item in enumerate(related_disburse_details, start=1):
         disburse_names[idx] = '$ '+item.name
         disburse_prices[idx] = item.price
-        
+
     totalSumDisburse = sum(detail.price for detail in related_disburse_details)
-    balanceAfterMinusExpense = sumCash - totalSumCommissionAndOa - totalSumDisburse - sumTip
+    balanceAfterMinusExpense = sumCash - \
+        totalSumCommissionAndOa - totalSumDisburse - sumTip
     imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner,
                                         realBillPhoneCashDinnerMinusHomePhone, realBillPhoneCardDinnerMinusHomePhone, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner)
 
     # * Summary for Comparation section
 
     sumWrongCredit = wrongCreditLunch + wrongCreditDinner
-    sumWrongCreditShow = f"กดเครดิตขาด   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {sumWrongCredit}" if sumWrongCredit != 0 else ""    # Calculate the sum of the bill_home_oa_amount attribute for all DeliveryDetailModel instances
+    # Calculate the sum of the bill_home_oa_amount attribute for all DeliveryDetailModel instances
+    sumWrongCreditShow = f"กดเครดิตขาด   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;   {sumWrongCredit}" if sumWrongCredit != 0 else ""
     realBillHomePhoneCard = sum(
         detail.bill_home_phone_card for detail in related_delivery_details)
     realBillHomeOnlineCard = sum(
@@ -575,8 +602,7 @@ def DinnerReport(request, daily_report_id):
     resultCheckEqual1 = "✅" if totalBillCardForCompareWithEdcDineIn == addWrongCreditToEdcDineIn else "❌"
     resultCheckEqual2 = "✅" if minusMotoCreditFromSumBillHomeCard == sumEdcHomeCard else "❌"
 
-
-    #* For choosing to display in number or -
+    # * For choosing to display in number or -
     sumrealBillOnline = sumrealBillOnline if sumrealBillOnline != 0 else "-"
     realBillOnlineCashLunch = realBillOnlineCashLunch if realBillOnlineCashLunch != 0 else "-"
     realBillOnlineCardLunch = realBillOnlineCardLunch if realBillOnlineCardLunch != 0 else "-"
@@ -605,9 +631,6 @@ def DinnerReport(request, daily_report_id):
     realBillInCardDinner = realBillInCardDinner if realBillInCardDinner != 0 else "-"
     sumCash = sumCash if sumCash != 0 else "-"
     sumCard = sumCard if sumCard != 0 else "-"
-    
-
-
 
     context = {
         'day': day,
@@ -703,21 +726,21 @@ def DinnerReport(request, daily_report_id):
         'imgLocation': imgLocation,
 
         #! Delivery Section
-        'home_counts_1':home_counts[1],
-        'show_oa_counts_1':show_oa_counts[1],
-        'sum_commissions_1':sum_commissions[1],
-        'show_oa_amounts_1':show_oa_amounts[1],
-        'delivery_names_1':delivery_names[1],
-        'home_counts_2':home_counts[2],
-        'show_oa_counts_2':show_oa_counts[2],
-        'sum_commissions_2':sum_commissions[2],
-        'show_oa_amounts_2':show_oa_amounts[2],
-        'delivery_names_2':delivery_names[2],
-        'home_counts_3':home_counts[3],
-        'show_oa_counts_3':show_oa_counts[3],
-        'sum_commissions_3':sum_commissions[3],
-        'show_oa_amounts_3':show_oa_amounts[3],
-        'delivery_names_3':delivery_names[3],
+        'home_counts_1': home_counts[1],
+        'show_oa_counts_1': show_oa_counts[1],
+        'sum_commissions_1': sum_commissions[1],
+        'show_oa_amounts_1': show_oa_amounts[1],
+        'delivery_names_1': delivery_names[1],
+        'home_counts_2': home_counts[2],
+        'show_oa_counts_2': show_oa_counts[2],
+        'sum_commissions_2': sum_commissions[2],
+        'show_oa_amounts_2': show_oa_amounts[2],
+        'delivery_names_2': delivery_names[2],
+        'home_counts_3': home_counts[3],
+        'show_oa_counts_3': show_oa_counts[3],
+        'sum_commissions_3': sum_commissions[3],
+        'show_oa_amounts_3': show_oa_amounts[3],
+        'delivery_names_3': delivery_names[3],
 
         #! Comparation
         'bill_dinner': bill_dinner,
@@ -1028,8 +1051,6 @@ def ScrapingOnlineData(table_rows, input_date, daily_report_id):
                 amount_decimal_format = Decimal(amount[0:6])
                 status = td_elements[5].text
                 payment_method = td_elements[6].text
-                print("type : ", type)
-                print("shift : ", shift)
                 if status == "Accepted":
                     if type == 'Delivery':
                         if payment_method == "Cash":
@@ -1056,13 +1077,6 @@ def ScrapingOnlineData(table_rows, input_date, daily_report_id):
                             elif payment_method == "Card":
                                 pickup_card_count_dinner += 1
                                 pickup_card_amount_dinner += amount_decimal_format
-
-                print("pickup_cash_count_dinner : ", pickup_cash_count_dinner)
-                print("pickup_cash_amount_dinner : ",
-                      pickup_cash_amount_dinner)
-                print("pickup_card_count_dinner : ", pickup_card_count_dinner)
-                print("pickup_card_amount_dinner : ",
-                      pickup_card_amount_dinner)
 
         except:
             pass

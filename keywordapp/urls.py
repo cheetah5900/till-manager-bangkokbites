@@ -3,6 +3,7 @@ from keywordapp.views import *
 
 urlpatterns = [
     path('', Index, name='index'),
+    path('<str:branch>/<int:daily_report_id>', ChooseMode, name='choose-mode'),
 
     # ? Disburse
     path('disburse-list/<str:daily_report_id>/',
@@ -13,8 +14,6 @@ urlpatterns = [
          DeleteDisburse, name='delete-disburse'),
 
     # ? Lunch
-    path('lunch-input-quick/<str:daily_report_id>/',
-         LunchInputQuick, name='lunch-input-quick'),
     path('lunch-report/<str:daily_report_id>/',
          LunchReport, name='lunch-report'),
 
@@ -40,5 +39,5 @@ urlpatterns = [
     path('get-online-data/<str:daily_report_id>/', GetOnlineOrderData),
 
     # ? POS update
-    path('update-pos/<str:daily_report_id>/', UpdatePosData),
+    path('update-pos/<str:daily_report_id>/', UpdatePosData,name='update-pos'),
 ]
