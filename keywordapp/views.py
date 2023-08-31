@@ -86,45 +86,74 @@ def ChooseMode(request, branch, daily_report_id):
     context = {}
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     date = daily_report.date
-
+    # * Preparation
     current_date = date.strftime('%Y-%m-%d')
     readable_date = date.strftime('%d/%m/%Y')
-    branch_image_name = 'button-bondi-beach.png' if branch == 'bkk' else 'button-cronulla.png'
-    branch_image_name = 'button-st-ives.png' if branch == 'st' else 'button-cronulla.png'
-    branch_image_name = 'button-martin-place.png' if branch == 'mt' else 'button-cronulla.png'
-    branch_image_name = 'button-newtown.png' if branch == 'nt' else 'button-cronulla.png'
-    branch_image_name = 'button-cronulla.png' if branch == 'cr' else 'button-cronulla.png'
+    # * Set Variable
+    bill_lunch_id = daily_report.bill_lunch.id
+    bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
+    bill_dinner_id = daily_report.bill_dinner.id
+    bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
+    # * Condition
+    if branch == 'bkk':
+        branch_image_name = 'button-bondi-beach.png'
+    elif branch == 'st':
+        branch_image_name = 'button-st-ives.png'
+    elif branch == 'nt':
+        branch_image_name = 'button-newtown.png'
+    elif branch == 'mt':
+        branch_image_name = 'button-martin-place.png'
+    elif branch == 'cr':
+        branch_image_name = 'button-cronulla.png'
+
+    # * Context
     context['current_date'] = current_date
     context['readable_date'] = readable_date
+    context['branch'] = branch
     context['branch_image_name'] = branch_image_name
     context['daily_report_id'] = daily_report_id
+    context['bill_lunch'] = bill_lunch
+    context['bill_dinner'] = bill_dinner
 
     if request.method == 'POST':
         mode = request.POST.get('mode')
         modePos = request.POST.get('mode_pos')
         modeOnline = request.POST.get('mode_online')
         if mode == 'lunch':
+            edcInCredit = request.POST.get('edc_in_credit')
+            tipCredit = request.POST.get('tip_credit')
+            wrongCredit = request.POST.get('wrong_credit')
+
+            edcInCredit = 0 if edcInCredit == '' else edcInCredit
+            tipCredit = 0 if tipCredit == '' else tipCredit
+            wrongCredit = 0 if wrongCredit == '' else wrongCredit
+
+            # Other
+            bill_lunch.edc_in_credit = edcInCredit
+            bill_lunch.tip_credit = tipCredit
+            bill_lunch.wrong_credit = wrongCredit
+
             if modePos == 'self':
-                bill_lunch_id = daily_report.bill_lunch.id
-                bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
-                billOnlineCashCount = request.POST.get('bill_online_cash_count')
-                billOnlineCash = request.POST.get('bill_online_cash')
-                billOnlineCardCount = request.POST.get('bill_online_card_count')
-                billOnlineCard = request.POST.get('bill_online_card')
                 posInCashCount = request.POST.get('pos_in_bill_cash_count')
                 posInCash = request.POST.get('pos_in_bill_cash')
                 posInCardCount = request.POST.get('pos_in_bill_card_count')
                 posInCard = request.POST.get('pos_in_bill_card')
-                posTaCashCount = request.POST.get('pos_ta_bill_phone_cash_count')
+                posTaCashCount = request.POST.get(
+                    'pos_ta_bill_phone_cash_count')
                 posTaCash = request.POST.get('pos_ta_bill_phone_cash')
-                posTaCardCount = request.POST.get('pos_ta_bill_phone_card_count')
+                posTaCardCount = request.POST.get(
+                    'pos_ta_bill_phone_card_count')
                 posTaCard = request.POST.get('pos_ta_bill_phone_card')
 
-                edcInCredit = request.POST.get('edc_in_credit')
-                tipCredit = request.POST.get('tip_credit')
-                wrongCredit = request.POST.get('wrong_credit')
+                posInCashCount = 0 if posInCashCount == '' else posInCashCount
+                posInCash = 0 if posInCash == '' else posInCash
+                posInCardCount = 0 if posInCardCount == '' else posInCardCount
+                posInCard = 0 if posInCard == '' else posInCard
+                posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
+                posTaCash = 0 if posTaCash == '' else posTaCash
+                posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
+                posTaCard = 0 if posTaCard == '' else posTaCard
 
-                bill_lunch = get_object_or_404(BillLunchModel, id=bill_lunch_id)
                 # POS Dine-in
                 bill_lunch.pos_in_bill_cash_count = posInCashCount
                 bill_lunch.pos_in_bill_cash = posInCash
@@ -135,20 +164,111 @@ def ChooseMode(request, branch, daily_report_id):
                 bill_lunch.pos_ta_bill_phone_cash = posTaCash
                 bill_lunch.pos_ta_bill_phone_card_count = posTaCardCount
                 bill_lunch.pos_ta_bill_phone_card = posTaCard
+
+                # Save the updated object
+            elif modePos == 'scraping':
+                # return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
+                pass
+            if modeOnline == 'self':
+                billOnlineCashCount = request.POST.get(
+                    'bill_online_cash_count')
+                billOnlineCash = request.POST.get('bill_online_cash')
+                billOnlineCardCount = request.POST.get(
+                    'bill_online_card_count')
+                billOnlineCard = request.POST.get('bill_online_card')
+
+                bill_lunch = get_object_or_404(
+                    BillLunchModel, id=bill_lunch_id)
+
                 # Online
                 bill_lunch.bill_online_cash_count = billOnlineCashCount
                 bill_lunch.bill_online_cash = billOnlineCash
                 bill_lunch.bill_online_card_count = billOnlineCardCount
                 bill_lunch.bill_online_card = billOnlineCard
-                # Other
-                bill_lunch.edc_in_credit = edcInCredit
-                bill_lunch.tip_credit = tipCredit
-                bill_lunch.wrong_credit = wrongCredit
+            elif modeOnline == 'scraping':
+                pass
+
+            bill_lunch.save()
+
+            request.session['status'] = 'submit_success'
+            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+        if mode == 'dinner':
+            edcInCredit = request.POST.get('edc_in_credit')
+            tipCredit = request.POST.get('tip_credit')
+            wrongCredit = request.POST.get('wrong_credit')
+
+            edcInCredit = 0 if edcInCredit == '' else edcInCredit
+            tipCredit = 0 if tipCredit == '' else tipCredit
+            wrongCredit = 0 if wrongCredit == '' else wrongCredit
+
+            # Other
+            bill_dinner.edc_in_credit = edcInCredit
+            bill_dinner.tip_credit = tipCredit
+            bill_dinner.wrong_credit = wrongCredit
+
+            if modePos == 'self':
+                posInCashCount = request.POST.get('pos_in_bill_cash_count')
+                posInCash = request.POST.get('pos_in_bill_cash')
+                posInCardCount = request.POST.get('pos_in_bill_card_count')
+                posInCard = request.POST.get('pos_in_bill_card')
+                posTaCashCount = request.POST.get(
+                    'pos_ta_bill_phone_cash_count')
+                posTaCash = request.POST.get('pos_ta_bill_phone_cash')
+                posTaCardCount = request.POST.get(
+                    'pos_ta_bill_phone_card_count')
+                posTaCard = request.POST.get('pos_ta_bill_phone_card')
+
+                posInCashCount = 0 if posInCashCount == '' else posInCashCount
+                posInCash = 0 if posInCash == '' else posInCash
+                posInCardCount = 0 if posInCardCount == '' else posInCardCount
+                posInCard = 0 if posInCard == '' else posInCard
+                posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
+                posTaCash = 0 if posTaCash == '' else posTaCash
+                posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
+                posTaCard = 0 if posTaCard == '' else posTaCard
+
+                # POS Dine-in
+                bill_dinner.pos_in_bill_cash_count = posInCashCount
+                bill_dinner.pos_in_bill_cash = posInCash
+                bill_dinner.pos_in_bill_card_count = posInCardCount
+                bill_dinner.pos_in_bill_card = posInCard
+                # POS TA
+                bill_dinner.pos_ta_bill_phone_cash_count = posTaCashCount
+                bill_dinner.pos_ta_bill_phone_cash = posTaCash
+                bill_dinner.pos_ta_bill_phone_card_count = posTaCardCount
+                bill_dinner.pos_ta_bill_phone_card = posTaCard
 
                 # Save the updated object
-                bill_lunch.save()
             elif modePos == 'scraping':
-                return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
+                # return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
+                pass
+            if modeOnline == 'self':
+                billOnlineCashCount = request.POST.get(
+                    'bill_online_cash_count')
+                billOnlineCash = request.POST.get('bill_online_cash')
+                billOnlineCardCount = request.POST.get(
+                    'bill_online_card_count')
+                billOnlineCard = request.POST.get('bill_online_card')
+
+                bill_dinner = get_object_or_404(
+                    BillLunchModel, id=bill_dinner_id)
+
+                # Online
+                bill_dinner.bill_online_cash_count = billOnlineCashCount
+                bill_dinner.bill_online_cash = billOnlineCash
+                bill_dinner.bill_online_card_count = billOnlineCardCount
+                bill_dinner.bill_online_card = billOnlineCard
+            elif modeOnline == 'scraping':
+                pass
+
+            bill_dinner.save()
+
+            request.session['status'] = 'submit_success'
+            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+    
+    if 'status' in request.session:
+        context['status'] = 'submit_success'
+        del request.session['status']
 
 
     return render(request, 'keywordapp/choose-mode.html', context)
@@ -311,47 +431,6 @@ def LunchReport(request, daily_report_id):
     return render(request, 'keywordapp/lunch-report.html', context)
 # ************************************************************************************************ END : LUNCH ************************************************************************************************
 # ************************************************************************************************ START : DINNER ************************************************************************************************
-
-
-def DinnerInputQuick(request, daily_report_id):
-
-    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
-    date = daily_object.date
-    bill_dinner_id = daily_object.bill_dinner.id
-
-    bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
-
-    if request.method == 'POST':
-        realBillOnlineCard = request.POST.get('bill_online_card')
-        edcInCredit = request.POST.get('edc_in_credit')
-        tipCredit = request.POST.get('tip_credit')
-        wrongCredit = request.POST.get('wrong_credit')
-        # Online
-        realBillOnlineCash = request.POST.get('bill_online_cash')
-        realBillOnlineCashCount = request.POST.get(
-            'bill_online_cash_count')
-        realBillOnlineCard = request.POST.get('bill_online_card')
-        realBillOnlineCardCount = request.POST.get(
-            'bill_online_card_count')
-
-        bill_dinner = get_object_or_404(BillDinnerModel, id=bill_dinner_id)
-        bill_dinner.bill_online_card = realBillOnlineCard
-        bill_dinner.wrong_credit = wrongCredit
-        bill_dinner.tip_credit = tipCredit
-        bill_dinner.edc_in_credit = edcInCredit
-
-        # TA Online
-        bill_dinner.bill_online_cash_count = realBillOnlineCashCount
-        bill_dinner.bill_online_cash = realBillOnlineCash
-        bill_dinner.bill_online_card_count = realBillOnlineCardCount
-        bill_dinner.bill_online_card = realBillOnlineCard
-
-        # Save the updated object
-        bill_dinner.save()
-
-        return redirect(reverse('dinner-report', kwargs={'daily_report_id': daily_report_id}))
-
-    return render(request, 'keywordapp/dinner-input-quick.html', context={'date': date, 'bill_dinner': bill_dinner, 'daily_report_id': daily_report_id})
 
 
 def DinnerReport(request, daily_report_id):
