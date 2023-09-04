@@ -71,7 +71,6 @@ class BillDinnerModel(models.Model):
     pos_ta_phone_total_bill_count = models.IntegerField(default=0)
     pos_dine_in_total_bill_count = models.IntegerField(default=0)
 
-
     def __str__(self):
         return self.real_bill_phone_cash
 
@@ -116,6 +115,7 @@ class DeliveryDetailModel(models.Model):
 
 class DailyReportModel(models.Model):
     date = models.DateField()
+    branch = models.CharField(default="cr",max_length=20)
     bill_lunch = models.ForeignKey(BillLunchModel, on_delete=models.CASCADE)
     bill_dinner = models.ForeignKey(BillDinnerModel, on_delete=models.CASCADE)
 

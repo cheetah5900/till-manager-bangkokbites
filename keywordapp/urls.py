@@ -6,8 +6,6 @@ urlpatterns = [
     path('<str:branch>/<int:daily_report_id>', ChooseMode, name='choose-mode'),
 
     # ? Disburse
-    path('disburse-list/<str:daily_report_id>/',
-         DisburseList, name='disburse-list'),
     path('disburse-input/<str:daily_report_id>/<int:disburse_id>/',
          DisburseInput, name='disburse-input'),
     path('delete-disburse/<int:disburse_id>/<str:daily_report_id>/',
@@ -18,15 +16,10 @@ urlpatterns = [
          LunchReport, name='lunch-report'),
 
     # ? Dinner
-    path('dinner-input-quick/<str:daily_report_id>/',
-         DinnerInputQuick, name='dinner-input-quick'),
-    path('dinner-report/<str:daily_report_id>/',
+    path('dinner-report/<str:branch>/<int:daily_report_id>/',
          DinnerReport, name='dinner-report'),
 
     # ? Home
-    path('home-list/<str:daily_report_id>/', HomeList, name='home-list'),
-    path('home-input-quick/<str:daily_report_id>/<int:delivery_id>/',
-         HomeInputQuick, name='home-input-quick'),
     path('home-report/<str:daily_report_id>/<int:delivery_id>/',
          HomeInputDetail, name='home-report'),
     path('delete-delivery-detail/<int:delivery_detail_id>/<str:daily_report_id>/',

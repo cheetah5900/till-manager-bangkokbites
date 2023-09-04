@@ -1,0 +1,180 @@
+<!--begin::Modal - Create delivery-->
+<div class="modal fade" id="kt_modal_expense" tabindex="-1" aria-hidden="true">
+  <!--begin::Modal dialog-->
+  <div class="modal-dialog modal-fullscreen p-9">
+    <!--begin::Modal content-->
+    <div class="modal-content">
+      <!--begin::Modal header-->
+      <div class="modal-header header-bg">
+        <!--begin::Modal title-->
+        <h2 class="text-white">Expense
+          <small class="ms-2 fs-7 fw-normal text-white opacity-50">Create, Edit, Manage expense of the day</small>
+        </h2>
+        <!--end::Modal title-->
+        <!--begin::Close-->
+        <div class="btn btn-sm btn-icon btn-color-white btn-active-color-primary" data-bs-dismiss="modal">
+          <i class="ki-duotone ki-cross fs-1">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </div>
+        <!--end::Close-->
+      </div>
+      <!--end::Modal header-->
+      <!--begin::Modal body-->
+      <div class="modal-body scroll-y m-5">
+        <!--begin::Stepper-->
+        <div class="stepper stepper-links d-flex flex-column" id="kt_create_expense_stepper">
+          <!--begin::Nav-->
+          <div class="stepper-nav py-5">
+            <!--begin::Step 1-->
+            <div class="stepper-item current" data-kt-stepper-element="nav">
+              <h3 class="stepper-title">List</h3>
+            </div>
+            <!--end::Step 1-->
+            <!--begin::Step 2-->
+            <div class="stepper-item" data-kt-stepper-element="nav">
+              <h3 class="stepper-title">Add expense</h3>
+            </div>
+            <!--end::Step 2-->
+          </div>
+          <!--end::Nav-->
+          <!--begin::Form-->
+          <form class="mx-auto mw-600px w-100 py-10" novalidate="novalidate" id="kt_create_expense_form" method="post">
+            <!--begin::Step 0-->
+            <div class="current" data-kt-stepper-element="content">
+              <!--begin::Wrapper-->
+              <div class="w-100">
+                <!--begin::Heading-->
+                <div class="pb-5">
+                  <!--begin::Title-->
+                  <h1 class="fw-bold text-dark">รายการเบิกของ</h1>
+                  <!--end::Title-->
+                  <!--begin::Body-->
+                  <div class="card-body pt-0 mt-10">
+                    {% for item in related_disburse_details %}
+                    <!--begin::Item-->
+                    <div class="d-flex align-items-center bg-light-{{item.css_classes}} rounded p-5 mb-7">
+                      <i class="ki-duotone ki-abstract-26 text-{{item.css_classes}} fs-1 me-5">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                      </i>
+                      <!--begin::Title-->
+                      <div class="flex-grow-1 me-2">
+                        <a href="#" class="fw-bold text-gray-800 text-hover-primary fs-6">{{item.name}}</a>
+                        <span class="text-muted fw-semibold d-block">{{item.price}}</span>
+                      </div>
+                      <!--end::Title-->
+                      <!--begin::Lable--><a href="/disburse-input/{{daily_report_id}}/{{item.id}}"
+                        class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-warning mx-3">Edit</a>
+                      <a class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-danger mx-3"
+                        href="{% url 'delete-disburse' item.id daily_report_id %}"
+                        onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                      <!--end::Lable-->
+                    </div>
+                    <!--end::Item-->
+                    {% endfor %}
+                  </div>
+                  <!--end::Body-->
+
+                </div>
+                <!--end::Heading-->
+              </div>
+              <!--end::Wrapper-->
+            </div>
+            <!--end::Step 0-->
+            <!--begin::Step 1-->
+            <div data-kt-stepper-element="content">
+              <!--begin::Wrapper-->
+              <div class="w-100">
+                <!--begin::Heading-->
+                <div class="pb-5">
+                  <!--begin::Title-->
+                  <h1 class="fw-bold text-dark">เพิ่มค่าใช้จ่าย</h1>
+                  <!--end::Title-->
+                  <!--begin::Description-->
+                  <div class="text-muted fw-semibold fs-4">
+                    <a href="#" class="link-primary">ใส่รายการที่จะเบิกและราคา</a>
+                  </div>
+                  <!--end::Description-->
+                </div>
+                <!--end::Heading-->
+
+
+                <!--begin::Input group-->
+                <div class="row mb-15" data-kt-buttons="true">
+                  <div class="col-6">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                      <span>รายการ</span>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input onfocus="clearInputValue(this)" type="text" value="{{ disburse_detail.name }}" name="name"
+                      class="form-control form-control-solid" placeholder="ชื่อสินค้า">
+                    <!--end::Input-->
+                  </div>
+                  <div class="col-6">
+                    <!--begin::Label-->
+                    <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                      <span>ราคา</span>
+                    </label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                      inputmode="numeric" type="text" value="{{ disburse_detail.price }}" name="price"
+                      class="form-control form-control-solid">
+                    <!--end::Input-->
+                  </div>
+                </div>
+                <!--end::Input group-->
+
+                <div class="d-flex justify-content-end mt-5">
+                  <button type="submit" class="btn btn-lg btn-primary me-3">
+                    <span class="indicator-label">ส่งข้อมูล
+                      <i class="ki-duotone ki-arrow-right fs-2 ms-2 me-0">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                      </i></span>
+                  </button>
+                </div>
+              </div>
+              
+              <!--end::Wrapper-->
+            </div>
+            <!--end::Step 1-->
+            <!--begin::Actions-->
+            <div class="d-flex flex-stack">
+              <!--begin::Wrapper-->
+              <div class="mr-2">
+                <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                  <i class="ki-duotone ki-arrow-left fs-4 me-1">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>ย้อนกลับ</button>
+              </div>
+              <!--end::Wrapper-->
+              <!--begin::Wrapper-->
+              <input type="hidden" name="mode" value="expense">
+              <div class="mt-5">
+                <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">ถัดไป
+                  <i class="ki-duotone ki-arrow-right fs-4 ms-1 me-0">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i></button>
+              </div>
+              <!--end::Wrapper-->
+            </div>
+            <!--end::Actions-->
+          </form>
+          <!--end::Form-->
+        </div>
+        <!--end::Stepper-->
+      </div>
+      <!--end::Modal body-->
+    </div>
+    <!--end::Modal content-->
+  </div>
+  <!--end::Modal dialog-->
+</div>
+<!--end::Modal - Create project-->

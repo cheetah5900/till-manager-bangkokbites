@@ -10,8 +10,6 @@
   Swal.fire({
     title: "เพิ่มข้อมูลแล้ว",
     icon: "success",
-  }).then(() => {
-    document.body.className = 'page-bg';
   });
 </script>
 {% endif %}
@@ -80,5 +78,6 @@
   {% include 'choose-mode-component/modal-lunch.html' %}
   {% include 'choose-mode-component/modal-dinner.html' %}
   {% include 'choose-mode-component/modal-delivery.html' %}
+  {% include 'choose-mode-component/modal-expense.html' %}
 
   {%endblock content%}
