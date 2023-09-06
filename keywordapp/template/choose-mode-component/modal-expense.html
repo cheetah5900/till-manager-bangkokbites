@@ -65,10 +65,11 @@
                         <span class="text-muted fw-semibold d-block">{{item.price}}</span>
                       </div>
                       <!--end::Title-->
-                      <!--begin::Lable--><a href="/disburse-input/{{daily_report_id}}/{{item.id}}"
+                      <!--begin::Lable-->
+                      <a href="/disburse-edit/{{branch}}/{{daily_report_id}}/{{item.id}}"
                         class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-warning mx-3">Edit</a>
                       <a class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-danger mx-3"
-                        href="{% url 'delete-disburse' item.id daily_report_id %}"
+                        href="{% url 'delete-disburse' branch item.id daily_report_id %}"
                         onclick="return confirm('Are you sure you want to delete?')">Delete</a>
                       <!--end::Lable-->
                     </div>
@@ -139,7 +140,7 @@
                   </button>
                 </div>
               </div>
-              
+
               <!--end::Wrapper-->
             </div>
             <!--end::Step 1-->

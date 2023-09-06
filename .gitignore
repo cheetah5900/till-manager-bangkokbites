@@ -153,3 +153,4 @@ cython_debug/
 .DS_Store
 chromedriver.exe
 betmanager/settings.py
+node_modules/

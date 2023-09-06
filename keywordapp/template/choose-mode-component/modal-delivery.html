@@ -76,10 +76,13 @@
                         <span class="text-muted fw-semibold d-block">{{delivery_detail.home_count}}</span>
                       </div>
                       <!--end::Title-->
-                      <!--begin::Lable--><a href="/home-input-quick/{{daily_report_id}}/{{delivery_detail.id}}"
+                      <!--begin::Lable-->
+                      <a href="/home-report/{{branch}}/{{daily_report_id}}/{{delivery_detail.id}}"
+                        class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-info mx-3">Report</a>
+                      <a href="/home-edit/{{branch}}/{{daily_report_id}}/{{delivery_detail.id}}"
                         class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-warning mx-3">Edit</a>
                       <a class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-danger mx-3"
-                        href="{% url 'delete-delivery-detail' delivery_detail.id daily_report_id %}"
+                        href="{% url 'delete-delivery-detail' branch daily_report_id delivery_detail.id  %}"
                         onclick="return confirm('Are you sure you want to delete?')">Delete</a>
                       <!--end::Lable-->
                     </div>
@@ -87,6 +90,125 @@
                     {% endfor %}
                   </div>
                   <!--end::Body-->
+
+
+                  <!--begin::Tables Widget 3-->
+                  <div class="card card-xl-stretch mb-xl-8">
+                    <!--begin::Body-->
+                    <div class="card-body py-3">
+                      <!--begin::Table container-->
+                      <div class="table-responsive">
+                        <!--begin::Header-->
+                        <div class="border-0 pt-5">
+                          <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-3 mb-1">ยอด Home ออนไลน์จากการรวมข้อมูล</span>
+                          </h3>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Table-->
+                        <table class="table align-middle gs-0 gy-3">
+                          <!--begin::Table head-->
+                          <thead>
+                            <tr>
+                              <th class="p-0 w-40px"></th>
+                              <th class="p-0 w-200px"></th>
+                              <th class="p-0 w-40px"></th>
+                            </tr>
+                          </thead>
+                          <!--end::Table head-->
+                          <!--begin::Table body-->
+                          <tbody>
+                            <tr>
+                              <td>
+                                <div class="symbol symbol-50px me-2">
+                                  <span class="symbol-label bg-light-success">
+                                    <i class="ki-duotone ki-arrow-mix fs-2x text-success">
+                                      <span class="path1"></span>
+                                      <span class="path2"></span>
+                                      <span class="path3"></span>
+                                      <span class="path4"></span>
+                                    </i>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Cash
+                                  ({{sumOnlineCashCount}}) {{sumOnlineCash}}</a>
+                              </td>
+                              <td>
+                                <div class="symbol symbol-50px me-2">
+                                  <span class="symbol-label bg-light-danger">
+                                    <i class="ki-duotone ki-bitcoin fs-2x text-danger">
+                                      <span class="path1"></span>
+                                      <span class="path2"></span>
+                                      <span class="path3"></span>
+                                      <span class="path4"></span>
+                                    </i>
+                                  </span>
+                                </div>
+                              </td>
+                              <td>
+                                <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Card
+                                  ({{sumOnlineCardCount}}) {{sumOnlineCard}}</a>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                        <!--begin::Header-->
+                        <div class="border-0">
+                          <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-3 mb-1">ยอด Home ออนไลน์จากระบบออนไลน์</span>
+                          </h3>
+                        </div>
+                        <!--end::Header-->
+                        <table class="table align-middle gs-0 gy-3">
+                          <!--begin::Table head-->
+                          <thead>
+                            <tr>
+                              <th class="p-0 w-40px"></th>
+                              <th class="p-0 w-200px"></th>
+                              <th class="p-0 w-40px"></th>
+                            </tr>
+                          </thead>
+                          <!--end::Table head-->
+                          <tr>
+                            <td>
+                              <div class="symbol symbol-50px me-2">
+                                <span class="symbol-label bg-light-info">
+                                  <i class="ki-duotone ki-dollar fs-2x text-info">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                  </i>
+                                </span>
+                              </div>
+                            </td>
+                            <td class="text-dark fw-bold fs-6 pe-0">Cash ({{bill_dinner.delivery_cash_count_in_online_system}}) {{bill_dinner.delivery_cash_amount_in_online_system}}</td>
+                            <td>
+                              <div class="symbol symbol-50px me-2">
+                                <span class="symbol-label bg-light-warning">
+                                  <i class="ki-duotone ki-delivery fs-2x text-warning">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <i class="path3"></i>
+                                    <i class="path4"></i>
+                                    <i class="path5"></i>
+                                  </i>
+                                </span>
+                              </div>
+                            </td>
+                            <td>
+                              <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Card ({{bill_dinner.delivery_card_count_in_online_system}}) {{bill_dinner.delivery_card_amount_in_online_system}}</a>
+                            </td>
+                          </tr>
+                        </table>
+
+                        <!--end::Table-->
+                      </div>
+                      <!--end::Table container-->
+                    </div>
+                    <!--begin::Body-->
+                  </div>
+                  <!--end::Tables Widget 3-->
 
                 </div>
                 <!--end::Heading-->

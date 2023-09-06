@@ -6,9 +6,9 @@ urlpatterns = [
     path('<str:branch>/<int:daily_report_id>', ChooseMode, name='choose-mode'),
 
     # ? Disburse
-    path('disburse-input/<str:daily_report_id>/<int:disburse_id>/',
-         DisburseInput, name='disburse-input'),
-    path('delete-disburse/<int:disburse_id>/<str:daily_report_id>/',
+    path('disburse-edit/<str:branch>/<str:daily_report_id>/<int:disburse_id>/',
+         DisburseEdit, name='disburse-input'),
+    path('delete-disburse/<str:branch>/<int:disburse_id>/<str:daily_report_id>/',
          DeleteDisburse, name='delete-disburse'),
 
     # ? Lunch
@@ -20,10 +20,12 @@ urlpatterns = [
          DinnerReport, name='dinner-report'),
 
     # ? Home
-    path('home-report/<str:daily_report_id>/<int:delivery_id>/',
-         HomeInputDetail, name='home-report'),
-    path('delete-delivery-detail/<int:delivery_detail_id>/<str:daily_report_id>/',
+    path('home-edit/<str:branch>/<str:daily_report_id>/<int:delivery_id>/',
+         HomeEdit, name='home-edit'),
+    path('delete-delivery-detail/<str:branch>/<str:daily_report_id>/<int:delivery_detail_id>/',
          DeleteDeliveryDetail, name='delete-delivery-detail'),
+    path('home-report/<str:branch>/<str:daily_report_id>/<int:delivery_id>/',
+         HomeReport, name='home-report'),
 
 
     # ? Scraping Data
@@ -32,5 +34,6 @@ urlpatterns = [
     path('get-online-data/<str:daily_report_id>/', GetOnlineOrderData),
 
     # ? POS update
-    path('update-pos/<str:daily_report_id>/', UpdatePosData,name='update-pos'),
+    path('update-pos/<str:daily_report_id>/',
+         UpdatePosData, name='update-pos'),
 ]

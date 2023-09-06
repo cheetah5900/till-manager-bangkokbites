@@ -1,105 +1,405 @@
 {%extends 'keywordapp/layout.html'%}
 {% load humanize %}
-{%block activework%}active{%endblock activework%}
 {%block content%}
-<div class="app-pages app-section text-center">
-  <div class="pages-title">
-    <h2>Report ({{ date }})</h2>
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+  <!--begin::Toolbar-->
+  <div class="toolbar d-flex flex-stack mb-3 mb-lg-5" id="kt_toolbar">
   </div>
-</div>
-<div class="text-center">
-  <img src="{{imgLocation}}" class="result-hua-img" style="margin: 0 auto; display:block">
-</div>
-<div class="checkout app-pages app-section">
-  <div class="container">
-    <div class="pages-title">
-      <h3>Credit Detail Dinner ({{ date }})</h3>
-    </div>
-    <div class="order">
-      <h5 class="title">Chraged by EDC Dine-in {{ resultCheckEqual1 }}</h5>
-      <div class="row">
-        <div class="col s8">
-          <h6>1. POS TA - Home Phone ({{bill_dinner.pos_ta_bill_phone_card}} - {{realBillHomePhoneCard}})</h6>
+  <!--end::Toolbar-->
+  <!--begin::Post-->
+  <div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+      <!--begin::Card-->
+      <div class="card">
+        <!--begin::Card body-->
+        <div class="card-body">
+          <!--begin::Stepper-->
+          <h1 class="fw-bold text-dark text-center">รายงานผลของวันที่ {{date}}</h1>
+          <div class="text-center">
+            <a href="/{{branch}}/{{daily_report_id}}" class="btn btn-lg btn-light-info me-3 text-center">
+              < ย้อนกลับ</a>
+          </div>
+          <div class="stepper stepper-links d-flex flex-column pt-15" id="kt_create_account_stepper">
+            <!--begin::Nav-->
+            <div class="stepper-nav mb-5">
+              <!--begin::Step 1-->
+              <div class="stepper-item current" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">Credit Check</h3>
+              </div>
+              <!--end::Step 1-->
+              <!--begin::Step 2-->
+              <div class="stepper-item" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">Report</h3>
+              </div>
+              <!--end::Step 2-->
+            </div>
+            <!--end::Nav-->
+            <!--begin::Form-->
+            <form class="mx-auto w-100 pt-15 pb-10" novalidate="novalidate" id="kt_create_report_form" method="post">
+              <!--begin::Step 1-->
+              <div class="current" data-kt-stepper-element="content">
+                <div class="d-flex justify-content-center w-100">
+                  <div class="row">
+                    <div class="col-6">
+                      <!--begin::Tables Widget 3-->
+                      <div class="card card-xl-stretch">
+                        <!--begin::Header-->
+                        <div class="card-header border-0 pt-5">
+                          <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-3 mb-1">เช็คเครดิตที่คิดเงินโดยเครื่อง​ EDC Dine-in
+                              {{resultCheckEqual1 }}</span>
+                          </h3>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Body-->
+                        <div class="card-body py-3">
+                          <!--begin::Table container-->
+                          <div class="table-responsive">
+                            <!--begin::Table-->
+                            <table class="table align-middle gs-0 gy-3">
+                              <!--begin::Table head-->
+                              <thead>
+                                <tr>
+                                  <th class="p-0 w-50px"></th>
+                                  <th class="p-0 min-w-150px"></th>
+                                  <th class="p-0 min-w-40px"></th>
+                                </tr>
+                              </thead>
+                              <!--end::Table head-->
+                              <!--begin::Table body-->
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-success">
+                                        <i class="ki-duotone ki-arrow-mix fs-2x text-success">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                          <span class="path3"></span>
+                                          <span class="path4"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">1. POS TA - Home
+                                      Phone ({{bill_dinner.pos_ta_bill_phone_card}} - {{realBillHomePhoneCard}})</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{minusHomePhoneOutFromPosTa}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-info">
+                                        <i class="ki-duotone ki-dollar fs-2x text-info">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">2. POS
+                                      Dine-in</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{bill_dinner.pos_in_bill_card}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-warning">
+                                        <i class="ki-duotone ki-delivery fs-2x text-warning">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                          <i class="path3"></i>
+                                          <i class="path4"></i>
+                                          <i class="path5"></i>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">3. TA Online</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{bill_dinner.bill_online_card}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-primary">
+                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">4. Tip</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{bill_dinner.tip_credit}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-danger">
+                                        <i class="ki-duotone ki-bank fs-2x text-danger">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-danger mb-1 fs-6">5. MOTO</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{edcInMotoCredit}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-primary">
+                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">6. EDC Lunch</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{edcInCreditLunch}}</td>
+                                </tr>
+                                <tr>
+                                  <td colspan="3">
+                                    <hr>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-primary">
+                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Total</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">
+                                    {{totalBillCardForCompareWithEdcDineIn}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-primary">
+                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">EDC Dine-in
+                                      Credit
+                                      + Lack Credit ({{edcInCredit}} + {{bill_dinner.wrong_credit}})</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{addWrongCreditToEdcDineIn}}</td>
+                                </tr>
+                              </tbody>
+                              <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
+                          </div>
+                          <!--end::Table container-->
+                        </div>
+                        <!--begin::Body-->
+                      </div>
+                      <!--end::Tables Widget 3-->
+                    </div>
+                    <div class="col-6">
+                      <!--begin::Tables Widget 3-->
+                      <div class="card card-xl-stretch">
+                        <!--begin::Header-->
+                        <div class="card-header border-0 pt-5">
+                          <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-3 mb-1">เช็คเครดิตที่คิดเงินโดยเครื่อง​ EDC Home
+                              {{resultCheckEqual2 }}</span>
+                          </h3>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Body-->
+                        <div class="card-body py-3">
+                          <!--begin::Table container-->
+                          <div class="table-responsive">
+                            <!--begin::Table-->
+                            <table class="table align-middle gs-0 gy-3">
+                              <!--begin::Table head-->
+                              <thead>
+                                <tr>
+                                  <th class="p-0 w-50px"></th>
+                                  <th class="p-0 min-w-150px"></th>
+                                  <th class="p-0 min-w-40px"></th>
+                                </tr>
+                              </thead>
+                              <!--end::Table head-->
+                              <!--begin::Table body-->
+                              <tbody>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-success">
+                                        <i class="ki-duotone ki-arrow-mix fs-2x text-success">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                          <span class="path3"></span>
+                                          <span class="path4"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">1. Home Phone</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{realBillHomePhoneCard}}</td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-info">
+                                        <i class="ki-duotone ki-dollar fs-2x text-info">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">2. Home
+                                      Online</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{realBillHomeOnlineCard}}</td>
+                                </tr>
+                                <tr>
+                                  <td colspan="3">
+                                    <hr>
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-warning">
+                                        <i class="ki-duotone ki-delivery fs-2x text-warning">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                          <i class="path3"></i>
+                                          <i class="path4"></i>
+                                          <i class="path5"></i>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Total - MOTO
+                                      ({{sumBillHomeCard}} - {{edcInMotoCredit}})</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">
+                                    {{minusMotoCreditFromSumBillHomeCard}}
+                                  </td>
+                                </tr>
+                                <tr>
+                                  <td>
+                                    <div class="symbol symbol-50px me-2">
+                                      <span class="symbol-label bg-light-primary">
+                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                          <span class="path1"></span>
+                                          <span class="path2"></span>
+                                        </i>
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td>
+                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">EDC Home
+                                      Credit</a>
+                                  </td>
+                                  <td class="text-end text-dark fw-bold fs-6 pe-0">{{sumEdcHomeCard}}</td>
+                                </tr>
+                              </tbody>
+                              <!--end::Table body-->
+                            </table>
+                            <!--end::Table-->
+                          </div>
+                          <!--end::Table container-->
+                        </div>
+                        <!--begin::Body-->
+                      </div>
+                      <!--end::Tables Widget 3-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--end::Step 1-->
+              <!--begin::Step 2-->
+              <div data-kt-stepper-element="content">
+                <!--begin::Wrapper-->
+                <div class="w-100">
+                  <!--begin::Heading-->
+                  <div class="pb-5">
+                    <!--begin::Title-->
+                    <h1 class="fw-bold text-dark">ใบรายงานผล</h1>
+                    <!--end::Title-->
+                  </div>
+                  <!--end::Heading-->
+
+
+                  <img src="{{imgLocation}}" class="result-hua-img" style="margin: 0 auto; display:block">
+
+                </div>
+                <!--end::Wrapper-->
+              </div>
+              <!--end::Step 2-->
+              <!--begin::Actions-->
+              <div class="d-flex flex-stack pt-15">
+                <!--begin::Wrapper-->
+                <div class="mr-2">
+                  <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                    <i class="ki-duotone ki-arrow-left fs-4 me-1">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>Back</button>
+                </div>
+                <!--end::Wrapper-->
+                <!--begin::Wrapper-->
+                <div>
+                  <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">Continue
+                    <i class="ki-duotone ki-arrow-right fs-4 ms-1 me-0">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i></button>
+                </div>
+                <!--end::Wrapper-->
+              </div>
+              <!--end::Actions-->
+            </form>
+            <!--end::Form-->
+          </div>
+          <!--end::Stepper-->
         </div>
-        <div class="col s4 text-right">
-          <h6> {{minusHomePhoneOutFromPosTa}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>2. POS Dine-in</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{bill_dinner.pos_in_bill_card}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>3. TA Online</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{bill_dinner.bill_online_card}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>4. Tip</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{bill_dinner.tip_credit}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>5. MOTO</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{edcInMotoCredit}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>6. EDC Lunch</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{edcInCreditLunch}}</h6>
-        </div>
-        <div class="col s8">
-          <h5>Total</h5>
-        </div>
-        <div class="col s4 text-right">
-          <h5>{{totalBillCardForCompareWithEdcDineIn}}</h5>
-        </div>
-        <div class="col s8">
-          <h5>EDC Dine-in Credit + Lack Credit ({{edcInCredit}} + {{bill_dinner.wrong_credit}})</h5>
-        </div>
-        <div class="col s4 text-right">
-          <h5>{{addWrongCreditToEdcDineIn}}</h5>
-        </div>
+        <!--end::Card body-->
       </div>
-      <h5 class="title">Chraged by EDC Home {{ resultCheckEqual2 }}</h5>
-      <div class="row">
-        <div class="col s8">
-          <h6>1. Home Phone</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6> {{realBillHomePhoneCard}}</h6>
-        </div>
-        <div class="col s8">
-          <h6>2. Home Online</h6>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{realBillHomeOnlineCard}}</h6>
-        </div>
-        <div class="col s8">
-          <h5>Total - MOTO
-            ({{sumBillHomeCard}} - {{edcInMotoCredit}})</h5>
-        </div>
-        <div class="col s4 text-right">
-          <h6>{{minusMotoCreditFromSumBillHomeCard}}</h6>
-        </div>
-        <div class="col s8">
-          <h5>EDC Home Credit</h5>
-        </div>
-        <div class="col s4 text-right">
-          <h5>{{sumEdcHomeCard}}</h5>
-        </div>
-      </div>
+      <!--end::Card-->
     </div>
-    <div class="mt-5">
-      <a href="/dinner-input-quick/{{daily_report_id}}" class="button twitter link-button">Back</a>
-      <a href="/" class="button facebook link-button">Main Page</a>
-    </div>
+    <!--end::Container-->
   </div>
+  <!--end::Post-->
 </div>
+<!--end::Content-->
 {%endblock content%}

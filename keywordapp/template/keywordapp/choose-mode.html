@@ -5,10 +5,26 @@
 <!--begin::Body-->
 
 <!-- Add the SweetAlert script -->
-{% if status%}
+{% if status == 'submit_success'%}
 <script>
   Swal.fire({
     title: "เพิ่มข้อมูลแล้ว",
+    icon: "success",
+  });
+</script>
+{% endif %}
+{% if status == 'edit_success'%}
+<script>
+  Swal.fire({
+    title: "แก้ไขข้อมูลแล้ว",
+    icon: "success",
+  });
+</script>
+{% endif %}
+{% if status == 'delete_success'%}
+<script>
+  Swal.fire({
+    title: "ลบข้อมูลแล้ว",
     icon: "success",
   });
 </script>

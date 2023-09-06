@@ -1,0 +1,115 @@
+{% extends 'keywordapp/layout.html' %}
+{% block content %}
+
+
+
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+  <!--begin::Toolbar-->
+  <div class="toolbar d-flex flex-stack mb-3 mb-lg-5" id="kt_toolbar">
+  </div>
+  <!--end::Toolbar-->
+  <!--begin::Post-->
+  <div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+      <!--begin::Card-->
+      <div class="card">
+        <!--begin::Card body-->
+        <div class="card-body">
+          <!--begin::Stepper-->
+          <h1 class="fw-bold text-dark text-center">แก้ไขรายละเอียดการเบิกจ่าย {{disburse_detail.name}}</h1>
+          <div class="text-center">
+            <a href="/{{branch}}/{{daily_report_id}}" class="btn btn-lg btn-light-info me-3 text-center">
+              < ย้อนกลับ</a>
+          </div>
+          <div class="stepper stepper-links d-flex flex-column pt-15" id="kt_create_account_stepper">
+            <!--begin::Nav-->
+            <div class="stepper-nav mb-5">
+              <!--begin::Step 1-->
+              <div class="stepper-item current" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">General</h3>
+              </div>
+              <!--end::Step 1-->
+            </div>
+            <!--end::Nav-->
+            <!--begin::Form-->
+            <form class="mx-auto mw-600px w-100 pt-15 pb-10" novalidate="novalidate" id="kt_create_delivery_form"
+              method="post">
+              <!--begin::Step 1-->
+              <div class="current" data-kt-stepper-element="content">
+                <!--begin::Wrapper-->
+                <div class="w-100">
+                  <!--begin::Heading-->
+                  <div class="pb-5">
+                    <!--begin::Title-->
+                    <h1 class="fw-bold text-dark">ข้อมูลทั่วไป</h1>
+                    <!--end::Title-->
+                    <!--begin::Notice-->
+                    <div class="text-muted fw-semibold fs-6">
+                      <a href="#" class="link-primary fw-bold">แก้ไขข้อมูลชื่อรายการและราคา</a>
+                    </div>
+                    <!--end::Notice-->
+                  </div>
+                  <!--end::Heading-->
+
+                  <!--begin::Label-->
+                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                    <span class="required">รายการ</span>
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    </i>
+                    </span>
+                  </label>
+                  <!--end::Label-->
+                  <!--begin::Input-->
+                  <input onfocus="clearInputValue(this)" type="text" value="{{ disburse_detail.name }}" name="name"
+                    class="form-control form-control-solid" placeholder="Item name">
+                  <!--end::Input-->
+                  <!--begin::Label-->
+                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2 mt-5">
+                    <span class="required">ราคา</span>
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    </i>
+                    </span>
+                  </label>
+                  <!--end::Label-->
+                  <!--begin::Input-->
+                  <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)" placeholder="0.00"
+                    inputmode="numeric" type="text" value="{{ disburse_detail.price }}" name="price"
+                    class="form-control form-control-solid">
+                  <!--end::Input-->
+
+                  <div class="d-flex justify-content-end mt-5">
+                    <button type="submit" class="btn btn-lg btn-primary me-3">
+                      <span class="indicator-label">ส่งข้อมูล
+                        <i class="ki-duotone ki-arrow-right fs-2 ms-2 me-0">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                        </i></span>
+                    </button>
+                  </div>
+
+                </div>
+                <!--end::Wrapper-->
+              </div>
+              <!--end::Step 1-->
+            </form>
+            <!--end::Form-->
+          </div>
+          <!--end::Stepper-->
+        </div>
+        <!--end::Card body-->
+      </div>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::Post-->
+</div>
+<!--end::Content-->
+
+{% endblock content %}

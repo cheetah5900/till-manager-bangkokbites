@@ -98,22 +98,40 @@ def ChooseMode(request, branch, daily_report_id):
     related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
     related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
 
-    #* Additional Data
+    # * Additional Data
+    # Calculating for total disburse
     totalDisburse = 0
     for detail in related_disburse_details:
         totalDisburse += detail.price
 
     i = 0
+    # Calculating for expense
+    for item in related_disburse_details:
+        item.css_classes = cssClasses[i]
+        i += 1
+        if i == 5:
+            i = 0
+    # Calculating for delivery data
+    sumOnlineCashCount = 0
+    sumOnlineCardCount = 0
+    sumOnlineCash = 0
+    sumOnlineCard = 0
     for detail in related_delivery_details:
         detail.sum_commission = detail.wage_per_home * (detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count +
                                                         detail.bill_home_online_cash_count + detail.bill_home_online_card_count)
         detail.home_count = detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count + \
             detail.bill_home_online_cash_count + \
             detail.bill_home_online_card_count
+        detail.sum_commission_and_oa = detail.bill_home_oa_amount + detail.sum_commission
+        sumOnlineCashCount += detail.bill_home_online_cash_count
+        sumOnlineCardCount += detail.bill_home_online_card_count
+        sumOnlineCash += detail.bill_home_online_cash
+        sumOnlineCard += detail.bill_home_online_card
         detail.css_classes = cssClasses[i]
         i += 1
         if i == 5:
             i = 0
+
 
     # * Condition
     if branch == 'bkk':
@@ -136,6 +154,10 @@ def ChooseMode(request, branch, daily_report_id):
     context['bill_lunch'] = bill_lunch
     context['bill_dinner'] = bill_dinner
     context['related_delivery_details'] = related_delivery_details
+    context['sumOnlineCashCount'] = sumOnlineCashCount
+    context['sumOnlineCardCount'] = sumOnlineCardCount
+    context['sumOnlineCash'] = sumOnlineCash
+    context['sumOnlineCard'] = sumOnlineCard
     context['related_disburse_details'] = related_disburse_details
     context['totalDisburse'] = totalDisburse
 
@@ -294,7 +316,6 @@ def ChooseMode(request, branch, daily_report_id):
             request.session['status'] = 'submit_success'
             return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
         elif mode == 'delivery':
-            date = daily_report.date
             bill_dinner = daily_report.bill_dinner
             deliveryObject = DeliveryDetailModel.objects.create(
                 bill_dinner=bill_dinner)
@@ -364,29 +385,25 @@ def ChooseMode(request, branch, daily_report_id):
         elif mode == 'expense':
             name = request.POST.get('name')
             price = request.POST.get('price')
-            disburseObject = DisburseModel.objects.create(name=name,price=price,bill_dinner=bill_dinner)
+            disburseObject = DisburseModel.objects.create(
+                name=name, price=price, bill_dinner=bill_dinner)
             request.session['status'] = 'submit_success'
             return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
 
     if 'status' in request.session:
-        context['status'] = 'submit_success'
+        context['status'] = request.session['status']
         del request.session['status']
 
     return render(request, 'keywordapp/choose-mode.html', context)
 
 # ************************************************************************************************ START : DISBURSE ************************************************************************************************
 
-
-
-def DisburseInput(request, daily_report_id, disburse_id):
+@csrf_exempt
+def DisburseEdit(request,branch ,daily_report_id, disburse_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     date = daily_report.date
-    bill_dinner = daily_report.bill_dinner
-    if disburse_id == 0:
-        newDisburse = DisburseModel.objects.create(bill_dinner=bill_dinner)
-        newDisburseId = newDisburse.id
-        return redirect(reverse('disburse-input', kwargs={'daily_report_id': daily_report_id, 'disburse_id': newDisburseId}))
+    disburse_detail = DisburseModel.objects.get(id=disburse_id)
 
     if request.method == 'POST':
         # Home
@@ -399,16 +416,17 @@ def DisburseInput(request, daily_report_id, disburse_id):
         disburse_detail.price = price
         disburse_detail.save()
 
-        return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report_id}))
+        request.session['status'] = 'edit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
 
-    disburse_detail = DisburseModel.objects.get(id=disburse_id)
 
     context = {
         'date': date,
         'daily_report_id': daily_report_id,
         'disburse_detail': disburse_detail,
+        'branch': branch,
     }
-    return render(request, 'keywordapp/disburse-input.html', context)
+    return render(request, 'keywordapp/disburse-edit.html', context)
 # ************************************************************************************************ END : DISBURSE ************************************************************************************************
 # ************************************************************************************************ START : LUNCH ************************************************************************************************
 
@@ -516,7 +534,7 @@ def LunchReport(request, daily_report_id):
 # ************************************************************************************************ START : DINNER ************************************************************************************************
 
 
-def DinnerReport(request, branch,daily_report_id):
+def DinnerReport(request, branch, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     bill_dinner_id = daily_report.bill_dinner.id
@@ -798,6 +816,7 @@ def DinnerReport(request, branch,daily_report_id):
         'day': day,
         'date': date,
         'daily_report_id': daily_report_id,
+        'branch': branch,
         #! Lunch
         # Row 1 Ta Online Lunch
         'sumrealBillOnlineCount': sumrealBillOnlineCount,
@@ -922,16 +941,89 @@ def DinnerReport(request, branch,daily_report_id):
         'sumEdcHomeCard': sumEdcHomeCard,
         'sumEdcMotoCard': sumEdcMotoCard,
         'sumEdcMotoCard': sumEdcMotoCard,
-
     }
 
-    # return render(request, 'keywordapp/report-image.html', context)
-    return render(request, 'keywordapp/dinner-report.html', context)
+    return render(request, 'keywordapp/report-image.html', context)
+    # return render(request, 'keywordapp/dinner-report.html', context)
 # ************************************************************************************************ END : DINNER ************************************************************************************************
-def HomeInputDetail(request, daily_report_id, delivery_id):
 
-    daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
-    date = daily_object.date
+@csrf_exempt
+def HomeEdit(request, branch, daily_report_id, delivery_id):
+
+    delivery_detail = DeliveryDetailModel.objects.get(id=delivery_id)
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    if request.method == 'POST':
+        deliveryName = request.POST.get('delivery_name')
+        wagePerHour = request.POST.get('wage_per_home')
+        edcHomeCredit = request.POST.get('edc_home_credit')
+        motoCredit = request.POST.get('moto_credit')
+        realBillHomePhoneCashCount = request.POST.get(
+            'bill_home_phone_cash_count')
+        realBillHomePhoneCash = request.POST.get('bill_home_phone_cash')
+        realBillHomePhoneCardCount = request.POST.get(
+            'bill_home_phone_card_count')
+        realBillHomePhoneCard = request.POST.get('bill_home_phone_card')
+        realBillHomeOnlineCashCount = request.POST.get(
+            'bill_home_online_cash_count')
+        realBillHomeOnlineCash = request.POST.get('bill_home_online_cash')
+        realBillHomeOnlineCardCount = request.POST.get(
+            'bill_home_online_card_count')
+        realBillHomeOnlineCard = request.POST.get('bill_home_online_card')
+        realBillHomeOaCount = request.POST.get('bill_home_oa_count')
+        realBillHomeOaAmount = request.POST.get('bill_home_oa_amount')
+
+        deliveryName = 0 if deliveryName == '' else deliveryName
+        wagePerHour = 0 if wagePerHour == '' else wagePerHour
+        edcHomeCredit = 0 if edcHomeCredit == '' else edcHomeCredit
+        motoCredit = 0 if motoCredit == '' else motoCredit
+        realBillHomePhoneCashCount = 0 if realBillHomePhoneCashCount == '' else realBillHomePhoneCashCount
+        realBillHomePhoneCash = 0 if realBillHomePhoneCash == '' else realBillHomePhoneCash
+        realBillHomePhoneCardCount = 0 if realBillHomePhoneCardCount == '' else realBillHomePhoneCardCount
+        realBillHomePhoneCard = 0 if realBillHomePhoneCard == '' else realBillHomePhoneCard
+        realBillHomeOnlineCashCount = 0 if realBillHomeOnlineCashCount == '' else realBillHomeOnlineCashCount
+        realBillHomeOnlineCash = 0 if realBillHomeOnlineCash == '' else realBillHomeOnlineCash
+        realBillHomeOnlineCardCount = 0 if realBillHomeOnlineCardCount == '' else realBillHomeOnlineCardCount
+        realBillHomeOnlineCard = 0 if realBillHomeOnlineCard == '' else realBillHomeOnlineCard
+        realBillHomeOaCount = 0 if realBillHomeOaCount == '' else realBillHomeOaCount
+        realBillHomeOaAmount = 0 if realBillHomeOaAmount == '' else realBillHomeOaAmount
+
+        # Delivery man
+        delivery_detail.delivery_name = deliveryName
+        delivery_detail.wage_per_home = wagePerHour
+        # EDC
+        delivery_detail.edc_home_credit = edcHomeCredit
+        delivery_detail.moto_credit = motoCredit
+        # Home  Phone
+        delivery_detail.bill_home_phone_cash_count = realBillHomePhoneCashCount
+        delivery_detail.bill_home_phone_cash = realBillHomePhoneCash
+        delivery_detail.bill_home_phone_card_count = realBillHomePhoneCardCount
+        delivery_detail.bill_home_phone_card = realBillHomePhoneCard
+        # Home  Online
+        delivery_detail.bill_home_online_cash_count = realBillHomeOnlineCashCount
+        delivery_detail.bill_home_online_cash = realBillHomeOnlineCash
+        delivery_detail.bill_home_online_card_count = realBillHomeOnlineCardCount
+        delivery_detail.bill_home_online_card = realBillHomeOnlineCard
+        # OA
+        delivery_detail.bill_home_oa_count = realBillHomeOaCount
+        delivery_detail.bill_home_oa_amount = realBillHomeOaAmount
+
+        delivery_detail.save()
+
+        request.session['status'] = 'edit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+    context = {
+        'delivery_detail': delivery_detail,
+        'daily_report_id': daily_report_id,
+        'branch': branch,
+    }
+
+    return render(request, 'keywordapp/home-edit.html', context)
+
+
+def HomeReport(request, branch, daily_report_id, delivery_id):
+
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
     delivery_detail = DeliveryDetailModel.objects.get(id=delivery_id)
 
     # Summary
@@ -957,6 +1049,7 @@ def HomeInputDetail(request, daily_report_id, delivery_id):
     context = {
         'date': date,
         'delivery_detail': delivery_detail,
+        'branch': branch,
         'daily_report_id': daily_report_id,
         'sumHomeCount': sumHomeCount,
         'sumHomePhoneCount': sumHomePhoneCount,
@@ -970,11 +1063,14 @@ def HomeInputDetail(request, daily_report_id, delivery_id):
     return render(request, 'keywordapp/home-report.html', context)
 
 
-def DeleteDeliveryDetail(request, delivery_detail_id, daily_report_id):
+
+def DeleteDeliveryDetail(request, branch, daily_report_id, delivery_detail_id):
     delivery_detail = get_object_or_404(
         DeliveryDetailModel, id=delivery_detail_id)
     delivery_detail.delete()
-    return redirect(reverse('home-list', kwargs={'daily_report_id': daily_report_id}))
+    request.session['status'] = 'delete_success'
+    return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report_id}))
+
 
 # ************************************************************************************************ END : HOME ************************************************************************************************
 # ************************************************************************************************ START : ONLINE ************************************************************************************************
@@ -1181,10 +1277,11 @@ def ChooseScrapingData(request, daily_report_id):
 # ************************************************************************************************ END : ONLINE ************************************************************************************************
 
 
-def DeleteDisburse(request, disburse_id, daily_report_id):
+def DeleteDisburse(request, branch, disburse_id, daily_report_id):
     disburse = get_object_or_404(DisburseModel, id=disburse_id)
     disburse.delete()
-    return redirect(reverse('disburse-list', kwargs={'daily_report_id': daily_report_id}))
+    request.session['status'] = 'delete_success'
+    return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report_id}))
 
 # ************************************************************************************************ START : GENERATE TEXT ************************************************************************************************
 
