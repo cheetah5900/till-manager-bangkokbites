@@ -2,7 +2,7 @@
 {% load humanize %}
 {%block content%}
 <!--begin::Content-->
-<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+<div class="content d-flex flex-column flex-column-fluid page-bg" id="kt_content">
   <!--begin::Toolbar-->
   <div class="toolbar d-flex flex-stack mb-3 mb-lg-5" id="kt_toolbar">
   </div>
@@ -74,11 +74,14 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-success">
-                                        <i class="ki-duotone ki-arrow-mix fs-2x text-success">
-                                          <span class="path1"></span>
-                                          <span class="path2"></span>
-                                          <span class="path3"></span>
-                                          <span class="path4"></span>
+                                        <i class="ki-duotone ki-finance-calculator fs-2x text-success">
+                                          <i class="path1"></i>
+                                          <i class="path2"></i>
+                                          <i class="path3"></i>
+                                          <i class="path4"></i>
+                                          <i class="path5"></i>
+                                          <i class="path6"></i>
+                                          <i class="path7"></i>
                                         </i>
                                       </span>
                                     </div>
@@ -110,12 +113,11 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-warning">
-                                        <i class="ki-duotone ki-delivery fs-2x text-warning">
+                                        <i class="ki-duotone ki-wifi fs-2x text-warning">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
-                                          <i class="path3"></i>
-                                          <i class="path4"></i>
-                                          <i class="path5"></i>
+                                          <span class="path3"></span>
+                                          <span class="path4"></span>
                                         </i>
                                       </span>
                                     </div>
@@ -130,9 +132,10 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-primary">
-                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                        <i class="ki-duotone ki-price-tag fs-2x text-primary">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
+                                          <span class="path3"></span>
                                         </i>
                                       </span>
                                     </div>
@@ -146,7 +149,7 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-danger">
-                                        <i class="ki-duotone ki-bank fs-2x text-danger">
+                                        <i class="ki-duotone ki-monitor-mobile fs-2x text-danger">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
                                         </i>
@@ -161,16 +164,17 @@
                                 <tr>
                                   <td>
                                     <div class="symbol symbol-50px me-2">
-                                      <span class="symbol-label bg-light-primary">
-                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                      <span class="symbol-label bg-light-success">
+                                        <i class="ki-duotone ki-tablet fs-2x text-success">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
+                                          <span class="path3"></span>
                                         </i>
                                       </span>
                                     </div>
                                   </td>
                                   <td>
-                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">6. EDC Lunch</a>
+                                    <a href="#" class="text-dark fw-bold text-hover-success mb-1 fs-6">6. EDC Lunch</a>
                                   </td>
                                   <td class="text-end text-dark fw-bold fs-6 pe-0">{{edcInCreditLunch}}</td>
                                 </tr>
@@ -182,16 +186,19 @@
                                 <tr>
                                   <td>
                                     <div class="symbol symbol-50px me-2">
-                                      <span class="symbol-label bg-light-primary">
-                                        <i class="ki-duotone ki-bank fs-2x text-primary">
-                                          <span class="path1"></span>
-                                          <span class="path2"></span>
+                                      <span class="symbol-label bg-light-info">
+                                        <i class="ki-duotone ki-devices fs-2x text-info">
+                                          <i class="path1"></i>
+                                          <i class="path2"></i>
+                                          <i class="path3"></i>
+                                          <i class="path4"></i>
+                                          <i class="path5"></i>
                                         </i>
                                       </span>
                                     </div>
                                   </td>
                                   <td>
-                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Total</a>
+                                    <a href="#" class="text-dark fw-bold text-hover-info mb-1 fs-6">Total</a>
                                   </td>
                                   <td class="text-end text-dark fw-bold fs-6 pe-0">
                                     {{totalBillCardForCompareWithEdcDineIn}}</td>
@@ -200,7 +207,7 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-primary">
-                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                        <i class="ki-duotone ki-credit-cart fs-2x text-primary">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
                                         </i>
@@ -256,28 +263,28 @@
                                 <tr>
                                   <td>
                                     <div class="symbol symbol-50px me-2">
-                                      <span class="symbol-label bg-light-success">
-                                        <i class="ki-duotone ki-arrow-mix fs-2x text-success">
+                                      <span class="symbol-label bg-light-danger">
+                                        <i class="ki-duotone ki-phone fs-2x text-danger">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
-                                          <span class="path3"></span>
-                                          <span class="path4"></span>
                                         </i>
                                       </span>
                                     </div>
                                   </td>
                                   <td>
-                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">1. Home Phone</a>
+                                    <a href="#" class="text-dark fw-bold text-hover-danger mb-1 fs-6">1. Home Phone</a>
                                   </td>
                                   <td class="text-end text-dark fw-bold fs-6 pe-0">{{realBillHomePhoneCard}}</td>
                                 </tr>
                                 <tr>
                                   <td>
                                     <div class="symbol symbol-50px me-2">
-                                      <span class="symbol-label bg-light-info">
-                                        <i class="ki-duotone ki-dollar fs-2x text-info">
+                                      <span class="symbol-label bg-light-warning">
+                                        <i class="ki-duotone ki-wifi fs-2x text-warning">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
+                                          <span class="path3"></span>
+                                          <span class="path4"></span>
                                         </i>
                                       </span>
                                     </div>
@@ -296,10 +303,10 @@
                                 <tr>
                                   <td>
                                     <div class="symbol symbol-50px me-2">
-                                      <span class="symbol-label bg-light-warning">
-                                        <i class="ki-duotone ki-delivery fs-2x text-warning">
-                                          <span class="path1"></span>
-                                          <span class="path2"></span>
+                                      <span class="symbol-label bg-light-info">
+                                        <i class="ki-duotone ki-devices fs-2x text-info">
+                                          <i class="path1"></i>
+                                          <i class="path2"></i>
                                           <i class="path3"></i>
                                           <i class="path4"></i>
                                           <i class="path5"></i>
@@ -308,7 +315,7 @@
                                     </div>
                                   </td>
                                   <td>
-                                    <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Total - MOTO
+                                    <a href="#" class="text-dark fw-bold text-hover-info mb-1 fs-6">Total - MOTO
                                       ({{sumBillHomeCard}} - {{edcInMotoCredit}})</a>
                                   </td>
                                   <td class="text-end text-dark fw-bold fs-6 pe-0">
@@ -319,7 +326,7 @@
                                   <td>
                                     <div class="symbol symbol-50px me-2">
                                       <span class="symbol-label bg-light-primary">
-                                        <i class="ki-duotone ki-bank fs-2x text-primary">
+                                        <i class="ki-duotone ki-credit-cart fs-2x text-primary">
                                           <span class="path1"></span>
                                           <span class="path2"></span>
                                         </i>

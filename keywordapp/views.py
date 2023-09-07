@@ -13,6 +13,7 @@ import datetime
 from decimal import Decimal
 
 from selenium import webdriver
+# import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -59,7 +60,8 @@ def Index(request):
         branch = data.get('branch')
 
         try:
-            daily_report = DailyReportModel.objects.get(date=choose_date)
+            daily_report = DailyReportModel.objects.get(
+                date=choose_date, branch=branch)
         except DailyReportModel.DoesNotExist:
             # create empty record
             bill_lunch = BillLunchModel.objects.create()
@@ -72,6 +74,7 @@ def Index(request):
             # create daily report
             daily_report = DailyReportModel.objects.create(
                 date=choose_date,
+                branch=branch,
                 bill_lunch_id=bill_lunch_id,
                 bill_dinner_id=bill_dinner_id,
             )
@@ -131,7 +134,6 @@ def ChooseMode(request, branch, daily_report_id):
         i += 1
         if i == 5:
             i = 0
-
 
     # * Condition
     if branch == 'bkk':
@@ -213,8 +215,8 @@ def ChooseMode(request, branch, daily_report_id):
 
                 # Save the updated object
             elif modePos == 'scraping':
-                # return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
-                pass
+                if branch == 'cr':
+                    updatePosData = UpdatePosData(branch, daily_report_id)
             if modeOnline == 'self':
                 billOnlineCashCount = request.POST.get(
                     'bill_online_cash_count')
@@ -224,9 +226,9 @@ def ChooseMode(request, branch, daily_report_id):
                 billOnlineCard = request.POST.get('bill_online_card')
 
                 billOnlineCashCount = 0 if billOnlineCashCount == '' else billOnlineCashCount
-                billOnlineCash = 0 if posInCash == '' else posInCash
+                billOnlineCash = 0 if billOnlineCash == '' else billOnlineCash
                 billOnlineCardCount = 0 if billOnlineCardCount == '' else billOnlineCardCount
-                billOnlineCard = 0 if posInCard == '' else posInCard
+                billOnlineCard = 0 if billOnlineCard == '' else billOnlineCard
 
                 # Online
                 bill_lunch.bill_online_cash_count = billOnlineCashCount
@@ -234,7 +236,9 @@ def ChooseMode(request, branch, daily_report_id):
                 bill_lunch.bill_online_card_count = billOnlineCardCount
                 bill_lunch.bill_online_card = billOnlineCard
             elif modeOnline == 'scraping':
-                pass
+                if branch == 'cr' or branch == 'st':
+                    getOnlineOrderData = GetOnlineOrderData(
+                        branch, daily_report_id)
 
             bill_lunch.save()
 
@@ -286,10 +290,9 @@ def ChooseMode(request, branch, daily_report_id):
                 bill_dinner.pos_ta_bill_phone_card_count = posTaCardCount
                 bill_dinner.pos_ta_bill_phone_card = posTaCard
 
-                # Save the updated object
             elif modePos == 'scraping':
-                # return redirect(reverse('update-pos', kwargs={'daily_report_id': daily_report.id}))
-                pass
+                if branch == 'cr':
+                    updatePosData = UpdatePosData(daily_report_id)
             if modeOnline == 'self':
                 billOnlineCashCount = request.POST.get(
                     'bill_online_cash_count')
@@ -309,7 +312,9 @@ def ChooseMode(request, branch, daily_report_id):
                 bill_dinner.bill_online_card_count = billOnlineCardCount
                 bill_dinner.bill_online_card = billOnlineCard
             elif modeOnline == 'scraping':
-                pass
+                if branch == 'cr' or branch == 'st':
+                    getOnlineOrderData = GetOnlineOrderData(
+                        branch, daily_report_id)
 
             bill_dinner.save()
 
@@ -398,8 +403,9 @@ def ChooseMode(request, branch, daily_report_id):
 
 # ************************************************************************************************ START : DISBURSE ************************************************************************************************
 
+
 @csrf_exempt
-def DisburseEdit(request,branch ,daily_report_id, disburse_id):
+def DisburseEdit(request, branch, daily_report_id, disburse_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     date = daily_report.date
@@ -418,7 +424,6 @@ def DisburseEdit(request,branch ,daily_report_id, disburse_id):
 
         request.session['status'] = 'edit_success'
         return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
-
 
     context = {
         'date': date,
@@ -947,6 +952,7 @@ def DinnerReport(request, branch, daily_report_id):
     # return render(request, 'keywordapp/dinner-report.html', context)
 # ************************************************************************************************ END : DINNER ************************************************************************************************
 
+
 @csrf_exempt
 def HomeEdit(request, branch, daily_report_id, delivery_id):
 
@@ -1063,7 +1069,6 @@ def HomeReport(request, branch, daily_report_id, delivery_id):
     return render(request, 'keywordapp/home-report.html', context)
 
 
-
 def DeleteDeliveryDetail(request, branch, daily_report_id, delivery_detail_id):
     delivery_detail = get_object_or_404(
         DeliveryDetailModel, id=delivery_detail_id)
@@ -1076,15 +1081,13 @@ def DeleteDeliveryDetail(request, branch, daily_report_id, delivery_detail_id):
 # ************************************************************************************************ START : ONLINE ************************************************************************************************
 
 
-def GetOnlineOrderData(request, daily_report_id):
+def GetOnlineOrderData(branch, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
     input_date = daily_report.date
     input_date = input_date.strftime('%b %d, %Y')
 
     options = webdriver.ChromeOptions()
-
-    # options.add_argument("--headless")
     options.add_argument("start-maximized")
 
     if settings.PC_OR_MAC == "PC":
@@ -1093,52 +1096,59 @@ def GetOnlineOrderData(request, daily_report_id):
         driver = webdriver.Chrome(options=options)
     elif settings.PC_OR_MAC == "MAC":
         # Specify the path to your custom user data directory
-        custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome/Default'
-        options.add_argument(f'--user-data-dir={custom_user_data_dir}')
-        # Replace with the actual path to the Chrome binary
+        custom_user_data_dir = '/Users/chaperone/Library/Application Support/Google/Chrome'
+
+        # options.add_argument(f"--user-data-dir={custom_user_data_dir}")
+        # options.add_argument(f'--profile-directory=Profile 2')
         options.binary_location = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-        driver = webdriver.Chrome(
-            "/Users/chaperone/Documents/GitHub/chromedriver", options=options)
+        # chrome_driver_path = "/Users/chaperone/Documents/GitHub/chromedriver"
 
-    # driver.get('https://gloriafood.com/')
+        driver = webdriver.Chrome(options=options)
 
-    driver.get(
-        "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459")
 
-    # # Wait for Login button
-    # element_locator = (By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
-    # element = WaitForElement(driver, element_locator)
-    # if element:
-    #     login_button = driver.find_element(
-    #         By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
-    #     login_button.click()
-    # else:
-    #     driver.quit()
+    if branch == 'cr':
+        endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459"
+    elif branch == 'st':
+        endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=1007875"
+    elif branch == 'nt':
+        endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=753375"
+    elif branch == 'bkk':
+        endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=750327"
 
-    # # Wait for username and password block
-    # element_locator = (By.XPATH, '//*[@id="login-email"]')
-    # element = WaitForElement(driver, element_locator)
-    # if element:
-    #     time.sleep(1)
-    #     username = driver.find_element(By.XPATH, '//*[@id="login-email"]')
-    #     username.send_keys("chain_shane@yahoo.com")
-    #     password = driver.find_element(By.XPATH, '//*[@id="login-password"]')
-    #     password.send_keys("bitesme1234")
-    #     button_login = driver.find_element(
-    #         By.XPATH, '//*[@id="login-form"]/div[5]/button')
-    #     button_login.click()
-    # else:
-    #     driver.quit()
+    driver.get(endpoint)
 
-    # targetLinkText = "https://www.gloriafood.com/admin/?user_id=7961955&session_token=WEB_SESSION&acid=742458"
-    # targetLinkText2 = "https://www.gloriafood.com/admin2/app/company/dashboard/restaurants/list?acid=742458"
 
-    # while driver.current_url != targetLinkText or driver.current_url != targetLinkText2:
-    #     time.sleep(0.5)
-    #     if driver.current_url == targetLinkText or driver.current_url == targetLinkText2:
-    #         driver.get(
-    #             "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459")
-    #         break
+    time.sleep(10)
+    targetLinkText = "https://www.gloriafood.com/admin/?logged_out=SESSION_EXPIRED"
+    if driver.current_url == targetLinkText:
+        driver.get('https://gloriafood.com/')
+        # Wait for Login button
+        element_locator = (By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
+        element = WaitForElement(driver, element_locator)
+        if element:
+            login_button = driver.find_element(
+                By.XPATH, '//*[@id="navbar"]/ul/li[4]/a')
+            login_button.click()
+        else:
+            driver.quit()
+
+        # Wait for username and password block
+        element_locator = (By.XPATH, '//*[@id="login-email"]')
+        element = WaitForElement(driver, element_locator)
+        if element:
+            time.sleep(1)
+            username = driver.find_element(By.XPATH, '//*[@id="login-email"]')
+            username.send_keys("chain_shane@yahoo.com")
+            password = driver.find_element(By.XPATH, '//*[@id="login-password"]')
+            password.send_keys("bitesme1234")
+            button_login = driver.find_element(
+                By.XPATH, '//*[@id="login-form"]/div[5]/button')
+            button_login.click()
+            time.sleep(5)
+            driver.get(endpoint)
+        else:
+            driver.quit()
+
 
     # Wait for data in table
     element_locator = (By.XPATH, "//tr[contains(@class, 'ng-star-inserted')]")
@@ -1151,7 +1161,7 @@ def GetOnlineOrderData(request, daily_report_id):
         ScrapingOnlineData(table_rows, input_date, daily_report_id)
     else:
         driver.quit()
-    return redirect(reverse('index'))
+    return 0
 
 
 def WaitForElement(driver, element_locator, wait_time=10):
@@ -1181,7 +1191,7 @@ def ScrapingOnlineData(table_rows, input_date, daily_report_id):
     pickup_card_count_dinner = 0
     pickup_cash_amount_dinner = 0
     pickup_card_amount_dinner = 0
-
+    print("I'M IN DAILY REPORT ID : ", daily_report_id)
     for row in table_rows:
         # Get all child <td> elements within the row
         td_elements = row.find_elements(By.TAG_NAME, "td")
@@ -1614,7 +1624,7 @@ def AddTransparentHighlight(image, text, text_position, font, opacity, color='or
 # ************************************************************************************************ START : EMAIL ************************************************************************************************
 
 
-def UpdatePosData(request, daily_report_id,):
+def UpdatePosData(branch, daily_report_id):
 
     daily_object = get_object_or_404(DailyReportModel, id=daily_report_id)
     selectedDate = daily_object.date
@@ -1636,8 +1646,8 @@ def UpdatePosData(request, daily_report_id,):
     except:
         print("ERROR")
 
-# Search for emails (optional)
-# Here, we search for all emails in the selected mailbox
+    # Search for emails (optional)
+    # Here, we search for all emails in the selected mailbox
     sender_email = 'judy888123@gmail.com'
     # sender_email = 'cheetah5900@windowslive.com'
     # subject = 'Z Reading Report'
@@ -1898,7 +1908,7 @@ def UpdatePosData(request, daily_report_id,):
                 bill_dinner.pos_dine_in_total_bill_count = countAll
                 bill_dinner.save()
 
-    return render(request, 'keywordapp/after-pos-scraping.html', context={'daily_report_id': daily_report_id})
+    return 0
 
 # ************************************************************************************************ END : EMAIL ************************************************************************************************
 
