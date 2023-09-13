@@ -91,49 +91,8 @@ def ChooseMode(request, branch, daily_report_id):
     date = daily_report.date
 
     # * Set Variable
-    cssClasses = ['warning', 'success', 'danger', 'primary', 'info']
     current_date = date.strftime('%Y-%m-%d')
     readable_date = date.strftime('%d/%m/%Y')
-    bill_lunch_id = daily_report.bill_lunch.id
-    bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
-    bill_dinner_id = daily_report.bill_dinner.id
-    bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
-    related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
-    related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
-
-    # * Additional Data
-    # Calculating for total disburse
-    totalDisburse = 0
-    for detail in related_disburse_details:
-        totalDisburse += detail.price
-
-    i = 0
-    # Calculating for expense
-    for item in related_disburse_details:
-        item.css_classes = cssClasses[i]
-        i += 1
-        if i == 5:
-            i = 0
-    # Calculating for delivery data
-    sumOnlineCashCount = 0
-    sumOnlineCardCount = 0
-    sumOnlineCash = 0
-    sumOnlineCard = 0
-    for detail in related_delivery_details:
-        detail.sum_commission = detail.wage_per_home * (detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count +
-                                                        detail.bill_home_online_cash_count + detail.bill_home_online_card_count)
-        detail.home_count = detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count + \
-            detail.bill_home_online_cash_count + \
-            detail.bill_home_online_card_count
-        detail.sum_commission_and_oa = detail.bill_home_oa_amount + detail.sum_commission
-        sumOnlineCashCount += detail.bill_home_online_cash_count
-        sumOnlineCardCount += detail.bill_home_online_card_count
-        sumOnlineCash += detail.bill_home_online_cash
-        sumOnlineCard += detail.bill_home_online_card
-        detail.css_classes = cssClasses[i]
-        i += 1
-        if i == 5:
-            i = 0
 
     # * Condition
     if branch == 'bkk':
@@ -153,247 +112,6 @@ def ChooseMode(request, branch, daily_report_id):
     context['branch'] = branch
     context['branch_image_name'] = branch_image_name
     context['daily_report_id'] = daily_report_id
-    context['bill_lunch'] = bill_lunch
-    context['bill_dinner'] = bill_dinner
-    context['related_delivery_details'] = related_delivery_details
-    context['sumOnlineCashCount'] = sumOnlineCashCount
-    context['sumOnlineCardCount'] = sumOnlineCardCount
-    context['sumOnlineCash'] = sumOnlineCash
-    context['sumOnlineCard'] = sumOnlineCard
-    context['related_disburse_details'] = related_disburse_details
-    context['totalDisburse'] = totalDisburse
-
-    if request.method == 'POST':
-        mode = request.POST.get('mode')
-        modePos = request.POST.get('mode_pos')
-        modeOnline = request.POST.get('mode_online')
-        if mode == 'lunch':
-            edcInCredit = request.POST.get('edc_in_credit')
-            tipCredit = request.POST.get('tip_credit')
-            wrongCredit = request.POST.get('wrong_credit')
-
-            edcInCredit = 0 if edcInCredit == '' else edcInCredit
-            tipCredit = 0 if tipCredit == '' else tipCredit
-            wrongCredit = 0 if wrongCredit == '' else wrongCredit
-
-            # Other
-            bill_lunch.edc_in_credit = edcInCredit
-            bill_lunch.tip_credit = tipCredit
-            bill_lunch.wrong_credit = wrongCredit
-
-            if modePos == 'self':
-                posInCashCount = request.POST.get('pos_in_bill_cash_count')
-                posInCash = request.POST.get('pos_in_bill_cash')
-                posInCardCount = request.POST.get('pos_in_bill_card_count')
-                posInCard = request.POST.get('pos_in_bill_card')
-                posTaCashCount = request.POST.get(
-                    'pos_ta_bill_phone_cash_count')
-                posTaCash = request.POST.get('pos_ta_bill_phone_cash')
-                posTaCardCount = request.POST.get(
-                    'pos_ta_bill_phone_card_count')
-                posTaCard = request.POST.get('pos_ta_bill_phone_card')
-
-                posInCashCount = 0 if posInCashCount == '' else posInCashCount
-                posInCash = 0 if posInCash == '' else posInCash
-                posInCardCount = 0 if posInCardCount == '' else posInCardCount
-                posInCard = 0 if posInCard == '' else posInCard
-                posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
-                posTaCash = 0 if posTaCash == '' else posTaCash
-                posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
-                posTaCard = 0 if posTaCard == '' else posTaCard
-
-                # POS Dine-in
-                bill_lunch.pos_in_bill_cash_count = posInCashCount
-                bill_lunch.pos_in_bill_cash = posInCash
-                bill_lunch.pos_in_bill_card_count = posInCardCount
-                bill_lunch.pos_in_bill_card = posInCard
-                # POS TA
-                bill_lunch.pos_ta_bill_phone_cash_count = posTaCashCount
-                bill_lunch.pos_ta_bill_phone_cash = posTaCash
-                bill_lunch.pos_ta_bill_phone_card_count = posTaCardCount
-                bill_lunch.pos_ta_bill_phone_card = posTaCard
-
-                # Save the updated object
-            elif modePos == 'scraping':
-                if branch == 'cr':
-                    updatePosData = UpdatePosData(branch, daily_report_id)
-            if modeOnline == 'self':
-                billOnlineCashCount = request.POST.get(
-                    'bill_online_cash_count')
-                billOnlineCash = request.POST.get('bill_online_cash')
-                billOnlineCardCount = request.POST.get(
-                    'bill_online_card_count')
-                billOnlineCard = request.POST.get('bill_online_card')
-
-                billOnlineCashCount = 0 if billOnlineCashCount == '' else billOnlineCashCount
-                billOnlineCash = 0 if billOnlineCash == '' else billOnlineCash
-                billOnlineCardCount = 0 if billOnlineCardCount == '' else billOnlineCardCount
-                billOnlineCard = 0 if billOnlineCard == '' else billOnlineCard
-
-                # Online
-                bill_lunch.bill_online_cash_count = billOnlineCashCount
-                bill_lunch.bill_online_cash = billOnlineCash
-                bill_lunch.bill_online_card_count = billOnlineCardCount
-                bill_lunch.bill_online_card = billOnlineCard
-            elif modeOnline == 'scraping':
-                if branch == 'cr' or branch == 'st':
-                    getOnlineOrderData = GetOnlineOrderData(
-                        branch, daily_report_id)
-
-            bill_lunch.save()
-
-            request.session['status'] = 'submit_success'
-            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
-        elif mode == 'dinner':
-            edcInCredit = request.POST.get('edc_in_credit')
-            tipCredit = request.POST.get('tip_credit')
-            wrongCredit = request.POST.get('wrong_credit')
-
-            edcInCredit = 0 if edcInCredit == '' else edcInCredit
-            tipCredit = 0 if tipCredit == '' else tipCredit
-            wrongCredit = 0 if wrongCredit == '' else wrongCredit
-
-            # Other
-            bill_dinner.edc_in_credit = edcInCredit
-            bill_dinner.tip_credit = tipCredit
-            bill_dinner.wrong_credit = wrongCredit
-
-            if modePos == 'self':
-                posInCashCount = request.POST.get('pos_in_bill_cash_count')
-                posInCash = request.POST.get('pos_in_bill_cash')
-                posInCardCount = request.POST.get('pos_in_bill_card_count')
-                posInCard = request.POST.get('pos_in_bill_card')
-                posTaCashCount = request.POST.get(
-                    'pos_ta_bill_phone_cash_count')
-                posTaCash = request.POST.get('pos_ta_bill_phone_cash')
-                posTaCardCount = request.POST.get(
-                    'pos_ta_bill_phone_card_count')
-                posTaCard = request.POST.get('pos_ta_bill_phone_card')
-
-                posInCashCount = 0 if posInCashCount == '' else posInCashCount
-                posInCash = 0 if posInCash == '' else posInCash
-                posInCardCount = 0 if posInCardCount == '' else posInCardCount
-                posInCard = 0 if posInCard == '' else posInCard
-                posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
-                posTaCash = 0 if posTaCash == '' else posTaCash
-                posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
-                posTaCard = 0 if posTaCard == '' else posTaCard
-
-                # POS Dine-in
-                bill_dinner.pos_in_bill_cash_count = posInCashCount
-                bill_dinner.pos_in_bill_cash = posInCash
-                bill_dinner.pos_in_bill_card_count = posInCardCount
-                bill_dinner.pos_in_bill_card = posInCard
-                # POS TA
-                bill_dinner.pos_ta_bill_phone_cash_count = posTaCashCount
-                bill_dinner.pos_ta_bill_phone_cash = posTaCash
-                bill_dinner.pos_ta_bill_phone_card_count = posTaCardCount
-                bill_dinner.pos_ta_bill_phone_card = posTaCard
-
-            elif modePos == 'scraping':
-                if branch == 'cr':
-                    updatePosData = UpdatePosData(daily_report_id)
-            if modeOnline == 'self':
-                billOnlineCashCount = request.POST.get(
-                    'bill_online_cash_count')
-                billOnlineCash = request.POST.get('bill_online_cash')
-                billOnlineCardCount = request.POST.get(
-                    'bill_online_card_count')
-                billOnlineCard = request.POST.get('bill_online_card')
-
-                billOnlineCashCount = 0 if billOnlineCashCount == '' else billOnlineCashCount
-                billOnlineCash = 0 if billOnlineCash == '' else billOnlineCash
-                billOnlineCardCount = 0 if billOnlineCardCount == '' else billOnlineCardCount
-                billOnlineCard = 0 if billOnlineCard == '' else billOnlineCard
-
-                # Online
-                bill_dinner.bill_online_cash_count = billOnlineCashCount
-                bill_dinner.bill_online_cash = billOnlineCash
-                bill_dinner.bill_online_card_count = billOnlineCardCount
-                bill_dinner.bill_online_card = billOnlineCard
-            elif modeOnline == 'scraping':
-                if branch == 'cr' or branch == 'st':
-                    getOnlineOrderData = GetOnlineOrderData(
-                        branch, daily_report_id)
-
-            bill_dinner.save()
-
-            request.session['status'] = 'submit_success'
-            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
-        elif mode == 'delivery':
-            bill_dinner = daily_report.bill_dinner
-            deliveryObject = DeliveryDetailModel.objects.create(
-                bill_dinner=bill_dinner)
-            deliveryId = deliveryObject.id
-
-            deliveryName = request.POST.get('delivery_name')
-            wagePerHour = request.POST.get('wage_per_home')
-            edcHomeCredit = request.POST.get('edc_home_credit')
-            motoCredit = request.POST.get('moto_credit')
-            realBillHomePhoneCashCount = request.POST.get(
-                'bill_home_phone_cash_count')
-            realBillHomePhoneCash = request.POST.get('bill_home_phone_cash')
-            realBillHomePhoneCardCount = request.POST.get(
-                'bill_home_phone_card_count')
-            realBillHomePhoneCard = request.POST.get('bill_home_phone_card')
-            realBillHomeOnlineCashCount = request.POST.get(
-                'bill_home_online_cash_count')
-            realBillHomeOnlineCash = request.POST.get('bill_home_online_cash')
-            realBillHomeOnlineCardCount = request.POST.get(
-                'bill_home_online_card_count')
-            realBillHomeOnlineCard = request.POST.get('bill_home_online_card')
-            realBillHomeOaCount = request.POST.get('bill_home_oa_count')
-            realBillHomeOaAmount = request.POST.get('bill_home_oa_amount')
-
-            deliveryName = 0 if deliveryName == '' else deliveryName
-            wagePerHour = 0 if wagePerHour == '' else wagePerHour
-            edcHomeCredit = 0 if edcHomeCredit == '' else edcHomeCredit
-            motoCredit = 0 if motoCredit == '' else motoCredit
-            realBillHomePhoneCashCount = 0 if realBillHomePhoneCashCount == '' else realBillHomePhoneCashCount
-            realBillHomePhoneCash = 0 if realBillHomePhoneCash == '' else realBillHomePhoneCash
-            realBillHomePhoneCardCount = 0 if realBillHomePhoneCardCount == '' else realBillHomePhoneCardCount
-            realBillHomePhoneCard = 0 if realBillHomePhoneCard == '' else realBillHomePhoneCard
-            realBillHomeOnlineCashCount = 0 if realBillHomeOnlineCashCount == '' else realBillHomeOnlineCashCount
-            realBillHomeOnlineCash = 0 if realBillHomeOnlineCash == '' else realBillHomeOnlineCash
-            realBillHomeOnlineCardCount = 0 if realBillHomeOnlineCardCount == '' else realBillHomeOnlineCardCount
-            realBillHomeOnlineCard = 0 if realBillHomeOnlineCard == '' else realBillHomeOnlineCard
-            realBillHomeOaCount = 0 if realBillHomeOaCount == '' else realBillHomeOaCount
-            realBillHomeOaAmount = 0 if realBillHomeOaAmount == '' else realBillHomeOaAmount
-
-            delivery_detail = get_object_or_404(
-                DeliveryDetailModel, id=deliveryId)
-
-            # Delivery man
-            delivery_detail.delivery_name = deliveryName
-            delivery_detail.wage_per_home = wagePerHour
-            # EDC
-            delivery_detail.edc_home_credit = edcHomeCredit
-            delivery_detail.moto_credit = motoCredit
-            # Home  Phone
-            delivery_detail.bill_home_phone_cash_count = realBillHomePhoneCashCount
-            delivery_detail.bill_home_phone_cash = realBillHomePhoneCash
-            delivery_detail.bill_home_phone_card_count = realBillHomePhoneCardCount
-            delivery_detail.bill_home_phone_card = realBillHomePhoneCard
-            # Home  Online
-            delivery_detail.bill_home_online_cash_count = realBillHomeOnlineCashCount
-            delivery_detail.bill_home_online_cash = realBillHomeOnlineCash
-            delivery_detail.bill_home_online_card_count = realBillHomeOnlineCardCount
-            delivery_detail.bill_home_online_card = realBillHomeOnlineCard
-            # OA
-            delivery_detail.bill_home_oa_count = realBillHomeOaCount
-            delivery_detail.bill_home_oa_amount = realBillHomeOaAmount
-
-            delivery_detail.save()
-
-            request.session['status'] = 'submit_success'
-            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
-        elif mode == 'expense':
-            name = request.POST.get('name')
-            price = request.POST.get('price')
-            disburseObject = DisburseModel.objects.create(
-                name=name, price=price, bill_dinner=bill_dinner)
-            request.session['status'] = 'submit_success'
-            return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
 
     if 'status' in request.session:
         context['status'] = request.session['status']
@@ -402,6 +120,44 @@ def ChooseMode(request, branch, daily_report_id):
     return render(request, 'keywordapp/choose-mode.html', context)
 
 # ************************************************************************************************ START : DISBURSE ************************************************************************************************
+
+
+@csrf_exempt
+def DisburseInput(request, branch, daily_report_id):
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    dinner_id = daily_report.bill_dinner.id
+    dinner_object = BillDinnerModel.objects.get(id=dinner_id)
+    cssClasses = ['warning', 'success', 'danger', 'primary', 'info']
+    related_disburse_details = daily_report.bill_dinner.disbursemodel_set.all()
+
+    # Calculating for total disburse
+    totalDisburse = 0
+    for detail in related_disburse_details:
+        totalDisburse += detail.price
+    i = 0
+    # Calculating for expense
+    for item in related_disburse_details:
+        item.css_classes = cssClasses[i]
+        i += 1
+        if i == 5:
+            i = 0
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        price = request.POST.get('price')
+        disburseObject = DisburseModel.objects.create(
+            name=name, price=price, bill_dinner=dinner_object)
+        request.session['status'] = 'submit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+    context = {
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'branch': branch,
+        'related_disburse_details': related_disburse_details,
+        'totalDisburse': totalDisburse,
+    }
+    return render(request, 'keywordapp/expense-input.html', context)
 
 
 @csrf_exempt
@@ -436,6 +192,102 @@ def DisburseEdit(request, branch, daily_report_id, disburse_id):
 # ************************************************************************************************ START : LUNCH ************************************************************************************************
 
 
+@csrf_exempt
+def LunchInput(request, branch, daily_report_id):
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    lunch_id = daily_report.bill_lunch.id
+    lunch_object = BillLunchModel.objects.get(id=lunch_id)
+
+    if request.method == 'POST':
+        edcInCredit = request.POST.get('edc_in_credit')
+        tipCredit = request.POST.get('tip_credit')
+        wrongCredit = request.POST.get('wrong_credit')
+        modePos = request.POST.get('mode_pos')
+        modeOnline = request.POST.get('mode_online')
+
+        edcInCredit = 0 if edcInCredit == '' else edcInCredit
+        tipCredit = 0 if tipCredit == '' else tipCredit
+        wrongCredit = 0 if wrongCredit == '' else wrongCredit
+
+        # Other
+        lunch_object.edc_in_credit = edcInCredit
+        lunch_object.tip_credit = tipCredit
+        lunch_object.wrong_credit = wrongCredit
+
+        if modePos == 'self':
+            posInCashCount = request.POST.get('pos_in_bill_cash_count')
+            posInCash = request.POST.get('pos_in_bill_cash')
+            posInCardCount = request.POST.get('pos_in_bill_card_count')
+            posInCard = request.POST.get('pos_in_bill_card')
+            posTaCashCount = request.POST.get(
+                'pos_ta_bill_phone_cash_count')
+            posTaCash = request.POST.get('pos_ta_bill_phone_cash')
+            posTaCardCount = request.POST.get(
+                'pos_ta_bill_phone_card_count')
+            posTaCard = request.POST.get('pos_ta_bill_phone_card')
+
+            posInCashCount = 0 if posInCashCount == '' else posInCashCount
+            posInCash = 0 if posInCash == '' else posInCash
+            posInCardCount = 0 if posInCardCount == '' else posInCardCount
+            posInCard = 0 if posInCard == '' else posInCard
+            posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
+            posTaCash = 0 if posTaCash == '' else posTaCash
+            posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
+            posTaCard = 0 if posTaCard == '' else posTaCard
+
+            # POS Dine-in
+            lunch_object.pos_in_bill_cash_count = posInCashCount
+            lunch_object.pos_in_bill_cash = posInCash
+            lunch_object.pos_in_bill_card_count = posInCardCount
+            lunch_object.pos_in_bill_card = posInCard
+            # POS TA
+            lunch_object.pos_ta_bill_phone_cash_count = posTaCashCount
+            lunch_object.pos_ta_bill_phone_cash = posTaCash
+            lunch_object.pos_ta_bill_phone_card_count = posTaCardCount
+            lunch_object.pos_ta_bill_phone_card = posTaCard
+
+            # Save the updated object
+        if modeOnline == 'self':
+            billOnlineCashCount = request.POST.get(
+                'bill_online_cash_count')
+            billOnlineCash = request.POST.get('bill_online_cash')
+            billOnlineCardCount = request.POST.get(
+                'bill_online_card_count')
+            billOnlineCard = request.POST.get('bill_online_card')
+
+            billOnlineCashCount = 0 if billOnlineCashCount == '' else billOnlineCashCount
+            billOnlineCash = 0 if billOnlineCash == '' else billOnlineCash
+            billOnlineCardCount = 0 if billOnlineCardCount == '' else billOnlineCardCount
+            billOnlineCard = 0 if billOnlineCard == '' else billOnlineCard
+
+            # Online
+            lunch_object.bill_online_cash_count = billOnlineCashCount
+            lunch_object.bill_online_cash = billOnlineCash
+            lunch_object.bill_online_card_count = billOnlineCardCount
+            lunch_object.bill_online_card = billOnlineCard
+
+
+        lunch_object.save()
+        if modePos == 'scraping':
+            if branch == 'cr':
+                updatePosData = UpdatePosData(branch, daily_report_id)
+        if modeOnline == 'scraping':
+            if branch == 'cr' or branch == 'st':
+                getOnlineOrderData = GetOnlineOrderData(
+                    branch, daily_report_id)
+        request.session['status'] = 'submit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+
+    context = {
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'lunch_object': lunch_object,
+        'branch': branch,
+    }
+    return render(request, 'keywordapp/lunch-input.html', context)
+
+
 def LunchReport(request, daily_report_id):
 
     daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
@@ -463,9 +315,7 @@ def LunchReport(request, daily_report_id):
     realBillInCardCount = bill_lunch.pos_in_bill_card_count
     edcInCredit = bill_lunch.edc_in_credit
 
-    posDineInTotalBillCount = bill_lunch.pos_dine_in_total_bill_count
-    resultCompareTotalDineInCount = (
-        realBillInCashCount + realBillInCardCount) - posDineInTotalBillCount
+    posDineInTotalBillCountLunch = bill_lunch.pos_dine_in_total_bill_count
 
     # TA Online
     realBillOnlineCash = bill_lunch.bill_online_cash
@@ -491,15 +341,14 @@ def LunchReport(request, daily_report_id):
         realBillPhoneCardCount - resultCompareTotalTaPhoneCount
     sumrealBillPhone = realBillPhoneCash + realBillPhoneCard
     # Row 3 Dine-in Lunch
-    sumrealBillInCount = realBillInCashCount + \
-        realBillInCardCount - resultCompareTotalDineInCount
+    posDineInTotalBillCountLunch = posDineInTotalBillCountLunch
     sumrealBillIn = realBillInCash + realBillInCard
     # Summary all Lunch
     totalBillLunch = sumrealBillPhone + sumrealBillIn + sumrealBillOnline
 
     day = date.strftime("%A")
     dateForImage = date.strftime("%d / %m / %y")
-    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCash, realBillOnlineCard, sumrealBillPhoneCount, sumrealBillPhone, realBillPhoneCash, realBillPhoneCard, sumrealBillInCount, sumrealBillIn, realBillInCash, realBillInCard, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCash, realBillOnlineCard, sumrealBillPhoneCount, sumrealBillPhone, realBillPhoneCash, realBillPhoneCard, posDineInTotalBillCountLunch, sumrealBillIn, realBillInCash, realBillInCard, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, totalBillLunch, 0, tipCredit, 0, 0, 0, 0, 0, 0, day, dateForImage, 0, 0, 0, wrongCredit, 0)
 
     context = {
@@ -522,7 +371,7 @@ def LunchReport(request, daily_report_id):
         # Row 3 Dine-in Lunch
         'realBillInCash': realBillInCash,
         'realBillInCard': realBillInCard,
-        'sumrealBillInCount': sumrealBillInCount,
+        'posDineInTotalBillCountLunch': posDineInTotalBillCountLunch,
         'sumrealBillIn': sumrealBillIn,
 
         # Row 4 Total
@@ -537,6 +386,102 @@ def LunchReport(request, daily_report_id):
     return render(request, 'keywordapp/lunch-report.html', context)
 # ************************************************************************************************ END : LUNCH ************************************************************************************************
 # ************************************************************************************************ START : DINNER ************************************************************************************************
+
+
+@csrf_exempt
+def DinnerInput(request, branch, daily_report_id):
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    dinner_id = daily_report.bill_dinner.id
+    dinner_object = BillDinnerModel.objects.get(id=dinner_id)
+
+    if request.method == 'POST':
+        edcInCredit = request.POST.get('edc_in_credit')
+        tipCredit = request.POST.get('tip_credit')
+        wrongCredit = request.POST.get('wrong_credit')
+        modePos = request.POST.get('mode_pos')
+        modeOnline = request.POST.get('mode_online')
+
+        edcInCredit = 0 if edcInCredit == '' else edcInCredit
+        tipCredit = 0 if tipCredit == '' else tipCredit
+        wrongCredit = 0 if wrongCredit == '' else wrongCredit
+
+        # Other
+        dinner_object.edc_in_credit = edcInCredit
+        dinner_object.tip_credit = tipCredit
+        dinner_object.wrong_credit = wrongCredit
+
+        if modePos == 'self':
+            posInCashCount = request.POST.get('pos_in_bill_cash_count')
+            posInCash = request.POST.get('pos_in_bill_cash')
+            posInCardCount = request.POST.get('pos_in_bill_card_count')
+            posInCard = request.POST.get('pos_in_bill_card')
+            posTaCashCount = request.POST.get(
+                'pos_ta_bill_phone_cash_count')
+            posTaCash = request.POST.get('pos_ta_bill_phone_cash')
+            posTaCardCount = request.POST.get(
+                'pos_ta_bill_phone_card_count')
+            posTaCard = request.POST.get('pos_ta_bill_phone_card')
+
+            posInCashCount = 0 if posInCashCount == '' else posInCashCount
+            posInCash = 0 if posInCash == '' else posInCash
+            posInCardCount = 0 if posInCardCount == '' else posInCardCount
+            posInCard = 0 if posInCard == '' else posInCard
+            posTaCashCount = 0 if posTaCashCount == '' else posTaCashCount
+            posTaCash = 0 if posTaCash == '' else posTaCash
+            posTaCardCount = 0 if posTaCardCount == '' else posTaCardCount
+            posTaCard = 0 if posTaCard == '' else posTaCard
+
+            # POS Dine-in
+            dinner_object.pos_in_bill_cash_count = posInCashCount
+            dinner_object.pos_in_bill_cash = posInCash
+            dinner_object.pos_in_bill_card_count = posInCardCount
+            dinner_object.pos_in_bill_card = posInCard
+            # POS TA
+            dinner_object.pos_ta_bill_phone_cash_count = posTaCashCount
+            dinner_object.pos_ta_bill_phone_cash = posTaCash
+            dinner_object.pos_ta_bill_phone_card_count = posTaCardCount
+            dinner_object.pos_ta_bill_phone_card = posTaCard
+
+        if modeOnline == 'self':
+            billOnlineCashCount = request.POST.get(
+                'bill_online_cash_count')
+            billOnlineCash = request.POST.get('bill_online_cash')
+            billOnlineCardCount = request.POST.get(
+                'bill_online_card_count')
+            billOnlineCard = request.POST.get('bill_online_card')
+
+            billOnlineCashCount = 0 if billOnlineCashCount == '' else billOnlineCashCount
+            billOnlineCash = 0 if billOnlineCash == '' else billOnlineCash
+            billOnlineCardCount = 0 if billOnlineCardCount == '' else billOnlineCardCount
+            billOnlineCard = 0 if billOnlineCard == '' else billOnlineCard
+
+            # Online
+            dinner_object.bill_online_cash_count = billOnlineCashCount
+            dinner_object.bill_online_cash = billOnlineCash
+            dinner_object.bill_online_card_count = billOnlineCardCount
+            dinner_object.bill_online_card = billOnlineCard
+
+        dinner_object.save()
+            # Save the updated object
+        if modePos == 'scraping':
+            if branch == 'cr':
+                updatePosData = UpdatePosData(branch, daily_report_id)
+        if modeOnline == 'scraping':
+            if branch == 'cr' or branch == 'st':
+                getOnlineOrderData = GetOnlineOrderData(
+                    branch, daily_report_id)
+
+        request.session['status'] = 'submit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+
+    context = {
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'dinner_object': dinner_object,
+        'branch': branch,
+    }
+    return render(request, 'keywordapp/dinner-input.html', context)
 
 
 def DinnerReport(request, branch, daily_report_id):
@@ -575,9 +520,7 @@ def DinnerReport(request, branch, daily_report_id):
     resultCompareTotalTaPhoneCount = (
         realBillPhoneCashCountLunch + realBillPhoneCardCountLunch) - posTaPhoneTotalBillCount
 
-    posDineInTotalBillCount = bill_lunch.pos_dine_in_total_bill_count
-    resultCompareTotalDineInCount = (
-        realBillInCashCountLunch + realBillInCardCountLunch) - posDineInTotalBillCount
+    posDineInTotalBillCountLunch = bill_lunch.pos_dine_in_total_bill_count
 
     # * Dinner Data
     realBillPhoneCashDinner = bill_dinner.pos_ta_bill_phone_cash
@@ -597,9 +540,11 @@ def DinnerReport(request, branch, daily_report_id):
 
     posTaPhoneTotalBillCount = bill_dinner.pos_ta_phone_total_bill_count
 
-    posDineInTotalBillCount = bill_dinner.pos_dine_in_total_bill_count
-    resultCompareTotalDineInCountDinner = (
-        realBillInCashCountDinner + realBillInCardCountDinner) - posDineInTotalBillCount
+    posDineInTotalBillCountDinner = bill_dinner.pos_dine_in_total_bill_count
+    print("posDineInTotalBillCountDinne222r :",posDineInTotalBillCountDinner)
+    # Cash amount + Card amount - Total count at the top will get the separated bills
+    # paySeparateCashAndCardCount = (
+    #     realBillInCashCountDinner + realBillInCardCountDinner) - posDineInTotalBillCount
 
     # * Delivery Section
     # Access the related DeliveryDetailModel instances using the foreign key relationship
@@ -670,8 +615,7 @@ def DinnerReport(request, branch, daily_report_id):
         realBillPhoneCardCountLunch - resultCompareTotalTaPhoneCount
     realBillPhoneLunch = realBillPhoneCashLunch + realBillPhoneCardLunch
     # Row 3 Dine-in Lunch
-    sumrealBillInCount = realBillInCashCountLunch + \
-        realBillInCardCountLunch - resultCompareTotalDineInCount
+    posDineInTotalBillCountLunch = posDineInTotalBillCountLunch
     sumrealBillIn = realBillInCashLunch + realBillInCardLunch
     # Row 4
     sumrealBillHomePhoneDinner = realBillHomePhoneCashDinner + realBillHomePhoneCardDinner
@@ -695,8 +639,8 @@ def DinnerReport(request, branch, daily_report_id):
         realBillOnlineCardCountDinner
     sumrealBillOnlineDinner = realBillOnlineCashDinner + realBillOnlineCardDinner
     # Row 8 Dine-in Dinner
-    sumrealBillInCountDinner = realBillInCashCountDinner + \
-        realBillInCardCountDinner - resultCompareTotalDineInCountDinner
+    posDineInTotalBillCountDinner = posDineInTotalBillCountDinner
+    print("posDineInTotalBillCountDinner : ",posDineInTotalBillCountDinner)
     sumrealBillInDinner = realBillInCashDinner + realBillInCardDinner
     # Row 10 Column 4
     sumCash = realBillOnlineCashLunch + realBillPhoneCashLunch + realBillInCashLunch + realBillHomePhoneCashDinner + \
@@ -753,8 +697,8 @@ def DinnerReport(request, branch, daily_report_id):
     totalSumDisburse = sum(detail.price for detail in related_disburse_details)
     balanceAfterMinusExpense = sumCash - \
         totalSumCommissionAndOa - totalSumDisburse - sumTip
-    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner,
-                                        realBillPhoneCashDinnerMinusHomePhone, realBillPhoneCardDinnerMinusHomePhone, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner)
+    imgLocation = GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, posDineInTotalBillCountLunch, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner,
+                                        realBillPhoneCashDinnerMinusHomePhone, realBillPhoneCardDinnerMinusHomePhone, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, posDineInTotalBillCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner)
 
     # * Summary for Comparation section
 
@@ -834,7 +778,7 @@ def DinnerReport(request, branch, daily_report_id):
         'realBillPhoneCashLunch': realBillPhoneCashLunch,
         'realBillPhoneCardLunch': realBillPhoneCardLunch,
         # Row 3 Dine-in Lunch
-        'sumrealBillInCount': sumrealBillInCount,
+        'posDineInTotalBillCountLunch': posDineInTotalBillCountLunch,
         'sumrealBillIn': sumrealBillIn,
         'realBillInCashLunch': realBillInCashLunch,
         'realBillInCardLunch': realBillInCardLunch,
@@ -863,7 +807,7 @@ def DinnerReport(request, branch, daily_report_id):
         'realBillOnlineCashDinner': realBillOnlineCashDinner,
         'realBillOnlineCardDinner': realBillOnlineCardDinner,
         # Row 8 Dine-in Dinner
-        'sumrealBillInCountDinner': sumrealBillInCountDinner,
+        'posDineInTotalBillCountDinner': posDineInTotalBillCountDinner,
         'sumrealBillInDinner': sumrealBillInDinner,
         'realBillInCashDinner': realBillInCashDinner,
         'realBillInCardDinner': realBillInCardDinner,
@@ -951,6 +895,119 @@ def DinnerReport(request, branch, daily_report_id):
     return render(request, 'keywordapp/report-image.html', context)
     # return render(request, 'keywordapp/dinner-report.html', context)
 # ************************************************************************************************ END : DINNER ************************************************************************************************
+
+
+@csrf_exempt
+def HomeInput(request, branch, daily_report_id):
+    daily_report = get_object_or_404(DailyReportModel, id=daily_report_id)
+    date = daily_report.date
+    dinner_id = daily_report.bill_dinner.id
+    dinner_object = BillDinnerModel.objects.get(id=dinner_id)
+    cssClasses = ['warning', 'success', 'danger', 'primary', 'info']
+    related_delivery_details = daily_report.bill_dinner.deliverydetailmodel_set.all()
+
+    i = 0
+    # Calculating for delivery data
+    sumOnlineCashCount = 0
+    sumOnlineCardCount = 0
+    sumOnlineCash = 0
+    sumOnlineCard = 0
+    for detail in related_delivery_details:
+        detail.sum_commission = detail.wage_per_home * (detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count +
+                                                        detail.bill_home_online_cash_count + detail.bill_home_online_card_count)
+        detail.home_count = detail.bill_home_phone_cash_count + detail.bill_home_phone_card_count + \
+            detail.bill_home_online_cash_count + \
+            detail.bill_home_online_card_count
+        detail.sum_commission_and_oa = detail.bill_home_oa_amount + detail.sum_commission
+        sumOnlineCashCount += detail.bill_home_online_cash_count
+        sumOnlineCardCount += detail.bill_home_online_card_count
+        sumOnlineCash += detail.bill_home_online_cash
+        sumOnlineCard += detail.bill_home_online_card
+        detail.css_classes = cssClasses[i]
+        i += 1
+        if i == 5:
+            i = 0
+
+    if request.method == 'POST':
+        bill_dinner = daily_report.bill_dinner
+        deliveryObject = DeliveryDetailModel.objects.create(
+            bill_dinner=bill_dinner)
+        deliveryId = deliveryObject.id
+
+        deliveryName = request.POST.get('delivery_name')
+        wagePerHour = request.POST.get('wage_per_home')
+        edcHomeCredit = request.POST.get('edc_home_credit')
+        motoCredit = request.POST.get('moto_credit')
+        realBillHomePhoneCashCount = request.POST.get(
+            'bill_home_phone_cash_count')
+        realBillHomePhoneCash = request.POST.get('bill_home_phone_cash')
+        realBillHomePhoneCardCount = request.POST.get(
+            'bill_home_phone_card_count')
+        realBillHomePhoneCard = request.POST.get('bill_home_phone_card')
+        realBillHomeOnlineCashCount = request.POST.get(
+            'bill_home_online_cash_count')
+        realBillHomeOnlineCash = request.POST.get('bill_home_online_cash')
+        realBillHomeOnlineCardCount = request.POST.get(
+            'bill_home_online_card_count')
+        realBillHomeOnlineCard = request.POST.get('bill_home_online_card')
+        realBillHomeOaCount = request.POST.get('bill_home_oa_count')
+        realBillHomeOaAmount = request.POST.get('bill_home_oa_amount')
+
+        deliveryName = 0 if deliveryName == '' else deliveryName
+        wagePerHour = 0 if wagePerHour == '' else wagePerHour
+        edcHomeCredit = 0 if edcHomeCredit == '' else edcHomeCredit
+        motoCredit = 0 if motoCredit == '' else motoCredit
+        realBillHomePhoneCashCount = 0 if realBillHomePhoneCashCount == '' else realBillHomePhoneCashCount
+        realBillHomePhoneCash = 0 if realBillHomePhoneCash == '' else realBillHomePhoneCash
+        realBillHomePhoneCardCount = 0 if realBillHomePhoneCardCount == '' else realBillHomePhoneCardCount
+        realBillHomePhoneCard = 0 if realBillHomePhoneCard == '' else realBillHomePhoneCard
+        realBillHomeOnlineCashCount = 0 if realBillHomeOnlineCashCount == '' else realBillHomeOnlineCashCount
+        realBillHomeOnlineCash = 0 if realBillHomeOnlineCash == '' else realBillHomeOnlineCash
+        realBillHomeOnlineCardCount = 0 if realBillHomeOnlineCardCount == '' else realBillHomeOnlineCardCount
+        realBillHomeOnlineCard = 0 if realBillHomeOnlineCard == '' else realBillHomeOnlineCard
+        realBillHomeOaCount = 0 if realBillHomeOaCount == '' else realBillHomeOaCount
+        realBillHomeOaAmount = 0 if realBillHomeOaAmount == '' else realBillHomeOaAmount
+
+        delivery_detail = get_object_or_404(
+            DeliveryDetailModel, id=deliveryId)
+
+        # Delivery man
+        delivery_detail.delivery_name = deliveryName
+        delivery_detail.wage_per_home = wagePerHour
+        # EDC
+        delivery_detail.edc_home_credit = edcHomeCredit
+        delivery_detail.moto_credit = motoCredit
+        # Home  Phone
+        delivery_detail.bill_home_phone_cash_count = realBillHomePhoneCashCount
+        delivery_detail.bill_home_phone_cash = realBillHomePhoneCash
+        delivery_detail.bill_home_phone_card_count = realBillHomePhoneCardCount
+        delivery_detail.bill_home_phone_card = realBillHomePhoneCard
+        # Home  Online
+        delivery_detail.bill_home_online_cash_count = realBillHomeOnlineCashCount
+        delivery_detail.bill_home_online_cash = realBillHomeOnlineCash
+        delivery_detail.bill_home_online_card_count = realBillHomeOnlineCardCount
+        delivery_detail.bill_home_online_card = realBillHomeOnlineCard
+        # OA
+        delivery_detail.bill_home_oa_count = realBillHomeOaCount
+        delivery_detail.bill_home_oa_amount = realBillHomeOaAmount
+
+        delivery_detail.save()
+
+        request.session['status'] = 'submit_success'
+        return redirect(reverse('choose-mode', kwargs={'branch': branch, 'daily_report_id': daily_report.id}))
+
+    context = {
+        'date': date,
+        'daily_report_id': daily_report_id,
+        'dinner_object': dinner_object,
+        'related_delivery_details': related_delivery_details,
+        'branch': branch,
+        'sumOnlineCashCount': sumOnlineCashCount,
+        'sumOnlineCardCount': sumOnlineCardCount,
+        'sumOnlineCash': sumOnlineCash,
+        'sumOnlineCard': sumOnlineCard,
+    }
+    return render(request, 'keywordapp/home-input.html', context)
 
 
 @csrf_exempt
@@ -1105,7 +1162,6 @@ def GetOnlineOrderData(branch, daily_report_id):
 
         driver = webdriver.Chrome(options=options)
 
-
     if branch == 'cr':
         endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=742459"
     elif branch == 'st':
@@ -1116,7 +1172,6 @@ def GetOnlineOrderData(branch, daily_report_id):
         endpoint = "https://www.gloriafood.com/admin2/app/restaurant/reports/listview/orders?acid=750327"
 
     driver.get(endpoint)
-
 
     time.sleep(10)
     targetLinkText = "https://www.gloriafood.com/admin/?logged_out=SESSION_EXPIRED"
@@ -1139,7 +1194,8 @@ def GetOnlineOrderData(branch, daily_report_id):
             time.sleep(1)
             username = driver.find_element(By.XPATH, '//*[@id="login-email"]')
             username.send_keys("chain_shane@yahoo.com")
-            password = driver.find_element(By.XPATH, '//*[@id="login-password"]')
+            password = driver.find_element(
+                By.XPATH, '//*[@id="login-password"]')
             password.send_keys("bitesme1234")
             button_login = driver.find_element(
                 By.XPATH, '//*[@id="login-form"]/div[5]/button')
@@ -1148,7 +1204,6 @@ def GetOnlineOrderData(branch, daily_report_id):
             driver.get(endpoint)
         else:
             driver.quit()
-
 
     # Wait for data in table
     element_locator = (By.XPATH, "//tr[contains(@class, 'ng-star-inserted')]")
@@ -1296,7 +1351,7 @@ def DeleteDisburse(request, branch, disburse_id, daily_report_id):
 # ************************************************************************************************ START : GENERATE TEXT ************************************************************************************************
 
 
-def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, sumrealBillInCount, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner, realBillPhoneCashDinner, realBillPhoneCardDinner, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, sumrealBillInCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner):
+def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnlineCashLunch, realBillOnlineCardLunch, sumrealBillPhoneCount, realBillPhoneLunch, realBillPhoneCashLunch, realBillPhoneCardLunch, posDineInTotalBillCountLunch, sumrealBillIn, realBillInCashLunch, realBillInCardLunch, realBillHomePhoneCashDinner, realBillHomePhoneCardDinner, sumrealBillHomePhoneCountDinner, sumrealBillHomePhoneDinner, realBillHomeOnlineCashDinner, realBillHomeOnlineCardDinner, sumrealBillHomeOnlineCountDinner, sumrealBillHomeOnlineDinner, sumrealBillPhoneCountDinner, sumrealBillPhoneDinner, realBillPhoneCashDinner, realBillPhoneCardDinner, sumrealBillOnlineCountDinner, sumrealBillOnlineDinner, realBillOnlineCashDinner, realBillOnlineCardDinner, posDineInTotalBillCountDinner, sumrealBillInDinner, realBillInCashDinner, realBillInCardDinner, sumTotal, sumCash, sumCard, totalBillLunch, totalBillDinner, tipLunch, tipDinner, related_delivery_details, sumrealBillHomeCountDinner, totalSumCommissionAndOa, totalOnlineCount, totalOnlineAmount, day, dateForImage, related_disburse_details, totalSumDisburse, balanceAfterMinusExpense, wrongCreditLunch, wrongCreditDinner):
 
     path = os.getcwd()
     locationTemplate = os.path.join(path, 'static', 'img', 'template.jpg')
@@ -1346,8 +1401,8 @@ def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnl
         imgObj.text((610, 135), '-', font=fontThai,
                     fill=FontColor)  # Card Amount
     # Row 3 Dine-in Lunch
-    if sumrealBillInCount != 0:
-        imgObj.text((60, 170), str(sumrealBillInCount),
+    if posDineInTotalBillCountLunch != 0:
+        imgObj.text((60, 170), str(posDineInTotalBillCountLunch),
                     font=fontThai, fill=FontColor)  # Total Count
         imgObj.text((300, 180), str(sumrealBillIn),
                     font=fontThai, fill=FontColor)  # Total Amount
@@ -1431,8 +1486,8 @@ def GenerateImageWIthText(sumrealBillOnlineCount, sumrealBillOnline, realBillOnl
         imgObj.text((610, 335), '-', font=fontThai,
                     fill=FontColor)  # Card Amount
     # Row 8 Dine-in Dinner
-    if sumrealBillInCountDinner != 0:
-        imgObj.text((60, 380), str(sumrealBillInCountDinner),
+    if posDineInTotalBillCountDinner != 0:
+        imgObj.text((60, 380), str(posDineInTotalBillCountDinner),
                     font=fontThai, fill=FontColor)  # Total Count
         imgObj.text((300, 380), str(sumrealBillInDinner),
                     font=fontThai, fill=FontColor)  # Total Amount
@@ -1738,7 +1793,7 @@ def UpdatePosData(branch, daily_report_id):
                     for col in range(num_cols):
                         # Access cell value by index
                         cell_value = table_df.iat[row, col]
-                        print(f"Cell ({row}, {col}):", cell_value)
+                        # print(f"Cell ({row}, {col}):", cell_value)
             else:
                 print("Table DataFrame is empty.")
         else:
@@ -1886,6 +1941,7 @@ def UpdatePosData(branch, daily_report_id):
                 bill_dinner.pos_ta_phone_total_bill_count = countAll
                 bill_dinner.save()
         if posType == "in":
+
             if shift == "lunch":
                 bill_lunch_id = daily_object.bill_lunch.id
                 bill_lunch = BillLunchModel.objects.get(id=bill_lunch_id)
@@ -1899,6 +1955,7 @@ def UpdatePosData(branch, daily_report_id):
                 bill_lunch.save()
             elif shift == "dinner":
                 bill_dinner_id = daily_object.bill_dinner.id
+                print ("bill_dinner_id : ",bill_dinner_id)
                 bill_dinner = BillDinnerModel.objects.get(id=bill_dinner_id)
                 # POS Dine in
                 bill_dinner.pos_in_bill_cash = cashAmount
@@ -1927,12 +1984,12 @@ def getCashAndCardData(table_df, rowCash):
     cardAmount = 0
     # Cash Topic Cell
     getCashCount = table_df.iat[rowCash, 0]
-    print("getCashCount : ", getCashCount)
+    # print("getCashCount : ", getCashCount)
     if getCashCount != "Cash":
         cashCount = GetNumberAfterDashSign(getCashCount)
-        print("cashCount : ", cashCount)
+        # print("cashCount : ", cashCount)
         cashAmount = table_df.iat[rowCash, 1]
-        print("cashAmount : ", cashAmount)
+        # print("cashAmount : ", cashAmount)
     # Card Topic Cell
     getCardCount = table_df.iat[rowCash+1, 0]
     print("getCardCount : ", getCardCount)

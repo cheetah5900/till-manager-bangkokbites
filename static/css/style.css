@@ -9,3 +9,12 @@
 body{
  font-family: 'Nunito', 'Kanit'!important;
 }
+.page-bg{
+ background-size:cover;
+ background-repeat:no-repeat;
+ background-position:center;
+ background-image:url(../media/misc/page-bg.jpg)
+}
+.bg-gray{
+ background-color: #f6f8fc;
+}

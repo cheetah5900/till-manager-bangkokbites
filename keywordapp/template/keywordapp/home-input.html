@@ -1,0 +1,657 @@
+{%extends 'keywordapp/layout.html'%}
+{% load humanize %}
+{%block content%}
+<!--begin::Content-->
+<div class="content d-flex flex-column flex-column-fluid page-bg" id="kt_content">
+  <!--begin::Toolbar-->
+  <div class="toolbar d-flex flex-stack mb-3 mb-lg-5" id="kt_toolbar">
+  </div>
+  <!--end::Toolbar-->
+  <!--begin::Post-->
+  <div class="post d-flex flex-column-fluid" id="kt_post">
+    <!--begin::Container-->
+    <div id="kt_content_container" class="container-xxl">
+      <!--begin::Card-->
+      <div class="card bg-gray">
+        <!--begin::Card body-->
+        <div class="card-body">
+          <!--begin::Stepper-->
+          <h1 class="fw-bold text-dark text-center">ปิด Home ยอดรอบเย็น ของวันที่ {{date}}</h1>
+          <div class="text-center">
+            <a href="/{{branch}}/{{daily_report_id}}" class="btn btn-lg btn-light-info me-3 text-center">
+              < ย้อนกลับ</a>
+          </div>
+          <div class="stepper stepper-links d-flex flex-column pt-15" id="kt_create_account_stepper">
+            <!--begin::Nav-->
+            <div class="stepper-nav mb-5">
+              <!--begin::Step 1-->
+              <div class="stepper-item me-5 me-md-15 current" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">List</h3>
+              </div>
+              <!--end::Step 1-->
+              <!--begin::Step 2-->
+              <div class="stepper-item me-5 me-md-15" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">General</h3>
+              </div>
+              <!--end::Step 2-->
+              <!--begin::Step 3-->
+              <div class="stepper-item me-5 me-md-15" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">Credit</h3>
+              </div>
+              <!--end::Step 3-->
+              <!--begin::Step 4-->
+              <div class="stepper-item" data-kt-stepper-element="nav">
+                <h3 class="stepper-title">Bill</h3>
+              </div>
+              <!--end::Step 4-->
+            </div>
+            <!--end::Nav-->
+            <!--begin::Form-->
+            <form class="mx-auto w-100 pt-15 pb-10" novalidate="novalidate" id="kt_create_report_form" method="post">
+              <!--begin::Step 1-->
+              <div class="current" data-kt-stepper-element="content">
+                <div class="row d-flex justify-content-center w-100">
+                  <div class="col-8">
+                    <!--begin::Tables Widget 3-->
+                    <div class="card card-xl-stretch">
+                      <!--begin::Header-->
+                      <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column">
+                          <span class="card-label fw-bold fs-3 mb-1">รายการคนส่งโฮม</span>
+                        </h3>
+                      </div>
+                      <!--end::Header-->
+                      <!--begin::Body-->
+                      <div class="card-body py-3">
+                        <!--begin::Input group-->
+                        <div class="fv-row">
+                          <!--begin::Row-->
+                          <div class="row">
+                            <div class="col-lg-12">
+
+                              <!--begin::Body-->
+                              <div class="card-body pt-0 mt-10">
+                                {% for delivery_detail in related_delivery_details %}
+                                <!--begin::Item-->
+                                <div
+                                  class="d-flex align-items-center bg-light-{{delivery_detail.css_classes}} rounded p-5 mb-7">
+                                  <i class="ki-duotone ki-abstract-26 text-{{delivery_detail.css_classes}} fs-1 me-5">
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                  </i>
+                                  <!--begin::Title-->
+                                  <div class="flex-grow-1 me-2">
+                                    <a href="#"
+                                      class="fw-bold text-gray-800 text-hover-primary fs-6">{{delivery_detail.delivery_name}}</a>
+                                    <span class="text-muted fw-semibold d-block">{{delivery_detail.home_count}}</span>
+                                  </div>
+                                  <!--end::Title-->
+                                  <!--begin::Lable-->
+                                  <a href="/home-report/{{branch}}/{{daily_report_id}}/{{delivery_detail.id}}"
+                                    class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-info mx-3">Report</a>
+                                  <a href="/home-edit/{{branch}}/{{daily_report_id}}/{{delivery_detail.id}}"
+                                    class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-warning mx-3">Edit</a>
+                                  <a class="btn btn-hover-rise text-uppercase fs-7 fw-bold btn-danger mx-3"
+                                    href="{% url 'delete-delivery-detail' branch daily_report_id delivery_detail.id  %}"
+                                    onclick="return confirm('Are you sure you want to delete?')">Delete</a>
+                                  <!--end::Lable-->
+                                </div>
+                                <!--end::Item-->
+                                {% endfor %}
+                              </div>
+                              <!--end::Body-->
+
+
+                              <!--begin::Tables Widget 3-->
+                              <div class="card card-xl-stretch mb-xl-8">
+                                <!--begin::Body-->
+                                <div class="card-body py-3">
+                                  <!--begin::Table container-->
+                                  <div class="table-responsive">
+                                    <!--begin::Header-->
+                                    <div class="border-0 pt-5">
+                                      <h3 class="card-title align-items-start flex-column">
+                                        <span class="card-label fw-bold fs-3 mb-1">ยอด Home
+                                          ออนไลน์จากการรวมข้อมูล</span>
+                                      </h3>
+                                    </div>
+                                    <!--end::Header-->
+                                    <!--begin::Table-->
+                                    <table class="table align-middle gs-0 gy-3">
+                                      <!--begin::Table head-->
+                                      <thead>
+                                        <tr>
+                                          <th class="p-0 w-40px"></th>
+                                          <th class="p-0 w-200px"></th>
+                                          <th class="p-0 w-40px"></th>
+                                        </tr>
+                                      </thead>
+                                      <!--end::Table head-->
+                                      <!--begin::Table body-->
+                                      <tbody>
+                                        <tr>
+                                          <td>
+                                            <div class="symbol symbol-50px me-2">
+                                              <span class="symbol-label bg-light-success">
+                                                <i class="ki-duotone ki-arrow-mix fs-2x text-success">
+                                                  <span class="path1"></span>
+                                                  <span class="path2"></span>
+                                                  <span class="path3"></span>
+                                                  <span class="path4"></span>
+                                                </i>
+                                              </span>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Cash
+                                              ({{sumOnlineCashCount}}) {{sumOnlineCash}}</a>
+                                          </td>
+                                          <td>
+                                            <div class="symbol symbol-50px me-2">
+                                              <span class="symbol-label bg-light-danger">
+                                                <i class="ki-duotone ki-bitcoin fs-2x text-danger">
+                                                  <span class="path1"></span>
+                                                  <span class="path2"></span>
+                                                  <span class="path3"></span>
+                                                  <span class="path4"></span>
+                                                </i>
+                                              </span>
+                                            </div>
+                                          </td>
+                                          <td>
+                                            <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Card
+                                              ({{sumOnlineCardCount}}) {{sumOnlineCard}}</a>
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                    <!--begin::Header-->
+                                    <div class="border-0">
+                                      <h3 class="card-title align-items-start flex-column">
+                                        <span class="card-label fw-bold fs-3 mb-1">ยอด Home ออนไลน์จากระบบออนไลน์</span>
+                                      </h3>
+                                    </div>
+                                    <!--end::Header-->
+                                    <table class="table align-middle gs-0 gy-3">
+                                      <!--begin::Table head-->
+                                      <thead>
+                                        <tr>
+                                          <th class="p-0 w-40px"></th>
+                                          <th class="p-0 w-200px"></th>
+                                          <th class="p-0 w-40px"></th>
+                                        </tr>
+                                      </thead>
+                                      <!--end::Table head-->
+                                      <tr>
+                                        <td>
+                                          <div class="symbol symbol-50px me-2">
+                                            <span class="symbol-label bg-light-info">
+                                              <i class="ki-duotone ki-dollar fs-2x text-info">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                              </i>
+                                            </span>
+                                          </div>
+                                        </td>
+                                        <td class="text-dark fw-bold fs-6 pe-0">Cash
+                                          ({{dinner_object.delivery_cash_count_in_online_system}})
+                                          {{dinner_object.delivery_cash_amount_in_online_system}}</td>
+                                        <td>
+                                          <div class="symbol symbol-50px me-2">
+                                            <span class="symbol-label bg-light-warning">
+                                              <i class="ki-duotone ki-delivery fs-2x text-warning">
+                                                <span class="path1"></span>
+                                                <span class="path2"></span>
+                                                <i class="path3"></i>
+                                                <i class="path4"></i>
+                                                <i class="path5"></i>
+                                              </i>
+                                            </span>
+                                          </div>
+                                        </td>
+                                        <td>
+                                          <a href="#" class="text-dark fw-bold text-hover-primary mb-1 fs-6">Card
+                                            ({{dinner_object.delivery_card_count_in_online_system}})
+                                            {{dinner_object.delivery_card_amount_in_online_system}}</a>
+                                        </td>
+                                      </tr>
+                                    </table>
+
+                                    <!--end::Table-->
+                                  </div>
+                                  <!--end::Table container-->
+                                </div>
+                                <!--begin::Body-->
+                              </div>
+                              <!--end::Tables Widget 3-->
+                            </div>
+                          </div>
+                          <!--end::Row-->
+                        </div>
+                        <!--end::Input group-->
+                      </div>
+                      <!--begin::Body-->
+                    </div>
+                    <!--end::Tables Widget 3-->
+                  </div>
+                </div>
+              </div>
+              <!--end::Step 1-->
+              <!--begin::Step 2-->
+              <div data-kt-stepper-element="content">
+                <div class="row d-flex justify-content-center w-100">
+                  <div class="col-8">
+                    <!--begin::Tables Widget 3-->
+                    <div class="card card-xl-stretch">
+                      <!--begin::Header-->
+                      <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column">
+                          <span class="card-label fw-bold fs-3 mb-1">ข้อมูลทั่วไป</span>
+                        </h3>
+                      </div>
+                      <!--end::Header-->
+                      <!--begin::Body-->
+                      <div class="card-body py-3">
+                        <!--begin::Input group-->
+                        <div class="fv-row">
+                          <!--begin::Row-->
+                          <div class="row">
+                            <div class="col-lg-12">
+                              <div class="row">
+                                <div class="col-6">
+                                  <!--begin::Label-->
+                                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                    <span class="required">ชื่อคนส่ง</span>
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                    </i>
+                                    </span>
+                                  </label>
+                                  <!--end::Label-->
+                                  <!--begin::Input-->
+                                  <input class="form-control form-control-solid" placeholder="ชื่อคนส่ง"
+                                    inputmode="numeric" type="text" value="{{ delivery_detail.delivery_name }}"
+                                    name="delivery_name" />
+                                  <!--end::Input-->
+                                </div>
+                                <div class="col-6">
+                                  <!--begin::Label-->
+                                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                    <span class="required">ค่าคอมมิชชั่น/ใบ</span>
+                                    <span class="path1"></span>
+                                    <span class="path2"></span>
+                                    <span class="path3"></span>
+                                    </i>
+                                    </span>
+                                  </label>
+                                  <!--end::Label-->
+                                  <!--begin::Input-->
+                                  <input class="form-control form-control-solid" onfocus="clearInputValue(this)"
+                                    onblur="restoreInputValueDecimal(this)" placeholder="0.00" inputmode="numeric"
+                                    type="text" value="{{ delivery_detail.wage_per_home }}" name="wage_per_home" />
+                                  <!--end::Input-->
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                          <!--end::Row-->
+                        </div>
+                        <!--end::Input group-->
+                      </div>
+                      <!--begin::Body-->
+                    </div>
+                    <!--end::Tables Widget 3-->
+                  </div>
+                </div>
+              </div>
+              <!--end::Step 2-->
+              <!--begin::Step 3-->
+              <div data-kt-stepper-element="content">
+                <div class="row d-flex justify-content-center w-100">
+                  <div class="col-8">
+                    <!--begin::Tables Widget 3-->
+                    <div class="card card-xl-stretch">
+                      <!--begin::Header-->
+                      <div class="card-header border-0 pt-5">
+                        <h3 class="card-title align-items-start flex-column">
+                          <span class="card-label fw-bold fs-3 mb-1">ข้อมูล Credit</span>
+                        </h3>
+                      </div>
+                      <!--end::Header-->
+                      <!--begin::Body-->
+                      <div class="card-body py-3">
+                        <!--begin::Input group-->
+                        <div class="fv-row">
+
+                          <!--begin::Row-->
+                          <div class="row">
+                            <div class="col-lg-12">
+
+                              <!--begin::Input group-->
+                              <div class="row mb-15" data-kt-buttons="true">
+                                <div class="col-6">
+                                  <!--begin::Label-->
+                                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                    <span>EDC Home</span>
+                                  </label>
+                                  <!--end::Label-->
+                                  <!--begin::Input-->
+                                  <input class="form-control form-control-solid" onfocus="clearInputValue(this)"
+                                    onblur="restoreInputValueDecimal(this)" placeholder="0.00" inputmode="numeric"
+                                    type="text" value="{{ delivery_detail.edc_home_credit }}" name="edc_home_credit" />
+                                  <!--end::Input-->
+                                </div>
+                                <div class="col-6">
+                                  <!--begin::Label-->
+                                  <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                    <span>EDC MOTO</span>
+                                  </label>
+                                  <!--end::Label-->
+                                  <!--begin::Input-->
+                                  <input class="form-control form-control-solid" onfocus="clearInputValue(this)"
+                                    onblur="restoreInputValueDecimal(this)" placeholder="0.00" inputmode="numeric"
+                                    type="text" value="{{ delivery_detail.moto_credit }}" name="moto_credit" />
+                                  <!--end::Input-->
+                                </div>
+                              </div>
+                              <!--end::Input group-->
+
+                            </div>
+                          </div>
+                          <!--end::Row-->
+                          <!--begin::Fake to JS-->
+                          <div id="kt_modal_create_project_budget_setup" data-kt-dialer="true">
+                            <input type="hidden" />
+                          </div>
+                          <!--end::Fake to JS-->
+                        </div>
+                        <!--end::Input group-->
+                      </div>
+                      <!--begin::Body-->
+                      <!--end::Tables Widget 3-->
+
+                    </div>
+                  </div>
+                </div>
+                <!--end::Step 3-->
+              </div>
+
+                <!--begin::Step 4-->
+                <div data-kt-stepper-element="content">
+                  <div class="row d-flex justify-content-center w-100">
+                    <div class="col-8">
+                      <!--begin::Tables Widget 4-->
+                      <div class="card card-xl-stretch">
+                        <!--begin::Header-->
+                        <div class="card-header border-0 pt-5">
+                          <h3 class="card-title align-items-start flex-column">
+                            <span class="card-label fw-bold fs-3 mb-1">รายละเอียดการส่ง Home</span>
+                          </h3>
+                        </div>
+                        <!--end::Header-->
+                        <!--begin::Body-->
+                        <div class="card-body py-3">
+                          <!--begin::Input group-->
+                          <div class="fv-row">
+
+                            <!--begin::Row-->
+                            <div class="row">
+                              <div class="col-lg-12">
+
+                                <!--begin::Heading-->
+                                <div class="pb-5">
+                                  <h2 class="fw-bold text-dark">Home หน้าร้าน/โทรศัพท์
+                                  </h2>
+                                </div>
+                                <!--end::Heading-->
+                                <!--begin::Content-->
+                                <div class="pb-lg-3">
+                                  <!--begin::Title-->
+                                  <h3 class="fw-bold text-dark pb-lg-2">Cash</h3>
+                                  <!--end::Title-->
+                                  <!--begin::Input group-->
+                                  <div class="row mb-7" data-kt-buttons="true">
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>จำนวน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                        placeholder="0" inputmode="numeric" type="number"
+                                        value="{{ delivery_detail.bill_home_phone_cash_count }}"
+                                        name="bill_home_phone_cash_count" class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>ยอดเงิน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                        placeholder="0.00" inputmode="numeric" type="text"
+                                        value="{{ delivery_detail.bill_home_phone_cash }}" name="bill_home_phone_cash"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                  </div>
+                                  <!--begin::Title-->
+                                  <h3 class="fw-bold text-dark pb-lg-2">Card</h3>
+                                  <!--end::Title-->
+                                  <!--begin::Input group-->
+                                  <div class="row mb-15" data-kt-buttons="true">
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>จำนวน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                        placeholder="0" inputmode="numeric" type="number"
+                                        value="{{ delivery_detail.bill_home_phone_card_count }}"
+                                        name="bill_home_phone_card_count" class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>ยอดเงิน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                        placeholder="0.00" inputmode="numeric" type="text"
+                                        value="{{ delivery_detail.bill_home_phone_card }}" name="bill_home_phone_card"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                  </div>
+
+                                </div>
+                                <!--end::Content-->
+                                <!--begin::Heading-->
+                                <div class="pb-5">
+                                  <h2 class="fw-bold text-dark">Home Online
+                                  </h2>
+                                </div>
+                                <!--end::Heading-->
+                                <!--begin::Content-->
+                                <div class="pb-lg-3">
+                                  <!--begin::Title-->
+                                  <h3 class="fw-bold text-dark pb-lg-2">Cash</h3>
+                                  <!--end::Title-->
+                                  <!--begin::Input group-->
+                                  <div class="row mb-7" data-kt-buttons="true">
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>จำนวน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                        placeholder="0" inputmode="numeric" type="number"
+                                        value="{{ delivery_detail.bill_home_online_cash_count }}"
+                                        name="bill_home_online_cash_count" class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>ยอดเงิน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                        placeholder="0.00" inputmode="numeric" type="text"
+                                        value="{{ delivery_detail.bill_home_online_cash }}" name="bill_home_online_cash"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                  </div>
+                                  <!--begin::Title-->
+                                  <h3 class="fw-bold text-dark pb-lg-2">Card</h3>
+                                  <!--end::Title-->
+                                  <!--begin::Input group-->
+                                  <div class="row mb-15" data-kt-buttons="true">
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>จำนวน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                        placeholder="0" inputmode="numeric" type="number"
+                                        value="{{ delivery_detail.bill_home_online_card_count }}"
+                                        name="bill_home_online_card_count" class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>ยอดเงิน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                        placeholder="0.00" inputmode="numeric" type="text"
+                                        value="{{ delivery_detail.bill_home_online_card }}" name="bill_home_online_card"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--end::Content-->
+                                <!--begin::Heading-->
+                                <div class="pb-5">
+                                  <h2 class="fw-bold text-dark">Over Area (OA)
+                                  </h2>
+                                </div>
+                                <!--end::Heading-->
+                                <!--begin::Content-->
+                                <div class="pb-lg-3">
+                                  <!--begin::Input group-->
+                                  <div class="row mb-7" data-kt-buttons="true">
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>จำนวน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValue(this)"
+                                        placeholder="0" inputmode="numeric" type="number"
+                                        value="{{ delivery_detail.bill_home_oa_count }}" name="bill_home_oa_count"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                    <div class="col-6">
+                                      <!--begin::Label-->
+                                      <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                        <span>ยอดเงิน</span>
+                                      </label>
+                                      <!--end::Label-->
+                                      <!--begin::Input-->
+                                      <input onfocus="clearInputValue(this)" onblur="restoreInputValueDecimal(this)"
+                                        placeholder="0.00" inputmode="numeric" type="text"
+                                        value="{{ delivery_detail.bill_home_oa_amount }}" name="bill_home_oa_amount"
+                                        class="form-control">
+                                      <!--end::Input-->
+                                    </div>
+                                  </div>
+                                </div>
+                                <!--end::Content-->
+
+                              </div>
+                            </div>
+                            <!--end::Row-->
+                            <!--begin::Fake to JS-->
+                            <div id="kt_modal_create_project_budget_setup" data-kt-dialer="true">
+                              <input type="hidden" />
+                            </div>
+                            <!--end::Fake to JS-->
+                          </div>
+                          <!--end::Input group-->
+                        </div>
+                        <!--begin::Body-->
+                        <div class="d-flex justify-content-center my-5">
+                          <button type="submit" class="btn btn-lg btn-primary me-3">
+                            <span class="indicator-label">ส่งข้อมูล
+                              <i class="ki-duotone ki-arrow-right fs-2 ms-2 me-0">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                              </i></span>
+                          </button>
+                        </div>
+                      </div>
+                      <!--end::Tables Widget 4-->
+
+                    </div>
+                  </div>
+                </div>
+              <!--end::Step 4-->
+
+              <!--begin::Actions-->
+              <div class="d-flex flex-stack pt-15">
+                <!--begin::Wrapper-->
+                <div class="mr-2">
+                  <button type="button" class="btn btn-lg btn-light-primary me-3" data-kt-stepper-action="previous">
+                    <i class="ki-duotone ki-arrow-left fs-4 me-1">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>Back</button>
+                </div>
+                <!--end::Wrapper-->
+                <!--begin::Wrapper-->
+                <div>
+                  <button type="button" class="btn btn-lg btn-primary" data-kt-stepper-action="next">Continue
+                    <i class="ki-duotone ki-arrow-right fs-4 ms-1 me-0">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i></button>
+                </div>
+                <!--end::Wrapper-->
+              </div>
+              <!--end::Actions-->
+            </form>
+            <!--end::Form-->
+          </div>
+          <!--end::Stepper-->
+        </div>
+        <!--end::Card body-->
+      </div>
+      <!--end::Card-->
+    </div>
+    <!--end::Container-->
+  </div>
+  <!--end::Post-->
+</div>
+<!--end::Content-->
+{%endblock content%}
