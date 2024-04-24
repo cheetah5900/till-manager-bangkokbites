@@ -1,15 +1,16 @@
-# Keyword manager for SEO project
+# Till cashier manager
 
 ## Background
-I create this web application to help me finding keyword from Google for doing SEO. it can find Longtail, Refine and Related keyword from Google in real-time. I use web scraping named "Selenium" (Python).
+I created this web application to help me clear customers' bills everyday I worked faster than the manual way 50%.
 
-Furthermore, it can manage keyword for doing SEO from defining Title to writing footer content.
+Furthermore, it can input various data to show a report as a mockup to copy to paper template again later. Additionally, there are a scraping feature from online shop to the system automatically and an Excel reading feature to read and fill the system automatically.
 
 ## Technology
 - Python
 - Django Framework
 - SQLite3 for Database
 - Selenium for web scraping
+- Excel
 
 ## Requirement.
 - Python 3.0
@@ -38,13 +39,11 @@ Furthermore, it can manage keyword for doing SEO from defining Title to writing 
 ### Step 5 : Login to web app
 1. Open new tab browser
 2. Go to `localhost:8000`
-3. Login as root
- - username : cheetah
- - password : cheetah
-
+3. There is no need to login.
+   
 ## How to use
-- First navigation is finding keyword. You can put any keyword in input box. System will provide keyword from Google for you
-- Second navigation is manage keyword. it is a little bit complicated to describe because I designed it for only myself.
-- Third navigation is Permission for each user.
-- Fourth and Fifth navigation are not complete right now.
+1. Choose date and branch.
+2. Input data to every menu exept a Report menu.
+3. Click Report menu to see if credit card is correct.
+4. In the next page is a mockup paper to copy to template paper again.
 
