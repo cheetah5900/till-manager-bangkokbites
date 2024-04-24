@@ -1,7 +1,7 @@
 # Till cashier manager
 
 ## Background
-I created this web application to help me clear customers' bills everyday I worked faster than the manual way 50%.
+I created this web application to help me clear customers' bills everyday at a Thai restuarant when I was studying in Australia. I worked faster than the manual way 50%.
 
 Furthermore, it can input various data to show a report as a mockup to copy to paper template again later. Additionally, there are a scraping feature from online shop to the system automatically and an Excel reading feature to read and fill the system automatically.
 
