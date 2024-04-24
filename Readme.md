@@ -1,9 +1,14 @@
 # Till cashier manager
 
 ## Background
-I created this web application to help me clear customers' bills everyday at a Thai restuarant when I was studying in Australia. I worked faster than the manual way 50%.
 
-Furthermore, it can input various data to show a report as a mockup to copy to paper template again later. Additionally, there are a scraping feature from online shop to the system automatically and an Excel reading feature to read and fill the system automatically.
+### What is it for ?
+It can input various data to show a report as a mockup to copy to paper template again later reducing closing time by 50%. Additionally, there are a scraping feature from online shop to the system automatically and an Excel reading feature to read and fill the system automatically.
+
+### Why do this ?
+I needed to clear customers' bills everyday at a Thai restuarant when I was studying in Australia. 
+
+
 
 ## Technology
 - Python
